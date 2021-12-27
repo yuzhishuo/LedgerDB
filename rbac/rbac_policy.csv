@@ -1,5 +1,27 @@
-p, alice, data1, read
-p, bob, data2, write
-p, data2_admin, data2, read
-p, data2_admin, data2, write
-g, alice, data2_admin
+g, CREATE_USER, DBA
+g, DELETE_USER, DBA
+g, CREATE_LEDGER, DBA
+g, CREATE_LEDGER, COMMON
+
+g, Read, OWNER
+g, Verify, OWNER
+g, Write, OWNER
+g, Grant, OWNER
+g, Delete, OWNER
+g, Purge, OWNER
+
+g, Read, REGULATOR
+g, Verify, REGULATOR
+g, Hide, REGULATOR
+
+g, Read, R_COMMON
+g, Verify, R_COMMON
+g, Write, R_COMMON
+
+g, Read, READONLY
+g, Verify, READONLY
+
+p, admin, DBA, request
+p, jiansu, COMMON, request
+
+p, admin, c++, request

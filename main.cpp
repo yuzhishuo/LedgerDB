@@ -2,34 +2,55 @@
 #include <casbin/casbin.h>
 #include <memory>
 
-int main(int, char **)
+// casbin::ReturnType myMatcher(casbin::Scope scope)
+// {
+//     std::string key1 = casbin::GetString(scope, 0);
+//     std::string key2 = casbin::GetString(scope, 1);
+//     casbin::PushBooleanValue(scope, false);
+//     return -1;
+// }
+
+#include "AuthorityCertification.h"
+#include "User.h"
+
+int main(int argc, char **argv)
 {
+    AuthorityCertification::Instance().Start();
+    std::cout << AuthorityCertification::Instance().UserPass("CreateUser", "admin") << std::endl;
+    // auto m = std::make_shared<casbin::Model>("./rbac/rbac_model.conf");
 
-    // auto e = casbin::Enforcer("rbac/rbac_model.conf", "rbac/rbac_policy.csv");
+    // auto a = std::make_shared<casbin::FileAdapter>("./rbac/rbac_policy.csv");
+    // try
+    // {
+    //     auto e = casbin::Enforcer((m), std::dynamic_pointer_cast<casbin::Adapter>(a));
 
-    auto m = std::make_shared<casbin::Model>("rbac/rbac_model.conf");
+    //     auto sub = "jiansu";
+    //     auto obj = "Write";
+    //     auto obj1 = "luluyuzhi";
+    //     auto act = "allow";
+    //     e.EnableLog(true);
+    //     auto ok = e.Enforce({sub, obj, obj1, act});
 
-    auto a = std::make_shared<casbin::FileAdapter>("rbac/rbac_policy.csv");
+    //     // e.AddFunction("myMatcher", myMatcher, 2);
+    //     if (ok)
+    //     {
+    //         std::cout << "auth sucessor" << std::endl;
+    //     }
 
-    auto e = casbin::Enforcer((m), std::dynamic_pointer_cast<casbin::Adapter>(a));
+    //     auto roles = e.GetUsersForRole("REGULATOR");
 
-    auto sub = "alice";
-    auto obj = "data1";
-    auto act = "read";
-
-    auto ok = e.Enforce({sub, obj, act});
-
-    if (ok)
-    {
-        std::cout << "auth sucessor" << std::endl;
-    }
-
-    auto roles = e.GetRolesForUser(sub);
-
-    for (auto role : roles)
-    {
-        std::cout << "sub: " << sub << ",role is " << role << std::endl;
-    }
+    //     for (auto &role : roles)
+    //     {
+    //         for (auto &r : role)
+    //         {
+    //             std::cout << "sub: " << sub << ",role is " << r << std::endl;
+    //         }
+    //     }
+    // }
+    // catch (std::exception &e)
+    // {
+    //     std::cout << e.what() << std::endl;
+    // }
 
     return 0;
 }

@@ -17,4 +17,3 @@ aux_source_directory(./src DIR_SRCS)
 add_executable(samplate-cpp-template ${DIR_SRCS} main.cpp )
 
 target_link_libraries(samplate-cpp-template casbin)
-

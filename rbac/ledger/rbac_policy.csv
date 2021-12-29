@@ -1,0 +1,15 @@
+g, Read, OWNER
+g, Verify, OWNER
+g, Write, OWNER
+g, Grant, OWNER
+g, Delete, OWNER
+g, Purge, OWNER
+g, Read, REGULATOR
+g, Verify, REGULATOR
+g, Hide, REGULATOR
+g, Read, COMMON
+g, Verify, COMMON
+g, Write, COMMON
+g, Read, READONLY
+g, Verify, READONLY
+p, admin, OWNER, luluyuzhi

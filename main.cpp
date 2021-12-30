@@ -2,9 +2,13 @@
 #include <casbin/casbin.h>
 #include <memory>
 
+
+
+
 int main(int, char **)
 {
     {
+
         auto m = std::make_shared<casbin::Model>("./rbac/user/rbac_model.conf");
 
         auto a = std::make_shared<casbin::FileAdapter>("./rbac/user/rbac_policy.csv");
@@ -13,6 +17,8 @@ int main(int, char **)
 
         auto sub = "admin";
         auto obj = "CREATE_USER";
+        auto status_r = e.RemovePolicy({sub, obj});
+
 
         auto ok = e.Enforce({sub, obj});
 
@@ -54,7 +60,6 @@ int main(int, char **)
         {
             std::cout << "sub: " << sub << ",role is " << role << std::endl;
         }
-
     }
     return 0;
 }

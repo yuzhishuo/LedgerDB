@@ -57,7 +57,6 @@ public:
     }
 
 private:
-    user_engine::User user_proto_imp;
     uint64_t id_;
     std::string name_;
     USER_ROLE role_;

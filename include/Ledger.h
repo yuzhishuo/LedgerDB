@@ -16,15 +16,7 @@ enum class LEDGER_ROLE : uint8_t
     READONLY
 };
 
-template <typename T>
-class Store
-{
-public:
-    virtual void Serialize(const T &obj);
-    virtual T Parse(const string &str);
-};
-
-class Ledger : public Store<Ledger>
+class Ledger
 {
 public:
     Ledger(const std::string &name, std::shared_ptr<User> &owner)

@@ -4,6 +4,9 @@
 #include <map>
 #include <set>
 #include <memory>
+#include <variant>
+
+#include <user_engine.grpc.pb.h>
 
 enum class USER_ROLE : uint8_t
 {
@@ -46,7 +49,7 @@ public:
 
 public:
     static std::shared_ptr<User> admin;
-    
+
     static auto &Users()
     {
         static std::map<std::string, std::shared_ptr<User>> users{std::make_pair(admin->name(), admin)};
@@ -55,6 +58,7 @@ public:
 
 private:
     uint64_t id_;
+    std::variant<uint64_t, user_engine::User> user_;
     std::string name_;
     USER_ROLE role_;
 };

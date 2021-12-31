@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package user_engine;
+
+enum Role
+{
+    REGULATOR = 0;
+    COMMON = 1;
+    READONLY = 2;
+    DBA = 3;
+}
+
+message Ledger 
+{
+    string name = 1;
+    uint32 id = 2;
+    string Owner = 3;
+    string Regulator = 4;
+    repeated string Commons = 5;
+    repeated string Readonlys = 6;
+}
+
+message User
+{
+    string name = 1;
+    string password = 2;
+    string public_key = 3;
+    Role role = 4;
+}

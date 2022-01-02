@@ -15,6 +15,7 @@ ENDIF()
 find_package(RocksDB CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
 find_package(Threads REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
@@ -67,6 +68,7 @@ target_link_libraries(samplate-cpp-template
                     gRPC::gpr gRPC::upb gRPC::grpc gRPC::grpc++
                     # re2::re2 c-ares::cares)
                     Threads::Threads
+                    spdlog::spdlog spdlog::spdlog_header_only
                     )
 
 add_subdirectory(test)

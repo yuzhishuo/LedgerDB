@@ -1,3 +1,6 @@
+#define SPDLOG_TRACE_ON
+#define SPDLOG_DEBUG_ON
+
 #include <iostream>
 #include <memory>
 
@@ -5,17 +8,20 @@
 #include <casbin/casbin.h>
 
 #include "AuthorityCertification.h"
-#include "User.h"
 #include "PersistenceStore.h"
+#include "User.h"
+#include "Spd.h"
 
+namespace spd = spdlog;
 
-// temp
-#include "Meta.h"
-// temp
 int main(int argc, char **argv)
 {
     AuthorityCertification::Instance().Start();
     std::cout << AuthorityCertification::Instance().UserPass("CreateUser", "admin") << std::endl;
+    
+    auto console = spd::stdout_color_mt("console");
+    spd::get("console")->info("Hello, world!");
+   
 
     auto &persistenceStore = PersistenceStore::Instance();
     // auto [value, error] = persistenceStore.load("key");

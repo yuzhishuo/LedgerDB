@@ -3,5 +3,4 @@
 template <typename T>
 class Monostate
 {
-    
 };

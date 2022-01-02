@@ -7,7 +7,17 @@
 #include "Ledgers.h"
 
 Ledger::Ledger(const std::string &name, const std::string &owner)
-    : name_(name), id_{Ledger::GeneratorId()}, owner_{owner} {}
+    : ledger_{}
+{
+    std::get<ledger_engine::Ledger>(ledger_).set_onwer(owner);
+    std::get<ledger_engine::Ledger>(ledger_).set_name(name);
+    std::get<ledger_engine::Ledger>(ledger_).set_id(Ledger::GeneratorId());
+}
+
+Ledger::Ledger(ledger_engine::Ledger &&ledger_inner)
+    : ledger_(std::move(ledger_inner))
+{
+}
 
 // void Ledger::setOwner(std::shared_ptr<User> &owner)
 // {
@@ -107,6 +117,21 @@ bool Ledger::isOwner(const std::string &name) const
     // return owner_.lock()->name() == name;
 }
 
+std::shared_ptr<User> Ledger::Onwer() const
+{
+    // if (owner_.expired())
+    // {
+    //     const auto &onwer_name = std::get<ledger_engine::Ledger>(ledger_).onwer();
+    //     auto &instance = Users::getInstance();
+    //     auto onwer = instance.getUser(onwer_name);
+    //     // TODO: User Manager should package a class to manage users.
+    //     assert(onwer != nullptr);
+    //     return onwer;
+    // }
+    // return owner_.lock();
+    return nullptr;
+}
+
 bool Ledger::isCommon(const std::string &name) const
 {
     const auto &commons = std::get<ledger_engine::Ledger>(ledger_).commons();
@@ -129,7 +154,7 @@ bool Ledger::isReadOnly(const std::string &name) const
 
 const std::string &Ledger::name() const
 {
-    return name_;
+    return std::get<ledger_engine::Ledger>(ledger_).name();
 }
 
 uint64_t Ledger::id() const

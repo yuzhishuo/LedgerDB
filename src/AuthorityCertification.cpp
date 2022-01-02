@@ -1,6 +1,7 @@
 #include "AuthorityCertification.h"
 #include "User.h"
 #include "Users.h"
+#include "Ledgers.h"
 
 bool AuthorityCertification::UserPass(const std::string &command_name, const std::string &user_name) const
 {
@@ -26,13 +27,14 @@ bool AuthorityCertification::LedgerPass(const std::string &command_name, const s
     {
         return false;
     }
-    const auto &ledger = Ledger::Ledgers().find(ledger_name);
-    if (ledger == Ledger::Ledgers().end())
-    {
-        return false;
-    }
 
-    return command->second->Pass(ledger->second->GetRoleByUserName(user_name));
+    auto &ledgers = Ledgers::getInstance();
+
+    if (const auto &ledger = ledgers.getLedger(ledger_name); ledger != nullptr)
+    {
+        return command->second->Pass(ledger->GetRoleByUserName(user_name));
+    }
+    return false;
 }
 
 bool AuthorityCertification::RegisterStrategy(std::unique_ptr<IStrategy> &&strategy)

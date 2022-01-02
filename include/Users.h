@@ -31,7 +31,8 @@ public:
     std::shared_ptr<User> createUser(const std::string &name);
     std::shared_ptr<User> getUser(const std::string &name);
     const std::shared_ptr<User> getUser(const std::string &name) const;
-
+    bool removeUser(const std::shared_ptr<User> &user);
+    
 private:
     std::map<std::string, std::shared_ptr<User>> users_;
 };

@@ -3,4 +3,4 @@
 #include "Role.h"
 #include "Ledger.h"
 
-using LedgerRole = Role<LEDGER_ROLE,Ledger>;
+using LedgerRole = Role<LEDGER_ROLE, Ledger>;

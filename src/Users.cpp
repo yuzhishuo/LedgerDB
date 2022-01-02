@@ -14,6 +14,20 @@ std::shared_ptr<User> Users::createUser(const std::string &name)
     return user;
 }
 
+bool Users::removeUser(const std::shared_ptr<User> &user)
+{
+    auto itr = users_.find(user->name());
+    if (itr == users_.end())
+    {
+        return false;
+    }
+
+    users_.erase(itr);
+    // assert(itr->second.unique());
+    return true;
+}
+    
+
 const std::shared_ptr<User> Users::getUser(const std::string &name) const
 {
     if (auto itr = users_.find(name); itr != users_.end())

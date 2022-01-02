@@ -8,6 +8,8 @@
 
 #include <user_engine.pb.h>
 
+#include "IDisposable.h"
+
 enum class USER_ROLE : uint8_t
 {
     DBA,
@@ -15,11 +17,14 @@ enum class USER_ROLE : uint8_t
     COMMON
 };
 
-class User
+class User final : public std::enable_shared_from_this<User>, public IDisposable
 {
 public:
     User(const std::string &name, USER_ROLE role = USER_ROLE::COMMON)
         : id_{User::GeneratorId()}, name_(name), role_(role) {}
+    virtual ~User() = default;
+    
+    virtual void dispose() override;
 
     const std::string &name() const
     {

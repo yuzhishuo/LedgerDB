@@ -8,7 +8,9 @@ struct is_comparable : std::false_type
 };
 
 template <typename T>
-struct is_comparable<T, std::void_t<decltype(T{} > T{} && T{} <= T{})()>> : std::true_type
+struct is_comparable<T, std::void_t<
+                            // TODO: Do not rely on the default constructor
+                            decltype(T{} > T{} && T{} <= T{})()>> : std::true_type
 {
 };
 

@@ -1,22 +1,75 @@
-#include "Ledger.h"
-#include "User.h"
+#include <algorithm>
+#include <cassert>
 
-Ledger::Ledger(const std::string &name, std::shared_ptr<User> &owner)
+#include "Ledger.h"
+#include "Users.h"
+#include "User.h"
+#include "Ledgers.h"
+
+Ledger::Ledger(const std::string &name, const std::string &owner)
     : name_(name), id_{Ledger::GeneratorId()}, owner_{owner} {}
 
-void Ledger::setOwner(std::shared_ptr<User> &owner)
+// void Ledger::setOwner(std::shared_ptr<User> &owner)
+// {
+//     owner_ = owner;
+// }
+
+// std::shared_ptr<User> Ledger::owner() const
+// {
+//     if (owner_.expired())
+//     {
+//         const auto &onwer_name = std::get<ledger_engine::Ledger>(ledger_).onwer();
+//         // TODO: User Manager should package a class to manage users.
+//         auto users = Users::getInstance();
+//         auto onwer = users.getUser(onwer_name);
+//         assert(onwer != nullptr);
+//         return onwer;
+//     }
+//     return owner_.lock();
+// }
+
+void Ledger::dispose()
 {
-    owner_ = owner;
+    auto is_remove = Ledgers::getInstance().removeLedger(shared_from_this());
+    assert(is_remove);
 }
 
-std::shared_ptr<User> Ledger::owner() const
+std::optional<Error> Ledger::removeCommon(const std::string &name)
 {
-    if (owner_.expired())
+    auto commons = std::get<ledger_engine::Ledger>(ledger_).mutable_commons();
+    auto commons_ref = *commons;
+    auto it = std::find(commons_ref.begin(), commons_ref.end(), name);
+    if (it == commons_ref.end())
     {
-        // TODO: shouldn't nullptr, hava to hava a owner
-        return nullptr;
+        return std::make_optional<Error>("NOT_FOUND");
     }
-    return owner_.lock();
+    commons_ref.erase(it);
+    return std::nullopt;
+}
+
+std::optional<Error> Ledger::removeRegulator(const std::string &name)
+{
+    auto regulators = std::get<ledger_engine::Ledger>(ledger_).mutable_regulator();
+    auto &regulators_ref = *regulators;
+    if (regulators_ref != name)
+    {
+        return std::make_optional<Error>("NOT_FOUND");
+    }
+    regulators_ref.clear();
+    return std::nullopt;
+}
+
+std::optional<Error> Ledger::removeReadOnly(const std::string &name)
+{
+    auto read_onlys = std::get<ledger_engine::Ledger>(ledger_).mutable_readonlys();
+    auto read_onlys_ref = *read_onlys;
+    auto it = std::find(read_onlys_ref.begin(), read_onlys_ref.end(), name);
+    if (it == read_onlys_ref.end())
+    {
+        return std::make_optional<Error>("NOT_FOUND");
+    }
+    read_onlys_ref.erase(it);
+    return std::nullopt;
 }
 
 LEDGER_ROLE Ledger::GetRoleByUserName(const std::string &name) const
@@ -45,35 +98,41 @@ LEDGER_ROLE Ledger::GetRoleByUserName(const std::string &name) const
 
 bool Ledger::isOwner(const std::string &name) const
 {
-    if (owner_.expired())
-    {
-        // TODO: shouldn't nullptr, hava to hava a owner
-        return false;
-    }
-    return owner_.lock()->name() == name;
+    return std::get<ledger_engine::Ledger>(ledger_).onwer() == name;
+    // if (owner_.expired())
+    // {
+    //     // TODO: shouldn't nullptr, hava to hava a owner
+    //     return false;
+    // }
+    // return owner_.lock()->name() == name;
 }
 
 bool Ledger::isCommon(const std::string &name) const
 {
-    return true;
+    const auto &commons = std::get<ledger_engine::Ledger>(ledger_).commons();
+    return std::find_if(commons.begin(), commons.end(), [&name](const auto &common)
+                        { return common == name; }) != commons.end();
 }
 
 bool Ledger::isRegulator(const std::string &name) const
 {
-    return true;
+    const auto &regulator = std::get<ledger_engine::Ledger>(ledger_).regulator();
+    return regulator == name;
 }
 
 bool Ledger::isReadOnly(const std::string &name) const
 {
-    return true;
+    const auto &read_onlys = std::get<ledger_engine::Ledger>(ledger_).readonlys();
+    return std::find_if(read_onlys.begin(), read_onlys.end(), [&name](const auto &read_only)
+                        { return read_only == name; }) != read_onlys.end();
 }
 
-std::string Ledger::name() const
+const std::string &Ledger::name() const
 {
     return name_;
 }
 
 uint64_t Ledger::id() const
 {
-    return id_;
+    return std::get<ledger_engine::Ledger>(ledger_).id();
 }

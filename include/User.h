@@ -6,7 +6,7 @@
 #include <memory>
 #include <variant>
 
-#include <user_engine.grpc.pb.h>
+#include <user_engine.pb.h>
 
 enum class USER_ROLE : uint8_t
 {
@@ -48,12 +48,14 @@ public:
     }
 
 public:
-    static std::shared_ptr<User> admin;
-
-    static auto &Users()
+    void update_password(const std::string &password)
     {
-        static std::map<std::string, std::shared_ptr<User>> users{std::make_pair(admin->name(), admin)};
-        return users;
+        std::get<user_engine::User>(user_).set_password(password);
+    }
+
+    void update_public_key(const std::string &public_key)
+    {
+        std::get<user_engine::User>(user_).set_public_key(public_key);
     }
 
 private:

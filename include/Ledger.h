@@ -4,7 +4,14 @@
 #include <map>
 #include <set>
 #include <memory>
+#include <variant>
+#include <optional>
+#include <string>
 
+#include <ledger_engine.pb.h>
+
+#include "Error.h"
+#include "IDisposable.h"
 
 enum class LEDGER_ROLE : uint8_t
 {
@@ -17,14 +24,17 @@ enum class LEDGER_ROLE : uint8_t
 
 class User;
 
-class Ledger
+class Ledger final : public IDisposable, public std::enable_shared_from_this<Ledger>
 {
 public:
-    Ledger(const std::string &name, std::shared_ptr<User> &owner);
+    Ledger(const std::string &name, const std::string &owner);
+    virtual ~Ledger() = default;
+    
+    virtual void dispose() override;
 
-    void setOwner(std::shared_ptr<User> &owner);
+    // void setOwner(std::shared_ptr<User> &owner);
 
-    std::shared_ptr<User> owner() const;
+    // std::shared_ptr<User> owner() const;
 
     LEDGER_ROLE GetRoleByUserName(const std::string &name) const;
 
@@ -32,8 +42,12 @@ public:
     bool isCommon(const std::string &name) const;
     bool isRegulator(const std::string &name) const;
     bool isReadOnly(const std::string &name) const;
-    std::string name() const;
 
+    std::optional<Error> removeCommon(const std::string &name);
+    std::optional<Error> removeRegulator(const std::string &name);
+    std::optional<Error> removeReadOnly(const std::string &name);
+
+    const std::string &name() const;
     uint64_t id() const;
 
 public:
@@ -42,6 +56,7 @@ public:
         static uint64_t id = 0;
         return ++id;
     }
+
     static auto &Ledgers()
     {
         static std::map<std::string, std::shared_ptr<Ledger>> ledgers;
@@ -51,7 +66,6 @@ public:
 private:
     std::string name_;
     uint64_t id_;
-
-    std::weak_ptr<User> owner_;
+    std::variant<std::monostate, ledger_engine::Ledger> ledger_;
+    std::string owner_;
 };
-

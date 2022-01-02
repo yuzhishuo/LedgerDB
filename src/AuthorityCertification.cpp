@@ -1,5 +1,6 @@
 #include "AuthorityCertification.h"
 #include "User.h"
+#include "Users.h"
 
 bool AuthorityCertification::UserPass(const std::string &command_name, const std::string &user_name) const
 {
@@ -8,13 +9,13 @@ bool AuthorityCertification::UserPass(const std::string &command_name, const std
     {
         return false;
     }
-    const auto &users = User::Users();
-    auto user = users.find(user_name);
-    if (user == users.end())
+
+    const auto &users = Users::getInstance();
+    if (const auto user = users.getUser(user_name); user != nullptr)
     {
-        return false;
+        return command->second->Pass(user->role());
     }
-    return command->second->Pass(user->second->role());
+    return false;
 }
 
 bool AuthorityCertification::LedgerPass(const std::string &command_name, const std::string &user_name, const std::string &ledger_name) const

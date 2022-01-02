@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+IF (CMAKE_BUILD_TYPE STREQUAL Debug)      
+    ADD_DEFINITIONS(-DDEBUG)
+ENDIF()
+
 find_package(RocksDB CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
 find_package(Threads REQUIRED)
@@ -21,7 +25,7 @@ find_package(gRPC CONFIG REQUIRED)
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 
 file(GLOB PROTO_FILES protos/*.proto)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cpp)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/protos)
 
 set(_GRPC_GRPCPP gRPC::grpc++ )
 set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin> )
@@ -32,26 +36,26 @@ set(SRCS "" CACHE FILEPATH "" FORCE )
 foreach(OBJ ${PROTO_FILES})
     message(STATUS "Compiling ${OBJ}")
     get_filename_component(OBJNAME ${OBJ} NAME_WLE)
-    set(proto_srcs ${CMAKE_CURRENT_BINARY_DIR}/cpp/${OBJNAME}.pb.cc)
-    set(proto_hdrs ${CMAKE_CURRENT_BINARY_DIR}/cpp/${OBJNAME}.pb.h)
+    set(proto_srcs ${CMAKE_CURRENT_BINARY_DIR}/protos/${OBJNAME}.pb.cc)
+    set(proto_hdrs ${CMAKE_CURRENT_BINARY_DIR}/protos/${OBJNAME}.pb.h)
     list(APPEND SRCS ${proto_srcs})
 
-    set(grpc_srcs ${CMAKE_CURRENT_BINARY_DIR}/cpp/${OBJNAME}.grpc.pb.cc)
-    set(grpc_hdrs ${CMAKE_CURRENT_BINARY_DIR}/cpp/${OBJNAME}.grpc.pb.h)
+    set(grpc_srcs ${CMAKE_CURRENT_BINARY_DIR}/protos/${OBJNAME}.grpc.pb.cc)
+    set(grpc_hdrs ${CMAKE_CURRENT_BINARY_DIR}/protos/${OBJNAME}.grpc.pb.h)
     list(APPEND SRCS ${grpc_srcs})
     message(STATUS "Compiling ${_PROTOBUF_PROTOC}")
     add_custom_command(
       OUTPUT "${proto_srcs}" "${proto_hdrs}" "${grpc_srcs}" "${grpc_hdrs}"
       COMMAND ${_PROTOBUF_PROTOC}
-      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}/cpp"
-        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/cpp"
+      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}/protos"
+        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/protos"
         -I "${CMAKE_CURRENT_LIST_DIR}/protos"
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
         "${OBJ}"
       DEPENDS "${OBJ}")
 endforeach()
 
-include_directories(./build/cpp)
+include_directories(./build/protos)
 
 include_directories(./include)
 aux_source_directory(./src DIR_SRCS)
@@ -64,3 +68,5 @@ target_link_libraries(samplate-cpp-template
                     # re2::re2 c-ares::cares)
                     Threads::Threads
                     )
+
+add_subdirectory(test)

@@ -2,10 +2,15 @@
 #include <algorithm>
 
 #include "Ledgers.h"
+#include "Users.h"
 
 std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std::string &owner)
 {
-    if (hasLedger(name))
+    if (hasLedger(name)
+#ifdef DEBUG
+        && !Users::getInstance().getUser(owner)
+#endif // DEBUG
+    )
     {
         return nullptr;
     }

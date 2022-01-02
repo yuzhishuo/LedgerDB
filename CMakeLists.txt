@@ -13,10 +13,11 @@ IF (CMAKE_BUILD_TYPE STREQUAL Debug)
 ENDIF()
 
 find_package(RocksDB CONFIG REQUIRED)
-find_package(protobuf CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
+# -------------------------------GRPC---------------------------------------------
+find_package(protobuf CONFIG REQUIRED)
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 set(_REFLECTION gRPC::grpc++_reflection )
@@ -70,5 +71,9 @@ target_link_libraries(samplate-cpp-template
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
                     )
-
-add_subdirectory(test)
+                    
+# ---------------------------------TEST-----------------------------------
+option(ENABLE_TEST "Enable test" ON)
+if(${ENABLE_TEST})
+    add_subdirectory(test)
+endif()

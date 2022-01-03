@@ -11,6 +11,7 @@
 #include <ledger_engine.pb.h>
 
 #include "Error.h"
+#include "IUnique.h"
 #include "IDisposable.h"
 
 enum class LEDGER_ROLE : uint8_t
@@ -24,11 +25,11 @@ enum class LEDGER_ROLE : uint8_t
 
 class User;
 
-class Ledger final : public IDisposable, public std::enable_shared_from_this<Ledger>
+class Ledger final : public IDisposable, public Uint64TUnique, public std::enable_shared_from_this<Ledger>
 {
 public:
     Ledger(const std::string &name, const std::string &owner);
-    Ledger(ledger_engine::Ledger && ledger_inner);
+    Ledger(ledger_engine::Ledger &&ledger_inner);
 
     virtual ~Ledger() = default;
 
@@ -38,8 +39,12 @@ public:
 
     // std::shared_ptr<User> owner() const;
 
-    LEDGER_ROLE GetRoleByUserName(const std::string &name) const;
+    virtual uint64_t GetUnique() const override
+    {
+        return std::get<ledger_engine::Ledger>(ledger_).id();
+    }
 
+    LEDGER_ROLE GetRoleByUserName(const std::string &name) const;
 
     bool isOwner(const std::string &name) const;
     bool isCommon(const std::string &name) const;
@@ -62,6 +67,7 @@ public:
         static uint64_t id = 0;
         return ++id;
     }
+
 private:
     std::variant<std::monostate, ledger_engine::Ledger> ledger_;
 };

@@ -11,6 +11,7 @@ namespace inner
         };
 
     } // namespace operators_detail
+
     template <class T, class U, class B = operators_detail::empty_base<T>>
     struct less_than_comparable2 : B
     {

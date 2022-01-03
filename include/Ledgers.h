@@ -10,6 +10,11 @@ class User;
 
 class Ledgers
 {
+public:
+    using Raw = Ledger;
+    using Element = std::shared_ptr<Ledger>;
+    using Container = std::vector<Element>;
+    using UniqueType = decltype(((Ledger *)nullptr)->GetUnique());
 
 public:
     static Ledgers &getInstance()
@@ -34,5 +39,5 @@ public:
     std::shared_ptr<Ledger> getLedger(const std::string &name) const;
 
 private:
-    std::map<std::string, std::shared_ptr<Ledger>> ledgers_;
+    std::map<std::string, Element> ledgers_;
 };

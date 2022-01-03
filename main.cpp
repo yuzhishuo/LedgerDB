@@ -22,10 +22,10 @@ int main(int argc, char **argv)
 {
     AuthorityCertification::Instance().Start();
     std::cout << AuthorityCertification::Instance().UserPass("CreateUser", "admin") << std::endl;
-    
+
     auto console = spd::stdout_color_mt("console");
     spd::get("console")->info("Hello, world!");
-   
+
 
     auto &persistenceStore = PersistenceStore::Instance();
     // auto [value, error] = persistenceStore.load("key");

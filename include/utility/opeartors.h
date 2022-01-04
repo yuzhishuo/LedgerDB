@@ -31,7 +31,7 @@ namespace inner
         friend bool operator>=(const T &x, const T &y) { return !static_cast<bool>(x < y); }
     };
 
-} // namespace
+} // namespace inner
 
 template <typename T>
 using less_than_comparable = inner::less_than_comparable1<T>;

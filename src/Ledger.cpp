@@ -9,9 +9,9 @@
 Ledger::Ledger(const std::string &name, const std::string &owner)
     : ledger_{}
 {
-    std::get<ledger_engine::Ledger>(ledger_).set_onwer(owner);
-    std::get<ledger_engine::Ledger>(ledger_).set_name(name);
-    std::get<ledger_engine::Ledger>(ledger_).set_id(Ledger::GeneratorId());
+    ledger_->set_onwer(owner);
+    ledger_->set_name(name);
+    ledger_->set_id(Ledger::GeneratorId());
 }
 
 Ledger::Ledger(ledger_engine::Ledger &&ledger_inner)
@@ -46,7 +46,7 @@ void Ledger::dispose()
 
 std::optional<Error> Ledger::removeCommon(const std::string &name)
 {
-    auto commons = std::get<ledger_engine::Ledger>(ledger_).mutable_commons();
+    auto commons = ledger_->mutable_commons();
     auto commons_ref = *commons;
     auto it = std::find(commons_ref.begin(), commons_ref.end(), name);
     if (it == commons_ref.end())
@@ -59,7 +59,7 @@ std::optional<Error> Ledger::removeCommon(const std::string &name)
 
 std::optional<Error> Ledger::removeRegulator(const std::string &name)
 {
-    auto regulators = std::get<ledger_engine::Ledger>(ledger_).mutable_regulator();
+    auto regulators = ledger_->mutable_regulator();
     auto &regulators_ref = *regulators;
     if (regulators_ref != name)
     {
@@ -71,7 +71,7 @@ std::optional<Error> Ledger::removeRegulator(const std::string &name)
 
 std::optional<Error> Ledger::removeReadOnly(const std::string &name)
 {
-    auto read_onlys = std::get<ledger_engine::Ledger>(ledger_).mutable_readonlys();
+    auto read_onlys = ledger_->mutable_readonlys();
     auto read_onlys_ref = *read_onlys;
     auto it = std::find(read_onlys_ref.begin(), read_onlys_ref.end(), name);
     if (it == read_onlys_ref.end())
@@ -108,7 +108,7 @@ LEDGER_ROLE Ledger::GetRoleByUserName(const std::string &name) const
 
 bool Ledger::isOwner(const std::string &name) const
 {
-    return std::get<ledger_engine::Ledger>(ledger_).onwer() == name;
+    return ledger_->onwer() == name;
     // if (owner_.expired())
     // {
     //     // TODO: shouldn't nullptr, hava to hava a owner
@@ -134,30 +134,30 @@ std::shared_ptr<User> Ledger::Onwer() const
 
 bool Ledger::isCommon(const std::string &name) const
 {
-    const auto &commons = std::get<ledger_engine::Ledger>(ledger_).commons();
+    const auto &commons = ledger_->commons();
     return std::find_if(commons.begin(), commons.end(), [&name](const auto &common)
                         { return common == name; }) != commons.end();
 }
 
 bool Ledger::isRegulator(const std::string &name) const
 {
-    const auto &regulator = std::get<ledger_engine::Ledger>(ledger_).regulator();
+    const auto &regulator = ledger_->regulator();
     return regulator == name;
 }
 
 bool Ledger::isReadOnly(const std::string &name) const
 {
-    const auto &read_onlys = std::get<ledger_engine::Ledger>(ledger_).readonlys();
+    const auto &read_onlys = ledger_->readonlys();
     return std::find_if(read_onlys.begin(), read_onlys.end(), [&name](const auto &read_only)
                         { return read_only == name; }) != read_onlys.end();
 }
 
 const std::string &Ledger::name() const
 {
-    return std::get<ledger_engine::Ledger>(ledger_).name();
+    return ledger_->name();
 }
 
 uint64_t Ledger::id() const
 {
-    return std::get<ledger_engine::Ledger>(ledger_).id();
+    return ledger_->id();
 }

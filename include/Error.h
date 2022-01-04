@@ -9,6 +9,7 @@ class Error
 public:
     Error(const std::string &message) : message_(message) {}
     virtual ~Error() = default;
+    Error& operator=(const Error &other) = default;
 
     virtual const std::string &message() const { return message_; }
 

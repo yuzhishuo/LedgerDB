@@ -12,7 +12,6 @@
 #include "User.h"
 #include "Spd.h"
 
-
 // tmp
 #include "IUnique.h"
 // tmp
@@ -26,18 +25,7 @@ int main(int argc, char **argv)
     auto console = spd::stdout_color_mt("console");
     spd::get("console")->info("Hello, world!");
 
-
-    auto &persistenceStore = PersistenceStore::Instance();
-    // auto [value, error] = persistenceStore.load("key");
-
-    // if (error)
-    // {
-    //     std::cout << error.value() << std::endl;
-    // }
-    // else
-    // {
-    //     std::cout << value << std::endl;
-    // }
+    auto &persistenceStore = PersistenceStore::getInstance();
 
     persistenceStore.save("key", "value");
     std::cout << "key is " << persistenceStore.load("key").first << std::endl;

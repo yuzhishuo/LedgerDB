@@ -12,6 +12,7 @@
 
 #include "Error.h"
 #include "IUnique.h"
+#include "interfaces/IMonostate.h"
 #include "IDisposable.h"
 
 enum class LEDGER_ROLE : uint8_t
@@ -25,8 +26,9 @@ enum class LEDGER_ROLE : uint8_t
 
 class User;
 
-class Ledger final : public IDisposable, public Uint64TUnique, public std::enable_shared_from_this<Ledger>
+class Ledger final : public IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
 {
+
 public:
     Ledger(const std::string &name, const std::string &owner);
     Ledger(ledger_engine::Ledger &&ledger_inner);
@@ -39,9 +41,9 @@ public:
 
     // std::shared_ptr<User> owner() const;
 
-    virtual uint64_t GetUnique() const override
+    virtual const std::string &GetUnique() const override
     {
-        return std::get<ledger_engine::Ledger>(ledger_).id();
+        return ledger_->name();
     }
 
     LEDGER_ROLE GetRoleByUserName(const std::string &name) const;
@@ -52,7 +54,10 @@ public:
     bool isReadOnly(const std::string &name) const;
 
     std::shared_ptr<User> Onwer() const;
+
     // std::optional<Error> addRegulator(const std::string &name);
+    // std::optional<Error> addCommon(const std::string &name);
+    // std::optional<Error> addReadOnly(const std::string &name);
 
     std::optional<Error> removeCommon(const std::string &name);
     std::optional<Error> removeRegulator(const std::string &name);
@@ -62,6 +67,17 @@ public:
     uint64_t id() const;
 
 public:
+    virtual std::pair<const std::string &, std::optional<Error>> serialize() const override
+    {
+        return ledger_.serialize();
+    }
+    
+    virtual std::pair<std::shared_ptr<ledger_engine::Ledger>, std::optional<Error>> deserialize(const std::string &serialized) override
+    {
+        return ledger_.deserialize(serialized);
+    }
+
+public:
     static uint64_t GeneratorId()
     {
         static uint64_t id = 0;
@@ -69,5 +85,5 @@ public:
     }
 
 private:
-    std::variant<std::monostate, ledger_engine::Ledger> ledger_;
+    Monostate<ledger_engine::Ledger> ledger_;
 };

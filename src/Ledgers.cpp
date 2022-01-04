@@ -17,6 +17,7 @@ std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std
 
     auto ledger = std::make_shared<Ledger>(name, owner);
     ledgers_.insert(std::make_pair(name, ledger));
+    store(ledger);
     return ledger;
 }
 

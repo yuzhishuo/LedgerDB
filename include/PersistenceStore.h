@@ -91,7 +91,7 @@ public:
         return std::nullopt;
     }
 
-    static PersistenceStore &Instance()
+    static PersistenceStore &getInstance()
     {
         static PersistenceStore store("/tmp/store/ledgerdb");
         return store;

@@ -26,10 +26,34 @@ enum class LEDGER_ROLE : uint8_t
 
 class User;
 
+class LedgerEngine
+{
+    LedgerEngine(std::string id)
+        : id_(id)
+    {
+    }
+
+    // Read
+
+    // Verify
+    // Write
+
+    // Grant
+    // Delete
+    // Purge
+    // Hide
+
+private:
+    std::string id_;
+};
+
 class Ledger final : public IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
 {
 
 public:
+    using MonoType = ledger_engine::Ledger;
+
+public: // meta
     Ledger(const std::string &name, const std::string &owner);
     Ledger(ledger_engine::Ledger &&ledger_inner);
 
@@ -66,12 +90,23 @@ public:
     const std::string &name() const;
     uint64_t id() const;
 
+public: // operator
+        // Read
+    // Verify
+
+    // Write
+
+    // Grant
+    // Delete
+    // Purge
+    // Hide
+
 public:
     virtual std::pair<const std::string &, std::optional<Error>> serialize() const override
     {
         return ledger_.serialize();
     }
-    
+
     virtual std::pair<std::shared_ptr<ledger_engine::Ledger>, std::optional<Error>> deserialize(const std::string &serialized) override
     {
         return ledger_.deserialize(serialized);
@@ -85,5 +120,5 @@ public:
     }
 
 private:
-    Monostate<ledger_engine::Ledger> ledger_;
+    Monostate<MonoType> ledger_;
 };

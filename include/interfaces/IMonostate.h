@@ -10,7 +10,7 @@ class IMonostate
 {
 public:
     virtual ~IMonostate() = default;
-    virtual std::pair<const std::string &, std::optional<Error>> serialize() const =0;
+    virtual std::pair<std::string, std::optional<Error>> serialize() const =0;
     virtual std::pair<std::shared_ptr<T>, std::optional<Error>> deserialize(const std::string &serialized) =0;
 };
 
@@ -30,7 +30,7 @@ private:
     Monostate &operator=(const Monostate &other) = delete;
 
 public:
-    virtual std::pair<const std::string &, std::optional<Error>> serialize() const override
+    virtual std::pair<std::string, std::optional<Error>> serialize() const override
     {
         if (auto serialized = std::string(); value_.SerializeToString(&serialized))
         {

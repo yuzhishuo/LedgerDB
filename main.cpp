@@ -26,33 +26,37 @@ int main(int argc, char **argv)
 
     auto &man = Users::getInstance();
     auto t = man.createUser("fff");
-    
-    if(AuthorityCertification::Instance().UserPass("CreateLedger", "fff"))
+    if (t)
     {
-        auto& man_l = Ledgers::getInstance();
-
-        man_l.createLedger("f", "fff");
-    }
-
-
-
-
-
-    auto console = spd::stdout_color_mt("console");
-    spd::get("console")->info("Hello, world!");
-    {
-        auto &persistenceStore = PersistenceStore::getInstance();
-
-        persistenceStore.save("key", "value");
-        std::cout << "key is " << persistenceStore.load("key").first << std::endl;
-
-        auto error = persistenceStore.update_key("key", "value2");
-        if (error)
+        if (auto error = man.store(t); error)
         {
-            std::cout << error.value() << std::endl;
+            std::cout << *error << std::endl;
         }
-
-        std::cout << "key is " << persistenceStore.load("key").first << std::endl;
     }
+
+    if (AuthorityCertification::Instance().UserPass("CreateLedger", "fff"))
+    {
+        auto &man_l = Ledgers::getInstance();
+
+        auto l = man_l.createLedger("f", t->GetUnique());
+
+        man_l.store(l);
+    }
+
+    // auto console = spd::stdout_color_mt("console");
+    // spd::get("console")->info("Hello, world!");
+    // {
+    //     auto &persistenceStore = PersistenceStore::getInstance();
+
+    //     persistenceStore.save("key", "value");
+    //     std::cout << "key is " << persistenceStore.load("key").first << std::endl;
+    //     auto error = persistenceStore.update_key("key", "value2");
+    //     if (error)
+    //     {
+    //         std::cout << error.value() << std::endl;
+    //     }
+
+    //     std::cout << "key is " << persistenceStore.load("key").first << std::endl;
+    // }
     return 0;
 }

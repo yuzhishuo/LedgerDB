@@ -11,8 +11,7 @@ public:
 public:
     virtual IStorage *create() const override
     {
-        return new PersistenceStore("Ledger");
+        static auto persistenceStore = PersistenceStore("Ledger", "db0");
+        return &persistenceStore;
     }
 };
-
-

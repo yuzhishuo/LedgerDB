@@ -23,7 +23,6 @@ public:
             {
                 auto key = prefix_ + "_" + object->GetUnique() + "_" + suffix_;
                 return storage->save(key, raw);
-                return std::nullopt;
             }
             else
             {
@@ -33,6 +32,7 @@ public:
 
         return Error{"Failed to create storage"};
     }
+    
     virtual std::shared_ptr<T> load(const std::shared_ptr<IUnique<typename T::Key>> &object)
     {
         if (auto storage = create(); storage)

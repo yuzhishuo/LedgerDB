@@ -82,7 +82,7 @@ public:
     }
 
 public:
-        virtual std::pair<const std::string &, std::optional<Error>> serialize() const override
+    virtual std::pair<std::string, std::optional<Error>> serialize() const override
     {
         return user_.serialize();
     }

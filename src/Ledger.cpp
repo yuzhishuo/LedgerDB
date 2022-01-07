@@ -44,6 +44,28 @@ void Ledger::dispose()
     assert(is_remove);
 }
 
+std::optional<Error> Ledger::addRegulator(const std::string &name)
+{
+    auto regulators = ledger_->mutable_regulator();
+    auto &regulators_ref = *regulators;
+    regulators_ref = name;
+    return std::nullopt;
+}
+std::optional<Error> Ledger::addCommon(const std::string &name)
+{
+    auto commons = ledger_->mutable_commons();
+    auto commons_ref = *commons;
+    commons_ref.Add(std::string(name));
+    return std::nullopt;
+}
+std::optional<Error> Ledger::addReadOnly(const std::string &name)
+{
+    auto read_onlys = ledger_->mutable_readonlys();
+    auto read_onlys_ref = *read_onlys;
+    read_onlys_ref.Add(std::string(name));
+    return std::nullopt;
+}
+
 std::optional<Error> Ledger::removeCommon(const std::string &name)
 {
     auto commons = ledger_->mutable_commons();

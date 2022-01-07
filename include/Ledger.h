@@ -49,10 +49,9 @@ private:
 
 class Ledger final : public IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
 {
-
 public:
     using MonoType = ledger_engine::Ledger;
-
+    
 public: // meta
     Ledger(const std::string &name, const std::string &owner);
     Ledger(ledger_engine::Ledger &&ledger_inner);
@@ -79,9 +78,9 @@ public: // meta
 
     std::shared_ptr<User> Onwer() const;
 
-    // std::optional<Error> addRegulator(const std::string &name);
-    // std::optional<Error> addCommon(const std::string &name);
-    // std::optional<Error> addReadOnly(const std::string &name);
+    std::optional<Error> addRegulator(const std::string &name);
+    std::optional<Error> addCommon(const std::string &name);
+    std::optional<Error> addReadOnly(const std::string &name);
 
     std::optional<Error> removeCommon(const std::string &name);
     std::optional<Error> removeRegulator(const std::string &name);
@@ -97,6 +96,7 @@ public: // operator
     // Write
 
     // Grant
+
     // Delete
     // Purge
     // Hide
@@ -118,6 +118,7 @@ public:
         static uint64_t id = 0;
         return ++id;
     }
+
 
 private:
     Monostate<MonoType> ledger_;

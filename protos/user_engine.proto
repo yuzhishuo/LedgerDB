@@ -12,8 +12,9 @@ enum Role
 
 message User
 {
-    string name = 1;
-    string password = 2;
-    string public_key = 3;
-    Role role = 4;
+    int64 id = 1;
+    string name = 2;
+    string password = 3;
+    string public_key = 4;
+    Role role = 5;
 }

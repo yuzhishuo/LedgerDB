@@ -10,8 +10,8 @@ class IMonostate
 {
 public:
     virtual ~IMonostate() = default;
-    virtual std::pair<const std::string &, std::optional<Error>> serialize() const;
-    virtual std::pair<std::shared_ptr<T>, std::optional<Error>> deserialize(const std::string &serialized);
+    virtual std::pair<const std::string &, std::optional<Error>> serialize() const =0;
+    virtual std::pair<std::shared_ptr<T>, std::optional<Error>> deserialize(const std::string &serialized) =0;
 };
 
 // duck model

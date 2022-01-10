@@ -54,7 +54,7 @@ std::optional<Error> Ledger::addRegulator(const std::string &name)
 std::optional<Error> Ledger::addCommon(const std::string &name)
 {
     auto commons = ledger_->mutable_commons();
-    auto commons_ref = *commons;
+    auto &commons_ref = *commons;
     commons_ref.Add(std::string(name));
     return std::nullopt;
 }
@@ -69,7 +69,7 @@ std::optional<Error> Ledger::addReadOnly(const std::string &name)
 std::optional<Error> Ledger::removeCommon(const std::string &name)
 {
     auto commons = ledger_->mutable_commons();
-    auto commons_ref = *commons;
+    auto &commons_ref = *commons;
     auto it = std::find(commons_ref.begin(), commons_ref.end(), name);
     if (it == commons_ref.end())
     {
@@ -94,7 +94,7 @@ std::optional<Error> Ledger::removeRegulator(const std::string &name)
 std::optional<Error> Ledger::removeReadOnly(const std::string &name)
 {
     auto read_onlys = ledger_->mutable_readonlys();
-    auto read_onlys_ref = *read_onlys;
+    auto &read_onlys_ref = *read_onlys;
     auto it = std::find(read_onlys_ref.begin(), read_onlys_ref.end(), name);
     if (it == read_onlys_ref.end())
     {

@@ -51,7 +51,7 @@ class Ledger final : public IDisposable, public StringUnique, public std::enable
 {
 public:
     using MonoType = ledger_engine::Ledger;
-    
+
 public: // meta
     Ledger(const std::string &name, const std::string &owner);
     Ledger(ledger_engine::Ledger &&ledger_inner);
@@ -118,7 +118,6 @@ public:
         static uint64_t id = 0;
         return ++id;
     }
-
 
 private:
     Monostate<MonoType> ledger_;

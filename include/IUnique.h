@@ -5,6 +5,7 @@
 
 #include "utility/opeartors.h"
 
+
 template <typename T, typename = std::void_t<>>
 struct is_comparable : std::false_type
 {
@@ -32,9 +33,6 @@ public:
     static_assert(is_comparable_v<T>); // true
 
     IUnique() = default;
-    // SetUnique(const Key &key)
-    // {
-    // }
     virtual ~IUnique() = default;
 
 public:

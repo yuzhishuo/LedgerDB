@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 
     auto &man = Users::getInstance();
     auto t = man.createUser("fff");
+
     if (t)
     {
         if (auto error = man.store(t); error)
@@ -37,9 +38,7 @@ int main(int argc, char **argv)
     if (AuthorityCertification::Instance().UserPass("CreateLedger", "fff"))
     {
         auto &man_l = Ledgers::getInstance();
-
         auto l = man_l.createLedger("f", t->GetUnique());
-
         man_l.store(l);
     }
 

@@ -84,8 +84,11 @@ public:
     {
         for (auto handle : handles)
         {
-            auto s = db_->DestroyColumnFamilyHandle(handle);
-            assert(s.ok());
+            if (handle)
+            {
+                auto s = db_->DestroyColumnFamilyHandle(handle);
+                assert(s.ok());
+            }
         }
         delete db_;
     }
@@ -94,7 +97,7 @@ public:
     {
         {
             std::string old_value;
-            if (auto read_status = db_->Get(rocksdb::ReadOptions(), handles[1], key, &old_value); read_status.ok())
+            if (auto read_status = db_->KeyMayExist(rocksdb::ReadOptions(), handles[1], key, &old_value); read_status)
             {
                 return Error{"Key already exists"};
             }

@@ -3,13 +3,12 @@
 #include <string>
 #include <ostream>
 
-
 class Error
 {
 public:
     Error(const std::string &message) : message_(message) {}
     virtual ~Error() = default;
-    Error& operator=(const Error &other) = default;
+    Error &operator=(const Error &other) = default;
 
     virtual const std::string &message() const { return message_; }
 
@@ -19,7 +18,9 @@ public:
         return out;
     }
 
+public:
+    static inline Error InvalidLedger() { return Error("InvalidLedger"); };
+
 private:
     std::string message_;
 };
-

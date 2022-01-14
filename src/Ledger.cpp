@@ -5,6 +5,15 @@
 #include "Users.h"
 #include "User.h"
 #include "Ledgers.h"
+#include "LedgerEngine.h"
+
+using namespace yuzhi;
+
+
+std::shared_ptr<LedgerEngine> Ledger::engine()
+{
+    return std::make_shared<LedgerEngine>(shared_from_this());
+}
 
 Ledger::Ledger(const std::string &name, const std::string &owner)
     : ledger_{}

@@ -7,6 +7,7 @@
 #include <type_traits>
 
 #include "Ledger.h"
+#include "LedgerEngine.h"
 #include "interfaces/IStorable.h"
 #include "PersistenceStore.h"
 #include "ledger_engine.pb.h"
@@ -37,6 +38,8 @@ public:
         static Ledgers instance;
         return instance;
     }
+
+public: //  Engine
 
 public: // IStorable
     virtual std::optional<Error> store(const Element &element) const override

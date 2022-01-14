@@ -5,7 +5,6 @@
 #include <memory>
 
 #include <rocksdb/db.h>
-#include <casbin/casbin.h>
 
 #include "AuthorityCertification.h"
 #include "PersistenceStore.h"

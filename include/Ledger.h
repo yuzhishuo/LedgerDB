@@ -25,27 +25,10 @@ enum class LEDGER_ROLE : uint8_t
 };
 
 class User;
-
-class LedgerEngine
+namespace yuzhi
 {
-    LedgerEngine(std::string id)
-        : id_(id)
-    {
-    }
-
-    // Read
-
-    // Verify
-    // Write
-
-    // Grant
-    // Delete
-    // Purge
-    // Hide
-
-private:
-    std::string id_;
-};
+    class LedgerEngine;
+}
 
 class Ledger final : public IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
 {
@@ -89,17 +72,8 @@ public: // meta
     const std::string &name() const;
     uint64_t id() const;
 
-public: // operator
-        // Read
-    // Verify
-
-    // Write
-
-    // Grant
-
-    // Delete
-    // Purge
-    // Hide
+public: // engine
+    std::shared_ptr<yuzhi::LedgerEngine> engine();
 
 public:
     virtual std::pair<std::string, std::optional<Error>> serialize() const override

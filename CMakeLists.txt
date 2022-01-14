@@ -16,6 +16,13 @@ find_package(RocksDB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
+
+include(FetchContent)
+
+FetchContent_Declare(merklecpp
+        GIT_REPOSITORY https://github.com/microsoft/merklecpp
+        GIT_TAG v1.0.0)
+FetchContent_MakeAvailable(merklecpp)
 # -------------------------------GRPC---------------------------------------------
 find_package(protobuf CONFIG REQUIRED)
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
@@ -64,7 +71,7 @@ aux_source_directory(./src DIR_SRCS)
 add_executable(samplate-cpp-template ${DIR_SRCS} ${SRCS} main.cpp )
 
 target_link_libraries(samplate-cpp-template
-                    casbin
+
                     RocksDB::rocksdb
                     gRPC::gpr gRPC::upb gRPC::grpc gRPC::grpc++
                     # re2::re2 c-ares::cares)

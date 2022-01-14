@@ -4,19 +4,18 @@
 #include <optional>
 #include <utility>
 #include <memory>
+#include <string>
 
 #include "Error.h"
-
+#include <merkle/MerkleEngine.h>
 class Ledger;
 
 namespace yuzhi
 {
-
     class LedgerEngine
     {
     public:
-        LedgerEngine(std::shared_ptr<Ledger> ledger)
-            : ledger_(ledger) {}
+        LedgerEngine(std::shared_ptr<Ledger> ledger);
         ~LedgerEngine() = default;
 
     public:
@@ -37,5 +36,6 @@ namespace yuzhi
 
     private:
         std::weak_ptr<Ledger> ledger_;
+        MerkleEngine merkle_engine_;
     };
 } // namespace yuzhi

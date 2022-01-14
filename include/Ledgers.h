@@ -7,7 +7,6 @@
 #include <type_traits>
 
 #include "Ledger.h"
-#include "LedgerEngine.h"
 #include "interfaces/IStorable.h"
 #include "PersistenceStore.h"
 #include "ledger_engine.pb.h"

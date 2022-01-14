@@ -65,6 +65,7 @@
       "any": "cpp",
       "*.inc": "cpp",
       "unordered_set": "cpp",
-      "iomanip": "cpp"
+      "iomanip": "cpp",
+      "codecvt": "cpp"
     }
   }

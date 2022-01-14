@@ -9,7 +9,6 @@
 
 using namespace yuzhi;
 
-
 std::shared_ptr<LedgerEngine> Ledger::engine()
 {
     return std::make_shared<LedgerEngine>(shared_from_this());

@@ -39,6 +39,8 @@ int main(int argc, char **argv)
         auto &man_l = Ledgers::getInstance();
         auto l = man_l.createLedger("f", t->GetUnique());
         man_l.store(l);
+
+        auto en = l->engine();
     }
 
     // auto console = spd::stdout_color_mt("console");

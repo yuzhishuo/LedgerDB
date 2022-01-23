@@ -7,7 +7,7 @@
 class IStorage;
 
 template <typename T>
-class  StoreCreator : public IStorable<T>
+class StoreCreator : public IStorable<T>
 {
 public:
     StoreCreator(const std::string &prefix = "", const std::string family = "default", const std::string &suffix = "")
@@ -32,7 +32,7 @@ public:
 
         return Error{"Failed to create storage"};
     }
-    
+
     virtual std::shared_ptr<T> load(const std::shared_ptr<IUnique<typename T::Key>> &object)
     {
         if (auto storage = create(); storage)
@@ -42,13 +42,7 @@ public:
 
             if (err)
             {
-                return nullptr;
-            }
-
-            typename T::MonoType object_inner;
-            if (auto parse_result = object_inner.ParseFromString(store_raw); parse_result)
-            {
-                return std::make_shared<T>(std::move(object_inner));
+                return nullptr; 
             }
         }
 

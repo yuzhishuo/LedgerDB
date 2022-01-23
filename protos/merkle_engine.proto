@@ -1,0 +1,10 @@
+syntax = "proto3";
+package merkle_engine;
+
+
+message  LeafMeta
+{
+    int64 index = 1;
+    int64 id = 2;
+    bytes hash = 3;
+}

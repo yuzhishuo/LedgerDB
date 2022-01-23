@@ -20,6 +20,11 @@ public:
 
 public:
     static inline Error InvalidLedger() { return Error("InvalidLedger"); };
+    static inline Error MerkleTreeUpdateError() { return Error("MerkleTreeUpdateError"); };
+    static inline Error InvalidMerkleTree() { return Error("InvalidMerkleTree"); };
+    static inline Error SerializeError() { return Error("SerializeError"); };
+    static inline Error DeserializeError() { return Error("DeserializeError"); };
+    static inline Error HashError() { return Error("HashError"); };
 
 private:
     std::string message_;

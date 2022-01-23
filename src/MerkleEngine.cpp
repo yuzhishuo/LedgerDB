@@ -30,7 +30,7 @@ MerkleEngine::MerkleEngine(std::shared_ptr<Ledger> ledger)
         // }
         std::string tree_str;
         ifs >> tree_str;
-        merkle_.deserialise(std::vector<uint8_t>(tree_str.begin(), tree_str.end()));
+        merkle_->deserialise(std::vector<uint8_t>(tree_str.begin(), tree_str.end()));
     }
     else
     {
@@ -38,5 +38,16 @@ MerkleEngine::MerkleEngine(std::shared_ptr<Ledger> ledger)
 
         std::vector<uint8_t> tree_data = {0};
         ofs << std::string(tree_data.begin(), tree_data.end());
+    }
+
+    // std::cout << "merkle engine init" << std::endl;
+
+    rocksdb::DB* db;
+    rocksdb::Options options;
+    options.create_if_missing = true;
+    rocksdb::Status status = rocksdb::DB::Open(options, tree_store_path_, &db);
+    if (!status.ok())
+    {
+        throw std::runtime_error("open db failed");
     }
 }

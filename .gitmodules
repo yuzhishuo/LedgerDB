@@ -1,0 +1,6 @@
+[submodule "include/merkle/merklecpp"]
+	path = include/merkle/merklecpp
+	url = https://github.com/yuzhishuo/merklecpp
+[submodule "net/muduo"]
+	path = net/muduo
+	url = https://github.com/yuzhishuo/muduo

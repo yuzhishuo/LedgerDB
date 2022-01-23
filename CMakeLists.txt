@@ -8,21 +8,18 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-IF (CMAKE_BUILD_TYPE STREQUAL Debug)      
-    ADD_DEFINITIONS(-DDEBUG)
-ENDIF()
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 find_package(RocksDB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
 
-include(FetchContent)
 
-FetchContent_Declare(merklecpp
-        GIT_REPOSITORY https://github.com/microsoft/merklecpp
-        GIT_TAG v1.0.0)
-FetchContent_MakeAvailable(merklecpp)
+add_subdirectory(net/muduo)
+include_directories("net/muduo")
 # -------------------------------GRPC---------------------------------------------
 find_package(protobuf CONFIG REQUIRED)
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
@@ -78,6 +75,9 @@ target_link_libraries(samplate-cpp-template
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
                     )
+target_link_libraries(samplate-cpp-template muduo_net)
+target_link_libraries(samplate-cpp-template muduo_base)
+target_link_libraries(samplate-cpp-template pthread rt)
                     
 # ---------------------------------TEST-----------------------------------
 option(ENABLE_TEST "Enable test" ON)

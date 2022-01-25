@@ -1,3 +1,6 @@
 [submodule "include/merkle/merklecpp"]
 	path = include/merkle/merklecpp
 	url = https://github.com/yuzhishuo/merklecpp
+[submodule "3rdParty/muduo"]
+	path = 3rdParty/muduo
+	url = https://github.com/yuzhishuo/muduo

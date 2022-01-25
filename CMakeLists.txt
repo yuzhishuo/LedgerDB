@@ -16,18 +16,15 @@ find_package(RocksDB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
-
-
-add_subdirectory(net/muduo)
-include_directories("net/muduo")
-# -------------------------------GRPC---------------------------------------------
+find_package(gRPC CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
-message(STATUS "Using protobuf ${Protobuf_VERSION}")
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 set(_REFLECTION gRPC::grpc++_reflection )
 set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
 
-find_package(gRPC CONFIG REQUIRED)
+
+
+message(STATUS "Using protobuf ${Protobuf_VERSION}")
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 
 file(GLOB PROTO_FILES protos/*.proto)
@@ -61,10 +58,12 @@ foreach(OBJ ${PROTO_FILES})
       DEPENDS "${OBJ}")
 endforeach()
 
-include_directories(./build/protos)
+add_subdirectory(3rdParty/muduo)
+include_directories(3rdParty/muduo)
+include_directories(build/protos)
+include_directories(include)
 
-include_directories(./include)
-aux_source_directory(./src DIR_SRCS)
+aux_source_directory(src DIR_SRCS)
 add_executable(samplate-cpp-template ${DIR_SRCS} ${SRCS} main.cpp )
 
 target_link_libraries(samplate-cpp-template
@@ -74,6 +73,8 @@ target_link_libraries(samplate-cpp-template
                     # re2::re2 c-ares::cares)
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
+                    muduo_base
+                    muduo_net
                     )
 target_link_libraries(samplate-cpp-template muduo_net)
 target_link_libraries(samplate-cpp-template muduo_base)

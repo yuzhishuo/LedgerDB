@@ -23,7 +23,6 @@ set(_REFLECTION gRPC::grpc++_reflection )
 set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
 
 
-
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 
@@ -58,6 +57,24 @@ foreach(OBJ ${PROTO_FILES})
       DEPENDS "${OBJ}")
 endforeach()
 
+# raft 
+set(RAFT_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft/libraft.a)
+add_custom_target(build_raft ALL
+        COMMAND ${CMAKE_MAKE_PROGRAM}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft
+        COMMENT "Original raft makefile target")
+
+        message(status "${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft/libraft.a")
+add_library(raft STATIC IMPORTED)
+set_property(TARGET raft APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+set_target_properties(raft PROPERTIES IMPORTED_LOCATION_NOCONFIG ${RAFT_LIBRARY})
+
+add_dependencies(raft build_raft)
+
+include_directories(3rdParty/raft/include)
+
+# raft end
+
 add_subdirectory(3rdParty/muduo)
 include_directories(3rdParty/muduo)
 include_directories(build/protos)
@@ -66,6 +83,7 @@ include_directories(include)
 aux_source_directory(src DIR_SRCS)
 add_executable(samplate-cpp-template ${DIR_SRCS} ${SRCS} main.cpp )
 
+add_dependencies(samplate-cpp-template raft)
 target_link_libraries(samplate-cpp-template
 
                     RocksDB::rocksdb
@@ -73,14 +91,14 @@ target_link_libraries(samplate-cpp-template
                     # re2::re2 c-ares::cares)
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
-                    muduo_base
-                    muduo_net
                     )
 target_link_libraries(samplate-cpp-template muduo_net)
 target_link_libraries(samplate-cpp-template muduo_base)
 target_link_libraries(samplate-cpp-template pthread rt)
-                    
-# ---------------------------------TEST-----------------------------------
+target_link_libraries(samplate-cpp-template raft)
+# gcov: https://www.cnblogs.com/turtle-fly/archive/2013/01/06/2847190.html
+# how to use : https://blog.csdn.net/yanxiangyfg/article/details/80989680
+target_link_libraries(samplate-cpp-template gcov)
 option(ENABLE_TEST "Enable test" ON)
 if(${ENABLE_TEST})
     add_subdirectory(test)

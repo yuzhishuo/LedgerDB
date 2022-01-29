@@ -4,3 +4,6 @@
 [submodule "3rdParty/muduo"]
 	path = 3rdParty/muduo
 	url = https://github.com/yuzhishuo/muduo
+[submodule "3rdParty/raft"]
+	path = 3rdParty/raft
+	url = https://github.com/yuzhishuo/raft-1.git

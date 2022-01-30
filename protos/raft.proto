@@ -3,6 +3,7 @@ package raft;
 
 import "google/protobuf/any.proto";
 
+
 enum RaftState {
     follower = 0;
     candidate = 1;
@@ -102,3 +103,10 @@ message KeepAliveResponse {
     int64 term = 1;
     bool success = 2;
 }
+
+
+service Raft {
+    rpc RRequestVote(RequestVote) returns (RequestVoteResponse);
+    rpc RAppendEntries(AppendEntries) returns (AppendEntriesResponse);
+ }
+ 

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-01-29 22:24:59
+ * @LastEditTime: 2022-01-30 15:32:35
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/main.cpp
@@ -27,11 +27,11 @@ extern "C"
 {
 #include <raft.h>
 }
+#include <raft_engine/RaftEngine.h>
 
-#include <muduo/net/EventLoop.h>
 // tmp
 namespace spd = spdlog;
-
+using namespace grpc;
 int main(int argc, char **argv)
 {
     AuthorityCertification::Instance().Start();
@@ -61,20 +61,7 @@ int main(int argc, char **argv)
 
     raft_server_t *raft = raft_new();
 
-    // auto console = spd::stdout_color_mt("console");
-    // spd::get("console")->info("Hello, world!");
-    // {
-    //     auto &persistenceStore = PersistenceStore::getInstance();
-
-    //     persistenceStore.save("key", "value");
-    //     std::cout << "key is " << persistenceStore.load("key").first << std::endl;
-    //     auto error = persistenceStore.update_key("key", "value2");
-    //     if (error)
-    //     {
-    //         std::cout << error.value() << std::endl;
-    //     }
-
-    //     std::cout << "key is " << persistenceStore.load("key").first << std::endl;
-    // }
+    yuzhi::raft_engine::RaftEngine raftEngine;
+    raftEngine.Listen();
     return 0;
 }

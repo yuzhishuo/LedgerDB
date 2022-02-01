@@ -66,6 +66,15 @@
       "*.inc": "cpp",
       "unordered_set": "cpp",
       "iomanip": "cpp",
-      "codecvt": "cpp"
-    }
+      "codecvt": "cpp",
+      "*.ipp": "cpp",
+      "csignal": "cpp",
+      "strstream": "cpp",
+      "bitset": "cpp",
+      "charconv": "cpp",
+      "complex": "cpp",
+      "cfenv": "cpp",
+      "typeindex": "cpp"
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
   }

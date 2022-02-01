@@ -91,6 +91,7 @@ target_link_libraries(samplate-cpp-template
                     # re2::re2 c-ares::cares)
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
+                    rudeconfig
                     )
 target_link_libraries(samplate-cpp-template muduo_net)
 target_link_libraries(samplate-cpp-template muduo_base)

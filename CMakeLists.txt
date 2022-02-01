@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(example_casbin_cpp VERSION 0.1.0)
+project(LedgerDB VERSION 0.1.0)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -81,10 +81,11 @@ include_directories(build/protos)
 include_directories(include)
 
 aux_source_directory(src DIR_SRCS)
-add_executable(samplate-cpp-template ${DIR_SRCS} ${SRCS} main.cpp )
+add_executable(Ledger ${DIR_SRCS} ${SRCS} main.cpp )
 
-add_dependencies(samplate-cpp-template raft)
-target_link_libraries(samplate-cpp-template
+add_dependencies(Ledger raft)
+
+target_link_libraries(Ledger
 
                     RocksDB::rocksdb
                     gRPC::gpr gRPC::upb gRPC::grpc gRPC::grpc++
@@ -92,14 +93,15 @@ target_link_libraries(samplate-cpp-template
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
                     rudeconfig
+                    muduo_net
+                    muduo_base
+                    pthread rt
+                    raft
                     )
-target_link_libraries(samplate-cpp-template muduo_net)
-target_link_libraries(samplate-cpp-template muduo_base)
-target_link_libraries(samplate-cpp-template pthread rt)
-target_link_libraries(samplate-cpp-template raft)
+
 # gcov: https://www.cnblogs.com/turtle-fly/archive/2013/01/06/2847190.html
 # how to use : https://blog.csdn.net/yanxiangyfg/article/details/80989680
-target_link_libraries(samplate-cpp-template gcov)
+target_link_libraries(Ledger gcov)
 option(ENABLE_TEST "Enable test" ON)
 if(${ENABLE_TEST})
     add_subdirectory(test)

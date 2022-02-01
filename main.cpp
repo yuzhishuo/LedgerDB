@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-01-31 11:51:25
+ * @LastEditTime: 2022-02-01 21:02:12
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -62,7 +62,12 @@ int main(int argc, char **argv) {
   raft_server_t *raft = raft_new();
 
   auto &config = yuzhi::Config::Instance();
-  yuzhi::raft_engine::RaftEngine raftEngine;
-  raftEngine.Listen();
+
+  EventLoop loop;
+  uint16_t port = static_cast<uint16_t>(5000);
+  InetAddress serverAddr(port);
+  yuzhi::raft_engine::RaftEngine server(&loop, serverAddr);
+  server.start();
+  loop.loop();
   return 0;
 }

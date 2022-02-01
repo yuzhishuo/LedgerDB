@@ -8,7 +8,7 @@
 
 #include "Ledger.h"
 #include "interfaces/IStorable.h"
-#include "PersistenceStore.h"
+#include "store/PersistenceStore.h"
 #include "ledger_engine.pb.h"
 #include "LedgerStoreCreator.h"
 

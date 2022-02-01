@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "IStore.h"
+#include "store/IStore.h"
 
 constexpr char const *default_db_path = "/tmp/store/rockdb/";
 constexpr char const *db_name = "db";

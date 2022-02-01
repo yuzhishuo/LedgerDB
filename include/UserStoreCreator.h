@@ -1,8 +1,8 @@
 #pragma once
 
 #include "User.h"
-#include "StoreCreator.h"
-#include "PersistenceStore.h"
+#include "store/StoreCreator.h"
+#include "store/PersistenceStore.h"
 
 class UserStoreCreator : public StoreCreator<User>
 {

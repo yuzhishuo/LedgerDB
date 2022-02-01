@@ -10,10 +10,10 @@
 
 #include <ledger_engine.pb.h>
 
-#include "Error.h"
-#include "IUnique.h"
+#include "common/Error.h"
+#include "interfaces/IUnique.h"
 #include "interfaces/IMonostate.h"
-#include "IDisposable.h"
+#include "interfaces/IDisposable.h"
 
 enum class LEDGER_ROLE : uint8_t
 {

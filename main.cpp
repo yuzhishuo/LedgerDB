@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-02-01 21:02:12
+ * @LastEditTime: 2022-02-01 22:05:42
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -16,12 +16,12 @@
 #include <rocksdb/db.h>
 
 #include "AuthorityCertification.h"
-#include "PersistenceStore.h"
+#include "store/PersistenceStore.h"
 #include "Spd.h"
 #include "User.h"
 
 // tmp
-#include "IUnique.h"
+#include "interfaces/IUnique.h"
 #include "Ledgers.h"
 #include "Users.h"
 

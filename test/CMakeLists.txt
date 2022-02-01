@@ -3,7 +3,7 @@ project(moontest)
 
 find_package(GTest CONFIG REQUIRED)
 
-# include_directories()
+include_directories(../include)
 aux_source_directory(./ TEST_DIR_SRCS)
 
 add_executable(moontest ${TEST_DIR_SRCS})

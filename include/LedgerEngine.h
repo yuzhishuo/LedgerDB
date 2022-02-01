@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include "Error.h"
+#include <common/Error.h>
 #include <merkle/MerkleEngine.h>
 class Ledger;
 

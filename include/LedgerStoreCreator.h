@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Ledger.h"
-#include "StoreCreator.h"
+#include "store/StoreCreator.h"
 
 class LedgerStoreCreator : public StoreCreator<Ledger>
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IStore.h"
+#include "store/IStore.h"
 
 class IDisposable
 {

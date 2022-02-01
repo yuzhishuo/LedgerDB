@@ -1,8 +1,8 @@
 /*
- * @Author: your name
+ * @Author: Yimin Liu
  * @Date: 2022-02-01 21:47:19
- * @LastEditTime: 2022-02-01 22:51:12
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-02-01 23:11:07
+ * @LastEditors: Yimin Liu
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/include/common/SelfDictionary.h
@@ -48,19 +48,29 @@ public:
       return Error("Key not found");
     }
 
-    dictionary_.insert(std::make_pair(value.GetUnique(), value));
+    dictionary_.insert(std::move(std::make_pair(value.GetUnique(), value)));
 
     return std::nullopt;
   }
 
-  void Remove(const Value &value) { dictionary_.erase(value.GetUnique()); }
+  std::optional<Error> Remove(const Value &value) {
+    if (dictionary_.erase(value.GetUnique()) == 0) {
+      return Error("Key not found");
+    }
+    return std::nullopt;
+  }
 
-  void Remove(const Key &key) { dictionary_.erase(key); }
+  std::optional<Error> Remove(const Key &key) {
+
+    if (dictionary_.erase(key) == 0) {
+      return Error("Key not found");
+    }
+    return std::nullopt;
+  }
 
 private:
   std::map<Key, Value> dictionary_;
 };
-
 
 // using  StringUniqueSelfDictionary =  SelfDictionary<IUnique<std::string>>;
 // using IntUniqueSelfDictionary = SelfDictionary<IUnique<int>>;

@@ -1,9 +1,9 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-05 00:49:00
+ * @LastEditTime: 2022-02-05 01:07:51
  * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置:
+ * @Description: Leo
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/src/RaftService.cpp
  */
@@ -166,16 +166,16 @@ int __raft_send_requestvote(raft_server_t *raft, void *user_data,
 }
 
 raft_cbs_t raft_funcs = {
-    .send_requestvote = __raft_send_requestvote,
-    .send_appendentries = __raft_send_appendentries,
-    .applylog = __raft_applylog,
-    .persist_vote = __raft_persist_vote,
-    .persist_term = __raft_persist_term,
-    .log_offer = __raft_logentry_offer,
-    .log_poll = __raft_logentry_poll,
-    .log_pop = __raft_logentry_pop,
-    .node_has_sufficient_logs = __raft_node_has_sufficient_logs,
-    .log = __raft_log,
+    .send_requestvote            = __raft_send_requestvote,
+    .send_appendentries          = __raft_send_appendentries,
+    .applylog                    = __raft_applylog,
+    .persist_vote                = __raft_persist_vote,
+    .persist_term                = __raft_persist_term,
+    .log_offer                   = __raft_logentry_offer,
+    .log_poll                    = __raft_logentry_poll,
+    .log_pop                     = __raft_logentry_pop,
+    .node_has_sufficient_logs    = __raft_node_has_sufficient_logs,
+    .log                         = __raft_log,
 };
 
 RaftService::RaftService() {
@@ -186,6 +186,7 @@ RaftService::RaftService() {
   auto host = config.get<std::string>(this, "host");
   auto raft_port = config.get<int>(this, "raft_port");
   auto http_port = config.get<int>(this, "http_port");
+  
   raft = raft_new();
 
   if (startable || joinable) {

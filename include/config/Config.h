@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 19:06:00
- * @LastEditTime: 2022-02-02 01:17:56
+ * @LastEditTime: 2022-02-04 17:43:29
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -59,7 +59,7 @@ public:
   }
 
 private:
-  template <typename T> T _get(const std::string &key) {
+  template <typename T> inline T _get(const std::string &key) {
     throw std::runtime_error("not implemented");
   }
 
@@ -74,17 +74,18 @@ private:
   rude::Config config_;
 };
 
-template <> int Config::_get<int>(const std::string &key) {
+template <> inline int Config::_get<int>(const std::string &key) {
   return config_.getIntValue(key.data());
 }
-template <> double Config::_get<double>(const std::string &key) {
+template <> inline double Config::_get<double>(const std::string &key) {
   return config_.getDoubleValue(key.data());
 }
 
-template <> bool Config::_get<bool>(const std::string &key) {
+template <> inline bool Config::_get<bool>(const std::string &key) {
   return config_.getBoolValue(key.data());
 }
-template <> std::string Config::_get<std::string>(const std::string &key) {
+template <>
+inline std::string Config::_get<std::string>(const std::string &key) {
   return config_.getStringValue(key.data());
 }
 } // namespace yuzhi

@@ -32,6 +32,9 @@ namespace yuzhi::raft_engine {
 
 class RaftEngine : private raft::Raft::Service, public IConfigurable {
 
+
+
+
 public:
   RaftEngine(EventLoop *loop, const InetAddress &listenAddr)
       : server_(loop, listenAddr, "RaftEngine"),
@@ -51,7 +54,7 @@ public:
 
   virtual const char *Field() const override { return "raft"; }
 
-  void Listen() {}
+  void Listen();
 
   void start() { server_.start(); }
 

@@ -1,13 +1,15 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-05 01:07:51
- * @LastEditors: Please set LastEditors
- * @Description: Leo
+ * @LastEditTime: 2022-02-05 02:51:01
+ * @LastEditors: Leo
+ * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/src/RaftService.cpp
  */
 
+#include <muduo/net/TcpClient.h>
+#include <muduo/net/TcpServer.h>
 #include <raft_engine/net/RaftService.hpp>
 #include <raft_engine/net/interface_raft.h>
 #include <utility/tpl/tpl.h>
@@ -18,8 +20,10 @@ using namespace muduo;
 
 using namespace std;
 
+static RaftService *self = nullptr;
+
 /** Serialize a peer message using TPL
- * @param[out] bufs libuv buffer to insert serialized message into
+ * @param[out] bufs Muduo buffer to insert serialized message into
  * @param[out] buf Buffer to write serialized message into */
 static size_t __peer_msg_serialize(tpl_node *tn, muduo::net::Buffer *buf,
                                    char *data) {
@@ -37,6 +41,61 @@ static int __append_cfg_change(RaftService *sv, raft_logtype_e change_type,
                                int node_id) {
 
   return -1;
+}
+
+/** Raft callback for applying an entry to the finite state machine */
+int __raft_applylog(raft_server_t *raft, void *udata, raft_entry_t *ety,
+                    raft_index_t entry_idx) {
+  return -1;
+}
+
+/** Raft callback for saving voted_for field to disk.
+ * This only returns when change has been made to disk. */
+int __raft_persist_vote(raft_server_t *raft, void *udata, const int voted_for) {
+  return -1;
+}
+
+/** Raft callback for saving term field to disk.
+ * This only returns when change has been made to disk. */
+int __raft_persist_term(raft_server_t *raft, void *udata,
+                        raft_term_t current_term, raft_node_id_t vote) {
+  return -1;
+}
+
+/** Raft callback for appending an item to the log */
+int __raft_logentry_offer(raft_server_t *raft, void *udata, raft_entry_t *ety,
+                          raft_index_t ety_idx) {
+  return -1;
+}
+
+/** Raft callback for deleting the most recent entry from the log.
+ * This happens when an invalid leader finds a valid leader and has to delete
+ * superseded log entries. */
+int __raft_logentry_poll(raft_server_t *raft, void *udata, raft_entry_t *entry,
+                         raft_index_t ety_idx) {
+  return 0;
+}
+
+/** Raft callback for deleting the most recent entry from the log.
+ * This happens when an invalid leader finds a valid leader and has to delete
+ * superseded log entries. */
+int __raft_logentry_pop(raft_server_t *raft, void *udata, raft_entry_t *entry,
+                        raft_index_t ety_idx) {
+  return -1;
+}
+
+/** Non-voting node now has enough logs to be able to vote.
+ * Append a finalization cfg log entry. */
+int __raft_node_has_sufficient_logs(raft_server_t *raft, void *user_data,
+                                    raft_node_t *node) {
+  peer_connection_t *conn = (peer_connection_t *)raft_node_get_udata(node);
+  return -1;
+}
+
+/** Raft callback for displaying debugging information */
+static void __raft_log(raft_server_t *raft, raft_node_t *node, void *udata,
+                       const char *buf) {
+  spdlog::debug("raft: {}", buf);
 }
 
 peer_connection_t *RaftService::__new_connection() {
@@ -61,12 +120,15 @@ void RaftService::__on_connection_accepted_by_peer(
 }
 
 void RaftService::__connect_to_peer(peer_connection_t *conn) {
-  EventLoop *loop = &(*loop_);
-  conn->cl = std::make_unique<TcpClient>(loop, conn->addr, "RaftClient");
+  assert(self);
+
+  cls_.emplace_back(
+      std::make_unique<TcpClient>(&loop_, conn->addr, "RaftClient"));
+  auto &cl = *cls_.back();
   conn->connection_status = CONNECTING;
-  conn->cl->setConnectionCallback(std::bind(
+  cl.setConnectionCallback(std::bind(
       &RaftService::__on_connection_accepted_by_peer, this, conn, _1));
-  conn->cl->connect();
+  cl.connect();
 }
 
 static void __connection_set_peer(peer_connection_t *conn, char *host,
@@ -87,7 +149,7 @@ void RaftService::__connect_to_peer_at_host(peer_connection_t *conn, char *host,
 static int __connect_if_needed(peer_connection_t *conn) {
   if (CONNECTED != conn->connection_status) {
     if (DISCONNECTED == conn->connection_status)
-      ((RaftService *)conn->self)->__connect_to_peer(conn);
+      self->__connect_to_peer(conn);
     return -1;
   }
   return 0;
@@ -166,19 +228,22 @@ int __raft_send_requestvote(raft_server_t *raft, void *user_data,
 }
 
 raft_cbs_t raft_funcs = {
-    .send_requestvote            = __raft_send_requestvote,
-    .send_appendentries          = __raft_send_appendentries,
-    .applylog                    = __raft_applylog,
-    .persist_vote                = __raft_persist_vote,
-    .persist_term                = __raft_persist_term,
-    .log_offer                   = __raft_logentry_offer,
-    .log_poll                    = __raft_logentry_poll,
-    .log_pop                     = __raft_logentry_pop,
-    .node_has_sufficient_logs    = __raft_node_has_sufficient_logs,
-    .log                         = __raft_log,
+    .send_requestvote = __raft_send_requestvote,
+    .send_appendentries = __raft_send_appendentries,
+    .applylog = __raft_applylog,
+    .persist_vote = __raft_persist_vote,
+    .persist_term = __raft_persist_term,
+    .log_offer = __raft_logentry_offer,
+    .log_poll = __raft_logentry_poll,
+    .log_pop = __raft_logentry_pop,
+    .node_has_sufficient_logs = __raft_node_has_sufficient_logs,
+    .log = __raft_log,
 };
 
 RaftService::RaftService() {
+
+  assert(nullptr == self);
+  self = this;
 
   auto &config = Config::Instance();
   auto startable = config.get<bool>(this, "start");
@@ -186,7 +251,7 @@ RaftService::RaftService() {
   auto host = config.get<std::string>(this, "host");
   auto raft_port = config.get<int>(this, "raft_port");
   auto http_port = config.get<int>(this, "http_port");
-  
+
   raft = raft_new();
 
   if (startable || joinable) {
@@ -204,9 +269,8 @@ RaftService::RaftService() {
     uint16_t port = static_cast<uint16_t>(raft_port);
     InetAddress serverAddr(port);
 
-    auto *loop = &(*loop_);
     server_ = std::move(std::make_unique<muduo::net::TcpServer>(
-        loop, serverAddr, "RaftServer"));
+        &loop_, serverAddr, "RaftServer"));
     server_->setConnectionCallback(
         bind(&RaftService::onConnection, this, std::placeholders::_1));
 
@@ -229,8 +293,8 @@ RaftService::RaftService() {
   }
 
   constexpr auto PERIOD_MSEC = 1000;
-  loop_->runEvery(PERIOD_MSEC,
-                  std::bind(raft_periodic, (raft_server_t *)raft, PERIOD_MSEC));
+  loop_.runEvery(PERIOD_MSEC,
+                 std::bind(raft_periodic, (raft_server_t *)raft, PERIOD_MSEC));
   raft_set_election_timeout((raft_server_t *)raft, PERIOD_MSEC * 2);
 }
 

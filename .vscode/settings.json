@@ -74,7 +74,9 @@
       "charconv": "cpp",
       "complex": "cpp",
       "cfenv": "cpp",
-      "typeindex": "cpp"
+      "typeindex": "cpp",
+      "hash_set": "cpp",
+      "hash_map": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
   }

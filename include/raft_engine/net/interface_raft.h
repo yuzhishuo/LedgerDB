@@ -1,8 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-04 17:46:31
- * @LastEditTime: 2022-02-05 00:55:12
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-02-05 01:43:23
+ * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/include/raft_engine/net/interface_raft.h
@@ -11,10 +11,10 @@
 #ifndef __RAFT_ENGINE_NET_INTERFACE_RAFT_H__
 #define __RAFT_ENGINE_NET_INTERFACE_RAFT_H__
 
-#include <functional>
-#include <muduo/net/TcpClient.h>
-#include <muduo/net/TcpServer.h>
 #include <optional>
+#include <functional>
+#include <muduo/net/InetAddress.h>
+
 
 extern "C" {
 #include <raft.h>
@@ -83,7 +83,6 @@ typedef enum {
 
 struct peer_connection_t {
 
-  void *self;
   /* peer's address */
   muduo::net::InetAddress addr;
 
@@ -106,63 +105,7 @@ struct peer_connection_t {
 
   muduo::net::TcpConnectionPtr peer;
 
-  std::unique_ptr<muduo::net::TcpClient> cl;
-
   peer_connection_t *next;
 };
 
-extern "C" {
-
-/** Raft callback for applying an entry to the finite state machine */
-int __raft_applylog(raft_server_t *raft, void *udata, raft_entry_t *ety,
-                    raft_index_t entry_idx) {
-
-  return -1;
-}
-
-int __raft_persist_vote(raft_server_t *raft, void *udata, const int voted_for) {
-  return -1;
-}
-
-int __raft_persist_term(raft_server_t *raft, void *udata,
-                        raft_term_t current_term, raft_node_id_t vote) {
-  return -1;
-}
-
-int __raft_logentry_offer(raft_server_t *raft, void *udata, raft_entry_t *ety,
-                          raft_index_t ety_idx) {
-
-  return -1;
-}
-
-/** Raft callback for deleting the most recent entry from the log.
- * This happens when an invalid leader finds a valid leader and has to delete
- * superseded log entries. */
-int __raft_logentry_poll(raft_server_t *raft, void *udata, raft_entry_t *entry,
-                         raft_index_t ety_idx) {
-
-  return 0;
-}
-
-/** Raft callback for deleting the most recent entry from the log.
- * This happens when an invalid leader finds a valid leader and has to delete
- * superseded log entries. */
-int __raft_logentry_pop(raft_server_t *raft, void *udata, raft_entry_t *entry,
-                        raft_index_t ety_idx) {
-  return -1;
-}
-
-/** Non-voting node now has enough logs to be able to vote.
- * Append a finalization cfg log entry. */
-int __raft_node_has_sufficient_logs(raft_server_t *raft, void *user_data,
-                                    raft_node_t *node) {
-  peer_connection_t *conn = (peer_connection_t *)raft_node_get_udata(node);
-  return -1;
-}
-void __raft_log(raft_server_t *raft, raft_node_t *node, void *udata,
-                const char *buf) {
-
-  spdlog::debug("raft: {}", buf);
-}
-}
 #endif // __RAFT_ENGINE_NET_INTERFACE_RAFT_H__

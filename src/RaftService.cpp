@@ -1,8 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-06 00:36:59
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-02-06 01:07:21
+ * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/src/RaftService.cpp
@@ -51,7 +51,6 @@ static void __deserialize_appendentries_payload(msg_entry_t *out,
 
 bool operator==(const muduo::net::InetAddress &left,
                 const muduo::net::InetAddress &right) {
-
   return left.toIpPort() == right.toIpPort();
 }
 
@@ -82,6 +81,13 @@ RaftService::__find_connection(const muduo::net::InetAddress &addr) {
   return conn;
 }
 
+static void __peer_msg_send(peer_connection_t *conn, tpl_node *tn, Buffer *buf,
+                            char *data) {
+
+  __peer_msg_serialize(tn, buf, data);
+  conn->peer->send(buf);
+}
+
 int __send_handshake_response(int node_id, peer_connection_t *conn,
                               handshake_state_e success, raft_node_t *leader,
                               int16_t http_port) {
@@ -106,12 +112,8 @@ int __send_handshake_response(int node_id, peer_connection_t *conn,
   }
 
   msg.hsr.http_port = http_port;
-
   string str = "S(I$(IIIIs))";
-  __peer_msg_serialize(tpl_map(str.data(), &msg), bufs, buf);
-
-  conn->peer->send(bufs);
-
+  __peer_msg_send(conn, tpl_map(str.data(), &msg), bufs, buf);
   return 0;
 }
 
@@ -244,10 +246,7 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
                                 &msg.aer);
 
     /* send response */
-    Buffer bufs[1];
-    char buf[RAFT_BUFLEN];
-    __peer_msg_serialize(tpl_map("S(I$(IIII))", &msg), bufs, buf);
-    conn->peer->send(bufs);
+    __peer_msg_send(conn, tpl_map("S(I$(IIII))", &msg), bufs, buf);
     conn->n_expected_entries = 0;
     return 0;
   }
@@ -340,10 +339,7 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
     e = raft_recv_requestvote((raft_server_t *)raft, conn->node, &m.rv,
                               &msg.rvr);
     string fmt = "S(I$(II))";
-    __peer_msg_serialize(tpl_map(fmt.data(), &msg), bufs, buf);
-
-    conn->peer->send(bufs);
-
+    __peer_msg_send(conn, tpl_map(fmt.data(), &msg), bufs, buf);
   } break;
   case MSG_REQUESTVOTE_RESPONSE:
     e = raft_recv_requestvote_response((raft_server_t *)raft, conn->node,
@@ -363,8 +359,7 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
                                   &msg.aer);
 
       string fmt = "S(I$(IIII))";
-      __peer_msg_serialize(tpl_map(fmt.data(), &msg), bufs, buf);
-      conn->peer->send(bufs);
+      __peer_msg_send(conn, tpl_map(fmt.data(), &msg), bufs, buf);
     }
     break;
   case MSG_APPENDENTRIES_RESPONSE:
@@ -585,10 +580,7 @@ int __raft_send_requestvote(raft_server_t *raft, void *user_data,
   msg.type = MSG_REQUESTVOTE;
   msg.rv = *m;
   string fmt = "S(I$(IIII))";
-  tpl_node *tn = tpl_map(fmt.data(), &msg);
-  __peer_msg_serialize(tn, &buf, data);
-
-  conn->peer->send(&buf);
+  __peer_msg_send(conn, tpl_map(fmt.data(), &msg), &buf, data);
   return 0;
 }
 

@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-04 17:46:31
- * @LastEditTime: 2022-02-05 01:43:23
+ * @LastEditTime: 2022-02-06 00:34:58
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -11,16 +11,22 @@
 #ifndef __RAFT_ENGINE_NET_INTERFACE_RAFT_H__
 #define __RAFT_ENGINE_NET_INTERFACE_RAFT_H__
 
-#include <optional>
 #include <functional>
 #include <muduo/net/InetAddress.h>
-
+#include <optional>
 
 extern "C" {
 #include <raft.h>
 }
 #define RAFT_BUFLEN 512
 #define IP_STR_LEN strlen("111.111.111.111")
+
+typedef struct {
+  int raft_port;
+  int http_port;
+  int node_id;
+  char host[IP_STR_LEN];
+} entry_cfg_change_t;
 
 typedef enum {
   /** Handshake is a special non-raft message type
@@ -80,6 +86,12 @@ typedef enum {
   CONNECTING,
   CONNECTED,
 } conn_status_e;
+
+
+typedef enum {
+    HANDSHAKE_FAILURE,
+    HANDSHAKE_SUCCESS,
+} handshake_state_e; 
 
 struct peer_connection_t {
 

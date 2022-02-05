@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "interfaces/IStorable.h"
+#include <interfaces/IStorable.h>
 
 class IStorage;
 
@@ -38,12 +38,20 @@ public:
         if (auto storage = create(); storage)
         {
             auto key = prefix_ + "_" + object->GetUnique() + "_" + suffix_;
-            auto [store_raw, err] = storage->load(key);
+            
 
-            if (err)
+            if (auto [store_raw, err] = storage->load(key); !err)
             {
-                return nullptr; 
+                // if (auto [res, e]= object->deserialize(store_raw); e)
+                // {
+                //     return nullptr;
+                // }
+                // else
+                // {
+                //     return T{*res};
+                // }
             }
+            return nullptr;
         }
 
         return nullptr;

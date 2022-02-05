@@ -1,18 +1,25 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-05 02:51:24
- * @LastEditors: Leo
+ * @LastEditTime: 2022-02-06 00:00:44
+ * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/include/raft_engine/net/RaftService.hpp
  */
+#pragma once
 
 #include <config/Config.h>
 #include <memory>
 #include <muduo/net/EventLoop.h>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
+
+extern "C" {
+#include <raft.h>
+#include <raft_private.h>
+#include <raft_log.h>
+}
 
 namespace muduo::net {
 class TcpServer;
@@ -41,6 +48,13 @@ public:
   __on_connection_accepted_by_peer(peer_connection_t *data,
                                    const muduo::net::TcpConnectionPtr &conn);
 
+  int __append_cfg_change(RaftService *sv, raft_logtype_e change_type,
+                          char *host, int raft_port, int http_port,
+                          int node_id);
+  int __deserialize_and_handle_msg(void *img, size_t sz, void *data);
+  peer_connection_t *__find_connection(const muduo::net::InetAddress &addr);
+  void __delete_connection(peer_connection_t *conn);
+
 private:
   std::mutex mutex;
   std::condition_variable cond;
@@ -50,6 +64,7 @@ private:
   muduo::net::EventLoop loop_;
   std::unique_ptr<muduo::net::TcpServer> server_;
   std::vector<std::unique_ptr<muduo::net::TcpClient>> cls_;
+  int16_t http_port;
 };
 
 } // namespace yuzhi::raft_engine::net

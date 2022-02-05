@@ -1,8 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-06 01:07:21
- * @LastEditors: Leo
+ * @LastEditTime: 2022-02-06 01:26:50
+ * @LastEditors: Please set LastEditors
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/src/RaftService.cpp
@@ -161,69 +161,7 @@ static int __should_grant_vote(raft_server_private_t *me,
   return 0;
 }
 
-int raft_recv_requestvote(raft_server_t *me_, raft_node_t *node,
-                          msg_requestvote_t *vr,
-                          msg_requestvote_response_t *r) {
-  raft_server_private_t *me = (raft_server_private_t *)me_;
-  int e = 0;
 
-  if (!node)
-    node = raft_get_node(me_, vr->candidate_id);
-
-  /* Reject request if we have a leader */
-  if (me->current_leader && me->current_leader != node &&
-      (me->timeout_elapsed < me->election_timeout)) {
-    r->vote_granted = 0;
-    goto done;
-  }
-
-  if (raft_get_current_term(me_) < vr->term) {
-    e = raft_set_current_term(me_, vr->term);
-    if (0 != e) {
-      r->vote_granted = 0;
-      goto done;
-    }
-    raft_become_follower(me_);
-    me->current_leader = NULL;
-  }
-
-  if (__should_grant_vote(me, vr)) {
-    /* It shouldn't be possible for a leader or candidate to grant a vote
-     * Both states would have voted for themselves */
-    assert(!(raft_is_leader(me_) || raft_is_candidate(me_)));
-
-    e = raft_vote_for_nodeid(me_, vr->candidate_id);
-    if (0 == e)
-      r->vote_granted = 1;
-    else
-      r->vote_granted = 0;
-
-    /* must be in an election. */
-    me->current_leader = NULL;
-
-    me->timeout_elapsed = 0;
-  } else {
-    /* It's possible the candidate node has been removed from the cluster but
-     * hasn't received the appendentries that confirms the removal. Therefore
-     * the node is partitioned and still thinks its part of the cluster. It
-     * will eventually send a requestvote. This is error response tells the
-     * node that it might be removed. */
-    if (!node) {
-      r->vote_granted = RAFT_REQUESTVOTE_ERR_UNKNOWN_NODE;
-      goto done;
-    } else
-      r->vote_granted = 0;
-  }
-
-done:
-  // __log(me_, node, "node requested vote: %d replying: %s", node,
-  //       r->vote_granted == 1
-  //           ? "granted"
-  //           : r->vote_granted == 0 ? "not granted" : "unknown");
-
-  r->term = raft_get_current_term(me_);
-  return e;
-}
 
 int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
                                               void *data) {
@@ -569,16 +507,14 @@ int __raft_send_appendentries(raft_server_t *raft, void *user_data,
 int __raft_send_requestvote(raft_server_t *raft, void *user_data,
                             raft_node_t *node, msg_requestvote_t *m) {
   peer_connection_t *conn = (peer_connection_t *)raft_node_get_udata(node);
-  int e = __connect_if_needed(conn);
-  if (e == -1)
+
+  if (int e = __connect_if_needed(conn); e == -1)
     return 0;
 
   Buffer buf;
-
   char data[RAFT_BUFLEN];
-  msg_t msg = {};
-  msg.type = MSG_REQUESTVOTE;
-  msg.rv = *m;
+  msg_t msg = {.type = MSG_REQUESTVOTE, .rv = *m};
+
   string fmt = "S(I$(IIII))";
   __peer_msg_send(conn, tpl_map(fmt.data(), &msg), &buf, data);
   return 0;

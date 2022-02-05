@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-06 00:00:44
+ * @LastEditTime: 2022-02-06 01:16:38
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -17,8 +17,8 @@
 
 extern "C" {
 #include <raft.h>
-#include <raft_private.h>
 #include <raft_log.h>
+#include <raft_private.h>
 }
 
 namespace muduo::net {
@@ -55,6 +55,11 @@ public:
   peer_connection_t *__find_connection(const muduo::net::InetAddress &addr);
   void __delete_connection(peer_connection_t *conn);
 
+public:
+  int32_t getNodeId() const { return node_id; }
+  int16_t getRaftPort() const { return raft_port; }
+  int16_t getHttpPort() const { return http_port; }
+
 private:
   std::mutex mutex;
   std::condition_variable cond;
@@ -64,7 +69,9 @@ private:
   muduo::net::EventLoop loop_;
   std::unique_ptr<muduo::net::TcpServer> server_;
   std::vector<std::unique_ptr<muduo::net::TcpClient>> cls_;
+
   int16_t http_port;
+  int16_t raft_port;
 };
 
 } // namespace yuzhi::raft_engine::net

@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-02-02 01:16:31
+ * @LastEditTime: 2022-02-07 18:19:45
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -30,44 +30,29 @@ extern "C" {
 }
 #include <config/Config.h>
 #include <raft_engine/RaftEngine.h>
+#include <service/LeadgerService.hpp>
+
+#include <grpcpp/ext/proto_server_reflection_plugin.h>
+#include <grpcpp/grpcpp.h>
+#include <grpcpp/health_check_service_interface.h>
 
 // tmp
 namespace spd = spdlog;
 using namespace grpc;
 int main(int argc, char **argv) {
-  AuthorityCertification::Instance().Start();
-  std::cout << AuthorityCertification::Instance().UserPass("CreateUser",
-                                                           "admin")
-            << std::endl;
-
-  auto &man = Users::getInstance();
-  auto t = man.createUser("fff");
-
-  if (t) {
-    if (auto error = man.store(t); error) {
-      std::cout << *error << std::endl;
-    }
-  }
-
-  if (AuthorityCertification::Instance().UserPass("CreateLedger", "fff")) {
-    auto &man_l = Ledgers::getInstance();
-    auto l = man_l.createLedger("f", t->GetUnique());
-    man_l.store(l);
-
-    auto en = l->engine();
-  }
-
-  auto e = muduo::net::EventLoop();
-
-  raft_server_t *raft = raft_new();
 
   auto &config = yuzhi::Config::Instance();
 
-  EventLoop loop;
-  uint16_t port = static_cast<uint16_t>(5000);
-  InetAddress serverAddr(port);
-  yuzhi::raft_engine::RaftEngine server(&loop, serverAddr);
-  server.start();
-  loop.loop();
+  // grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+  grpc::ServerBuilder builder;
+  yuzhi::service::LedgerService leadgerService;
+  builder.AddListeningPort("10080", grpc::InsecureServerCredentials());
+  // builder.set_health_check_service(new HealthCheckServiceImpl());
+  builder.RegisterService(&leadgerService);
+  auto server =
+      std::move(std::unique_ptr<grpc::Server>(builder.BuildAndStart()));
+
+  server->Wait();
+
   return 0;
 }

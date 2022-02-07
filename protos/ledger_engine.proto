@@ -30,3 +30,19 @@ message Ledger
 // {
 //     return Ledger.IsCommon(commonName);
 // }
+
+message Response
+{
+    string message = 1;
+    bool success = 2;
+}
+
+message CreateLedgerRequest
+{
+    string ledgerName = 1;
+}
+
+service LedgerService
+{
+    rpc CreateLedger(CreateLedgerRequest) returns (Response);
+}

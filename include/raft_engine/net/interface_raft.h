@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-04 17:46:31
- * @LastEditTime: 2022-02-06 00:34:58
+ * @LastEditTime: 2022-02-06 20:45:09
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -54,17 +54,11 @@ typedef struct {
 typedef struct {
 
   int success;
-
-  /* leader's Raft port */
   int leader_port;
-
-  /* the responding node's HTTP port */
   int http_port;
-
   /* my Raft node ID.
    * Sometimes we don't know who we did the handshake with */
   int node_id;
-
   char leader_host[IP_STR_LEN];
 } msg_handshake_response_t;
 

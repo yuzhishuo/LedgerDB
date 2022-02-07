@@ -1,8 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-06 01:26:50
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-02-06 13:13:38
+ * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/src/RaftService.cpp
@@ -22,6 +22,15 @@ using namespace std;
 
 static RaftService *self = nullptr;
 
+static int __connect_if_needed(peer_connection_t *conn) {
+  if (CONNECTED != conn->connection_status) {
+    if (DISCONNECTED == conn->connection_status)
+      self->__connect_to_peer(conn);
+    return -1;
+  }
+  return 0;
+}
+
 /** Serialize a peer message using TPL
  * @param[out] bufs Muduo buffer to insert serialized message into
  * @param[out] buf Buffer to write serialized message into */
@@ -34,6 +43,12 @@ static size_t __peer_msg_serialize(tpl_node *tn, muduo::net::Buffer *buf,
   tpl_free(tn);
   buf->append(data, sz);
   return sz;
+}
+
+static void __peer_msg_send(peer_connection_t *conn, tpl_node *tn, Buffer *buf,
+                            char *data) {
+  __peer_msg_serialize(tn, buf, data);
+  conn->peer->send(buf);
 }
 
 /** Deserialize a single log entry from appendentries message */
@@ -81,30 +96,23 @@ RaftService::__find_connection(const muduo::net::InetAddress &addr) {
   return conn;
 }
 
-static void __peer_msg_send(peer_connection_t *conn, tpl_node *tn, Buffer *buf,
-                            char *data) {
-
-  __peer_msg_serialize(tn, buf, data);
-  conn->peer->send(buf);
-}
-
-int __send_handshake_response(int node_id, peer_connection_t *conn,
-                              handshake_state_e success, raft_node_t *leader,
-                              int16_t http_port) {
+static int __send_handshake_response(int node_id, peer_connection_t *conn,
+                                     handshake_state_e success,
+                                     raft_node_t *leader, int16_t http_port) {
   Buffer bufs[1];
   char buf[RAFT_BUFLEN];
 
-  msg_t msg = {};
-  msg.type = MSG_HANDSHAKE_RESPONSE;
-  msg.hsr.success = success;
-  msg.hsr.leader_port = 0;
-  msg.hsr.node_id = node_id;
+  msg_t msg = {.type = MSG_HANDSHAKE_RESPONSE,
+               .hsr = {
+                   .success = success,
+                   .leader_port = 0,
+                   .node_id = node_id,
+               }};
 
   /* allow the peer to redirect to the leader */
   if (leader) {
-    peer_connection_t *leader_conn =
-        (peer_connection_t *)raft_node_get_udata(leader);
-    if (leader_conn) {
+    if (auto leader_conn = (peer_connection_t *)raft_node_get_udata(leader);
+        leader_conn) {
       msg.hsr.leader_port = leader_conn->raft_port;
       snprintf(msg.hsr.leader_host, IP_STR_LEN, "%s",
                leader_conn->addr.toIpPort().data());
@@ -116,52 +124,6 @@ int __send_handshake_response(int node_id, peer_connection_t *conn,
   __peer_msg_send(conn, tpl_map(str.data(), &msg), bufs, buf);
   return 0;
 }
-
-int raft_already_voted(raft_server_t *me_) {
-  return ((raft_server_private_t *)me_)->voted_for != -1;
-}
-
-static int __should_grant_vote(raft_server_private_t *me,
-                               msg_requestvote_t *vr) {
-  if (!raft_node_is_voting(raft_get_my_node((raft_server_t *)me)))
-    return 0;
-
-  if (vr->term < raft_get_current_term((raft_server_t *)me))
-    return 0;
-
-  /* TODO: if voted for is candidate return 1 (if below checks pass) */
-  if (raft_already_voted((raft_server_t *)me))
-    return 0;
-
-  /* Below we check if log is more up-to-date... */
-
-  raft_index_t current_idx = raft_get_current_idx((raft_server_t *)me);
-
-  /* Our log is definitely not more up-to-date if it's empty! */
-  if (0 == current_idx)
-    return 1;
-
-  raft_entry_t *ety = raft_get_entry_from_idx((raft_server_t *)me, current_idx);
-  int ety_term;
-
-  // TODO: add test
-  if (ety)
-    ety_term = ety->term;
-  else if (!ety && me->snapshot_last_idx == current_idx)
-    ety_term = me->snapshot_last_term;
-  else
-    return 0;
-
-  if (ety_term < vr->last_log_term)
-    return 1;
-
-  if (vr->last_log_term == ety_term && current_idx <= vr->last_log_idx)
-    return 1;
-
-  return 0;
-}
-
-
 
 int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
                                               void *data) {
@@ -323,43 +285,46 @@ int RaftService::__append_cfg_change(RaftService *sv,
   strcpy(change->host, host);
   change->host[IP_STR_LEN - 1] = 0;
 
-  msg_entry_t entry;
-  entry.id = rand();
-  entry.data.buf = (void *)change;
-  entry.data.len = sizeof(*change);
-  entry.type = change_type;
+  msg_entry_t entry = {.id = rand(),
+                       .type = change_type,
+                       .data =
+                           {
+                               .buf = (void *)change,
+                               .len = sizeof(*change),
+                           }
+
+  };
   msg_entry_response_t r;
-  int e = raft_recv_entry((raft_server_t *)raft, &entry, &r);
-  if (0 != e)
+  if (int e = raft_recv_entry((raft_server_t *)raft, &entry, &r); 0 != e)
     return -1;
   return 0;
-  return -1;
 }
 
 /** Raft callback for applying an entry to the finite state machine */
 // TODO: import this from raft.h
-int __raft_applylog(raft_server_t *raft, void *udata, raft_entry_t *ety,
-                    raft_index_t entry_idx) {
+static int __raft_applylog(raft_server_t *raft, void *udata, raft_entry_t *ety,
+                           raft_index_t entry_idx) {
   return -1;
 }
 
 /** Raft callback for saving voted_for field to disk.
  * This only returns when change has been made to disk. */
-int __raft_persist_vote(raft_server_t *raft, void *udata, const int voted_for) {
+static int __raft_persist_vote(raft_server_t *raft, void *udata,
+                               const int voted_for) {
   return -1;
 }
 
 /** Raft callback for saving term field to disk.
  * This only returns when change has been made to disk. */
-int __raft_persist_term(raft_server_t *raft, void *udata,
-                        raft_term_t current_term, raft_node_id_t vote) {
+static int __raft_persist_term(raft_server_t *raft, void *udata,
+                               raft_term_t current_term, raft_node_id_t vote) {
   return -1;
 }
 
 /** Raft callback for appending an item to the log */
 // TODO: import this from raft.c
-int __raft_logentry_offer(raft_server_t *raft, void *udata, raft_entry_t *ety,
-                          raft_index_t ety_idx) {
+static int __raft_logentry_offer(raft_server_t *raft, void *udata,
+                                 raft_entry_t *ety, raft_index_t ety_idx) {
   return -1;
 }
 
@@ -431,7 +396,6 @@ void RaftService::__connect_to_peer(peer_connection_t *conn) {
 
 static void __connection_set_peer(peer_connection_t *conn, char *host,
                                   int port) {
-
   conn->raft_port = port;
   spdlog::info("Connecting to {}:{}", host, conn->raft_port);
   muduo::net::InetAddress addr(host, port);
@@ -444,22 +408,12 @@ void RaftService::__connect_to_peer_at_host(peer_connection_t *conn, char *host,
   __connect_to_peer(conn);
 }
 
-static int __connect_if_needed(peer_connection_t *conn) {
-  if (CONNECTED != conn->connection_status) {
-    if (DISCONNECTED == conn->connection_status)
-      self->__connect_to_peer(conn);
-    return -1;
-  }
-  return 0;
-}
-
-int __raft_send_appendentries(raft_server_t *raft, void *user_data,
+static int __raft_send_appendentries(raft_server_t *raft, void *user_data,
                               raft_node_t *node, msg_appendentries_t *m) {
   Buffer bufs[3];
-  peer_connection_t *conn = (peer_connection_t *)raft_node_get_udata(node);
+  auto conn = (peer_connection_t *)raft_node_get_udata(node);
 
-  int e = __connect_if_needed(conn);
-  if (-1 == e)
+  if (int e = __connect_if_needed(conn); - 1 == e)
     return 0;
 
   char buf[RAFT_BUFLEN], *ptr = buf;
@@ -488,13 +442,10 @@ int __raft_send_appendentries(raft_server_t *raft, void *user_data,
     size_t sz;
     tpl_pack(tn, 0);
     tpl_dump(tn, TPL_GETSIZE, &sz);
-    e = tpl_dump(tn, TPL_MEM | TPL_PREALLOCD, ptr, RAFT_BUFLEN);
+    auto e = tpl_dump(tn, TPL_MEM | TPL_PREALLOCD, ptr, RAFT_BUFLEN);
     assert(0 == e);
-
     bufs[1].append(ptr, sz); /* append serialized entry to buffer */
-
     conn->peer->send(&bufs[2]);
-
     tpl_free(tn);
   } else {
     /* keep alive appendentries only */

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-08 15:39:01
  * @LastEditors: Leo
- * @LastEditTime: 2022-02-08 22:50:38
+ * @LastEditTime: 2022-02-08 23:06:38
  */
 #define STRIP_FLAG_HELP 1
 #include <cmdline.hpp>
@@ -10,8 +10,9 @@
 #include <gflags/gflags.h>
 #include <iostream>
 #include <spdlog/spdlog.h>
-#include <string>
+#include <server/leadger_service.hpp>
 
+#include <string>
 using namespace std;
 
 void create_op(int argc, char *argv[]) {
@@ -40,7 +41,6 @@ int main(int argc, char *argv[]) {
 
   std::vector<std::pair<std::string, std::function<void()>>> ops{
       std::pair("Create", std::bind(create_op, argc, argv)),
-
       std::pair("Append", []() { spdlog::info("Append"); })};
 
   for (auto &op : ops) {

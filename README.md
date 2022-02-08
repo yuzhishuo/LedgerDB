@@ -16,7 +16,7 @@
 ## User
 
 
-## Leadger
+## ledger
 
 |opeartor | method | finished |
 | :-----| :---- | :----: |

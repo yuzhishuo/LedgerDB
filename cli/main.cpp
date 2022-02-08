@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-08 15:39:01
  * @LastEditors: Leo
- * @LastEditTime: 2022-02-08 23:06:38
+ * @LastEditTime: 2022-02-08 23:42:07
  */
 #define STRIP_FLAG_HELP 1
 #include <cmdline.hpp>
@@ -10,7 +10,7 @@
 #include <gflags/gflags.h>
 #include <iostream>
 #include <spdlog/spdlog.h>
-#include <server/leadger_service.hpp>
+#include <server/ledger_service.hpp>
 
 #include <string>
 using namespace std;
@@ -19,7 +19,7 @@ void create_op(int argc, char *argv[]) {
 
   cmdline::parser create_parser;
 
-  create_parser.add<string>("name", 'n', "name of leadger", true);
+  create_parser.add<string>("name", 'n', "name of ledger", true);
 
   create_parser.add<string>("type", 't', "protocol type", true, "http",
                             cmdline::oneof<string>("file", "str"));
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
       std::pair("Append", []() { spdlog::info("Append"); })};
 
   for (auto &op : ops) {
-    op_parser.add<bool>(op.first, 0, "op :" + op.first + " Leadger", false);
+    op_parser.add<bool>(op.first, 0, "op :" + op.first + " ledger", false);
   }
 
   if (op_parser.parse(argc, argv)) {

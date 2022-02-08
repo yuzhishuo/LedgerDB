@@ -1,8 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-06 13:13:38
- * @LastEditors: Leo
+ * @LastEditTime: 2022-02-08 13:58:12
+ * @LastEditors: Please set LastEditors
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/src/RaftService.cpp
@@ -14,7 +14,8 @@
 #include <raft_engine/net/interface_raft.h>
 #include <utility/tpl/tpl.h>
 
-using namespace yuzhi::raft_engine::net;
+// g++ bug: friend declaration for ‘__deserialize_and_handle_msg’ not found
+namespace yuzhi::raft_engine::net {
 using namespace muduo::net;
 using namespace muduo;
 
@@ -96,9 +97,9 @@ RaftService::__find_connection(const muduo::net::InetAddress &addr) {
   return conn;
 }
 
-static int __send_handshake_response(int node_id, peer_connection_t *conn,
-                                     handshake_state_e success,
-                                     raft_node_t *leader, int16_t http_port) {
+int __send_handshake_response(int node_id, peer_connection_t *conn,
+                              handshake_state_e success, raft_node_t *leader,
+                              int16_t http_port) {
   Buffer bufs[1];
   char buf[RAFT_BUFLEN];
 
@@ -125,9 +126,8 @@ static int __send_handshake_response(int node_id, peer_connection_t *conn,
   return 0;
 }
 
-int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
-                                              void *data) {
-  peer_connection_t *conn = (peer_connection_t *)data;
+int __deserialize_and_handle_msg(void *img, size_t sz, void *data) {
+  auto conn = (peer_connection_t *)data;
   msg_t m;
   int e;
 
@@ -142,8 +142,8 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
 
     conn->ae.ae.entries = &entry;
     msg_t msg = {.type = MSG_APPENDENTRIES_RESPONSE};
-    e = raft_recv_appendentries((raft_server_t *)raft, conn->node, &conn->ae.ae,
-                                &msg.aer);
+    e = raft_recv_appendentries((raft_server_t *)(self->raft), conn->node,
+                                &conn->ae.ae, &msg.aer);
 
     /* send response */
     __peer_msg_send(conn, tpl_map("S(I$(IIII))", &msg), bufs, buf);
@@ -158,41 +158,43 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
 
   switch (m.type) {
   case MSG_HANDSHAKE: {
-    peer_connection_t *nconn = __find_connection(conn->addr);
+    peer_connection_t *nconn = self->__find_connection(conn->addr);
     if (nconn && conn != nconn)
-      __delete_connection(nconn);
+      self->__delete_connection(nconn);
 
     conn->connection_status = CONNECTED;
     conn->http_port = m.hs.http_port;
     conn->raft_port = m.hs.raft_port;
 
-    raft_node_t *leader = raft_get_current_leader_node((raft_server_t *)raft);
+    raft_node_t *leader =
+        raft_get_current_leader_node((raft_server_t *)self->raft);
 
     /* Is this peer in our configuration already? */
-    raft_node_t *node = raft_get_node((raft_server_t *)raft, m.hs.node_id);
+    raft_node_t *node =
+        raft_get_node((raft_server_t *)self->raft, m.hs.node_id);
     if (node) {
       raft_node_set_udata(node, conn);
       conn->node = node;
     }
 
     if (!leader) {
-      return __send_handshake_response(node_id, conn, HANDSHAKE_FAILURE, NULL,
-                                       http_port);
-    } else if (raft_node_get_id(leader) != node_id) {
-      return __send_handshake_response(node_id, conn, HANDSHAKE_FAILURE, leader,
-                                       http_port);
+      return __send_handshake_response(self->node_id, conn, HANDSHAKE_FAILURE,
+                                       NULL, self->http_port);
+    } else if (raft_node_get_id(leader) != self->node_id) {
+      return __send_handshake_response(self->node_id, conn, HANDSHAKE_FAILURE,
+                                       leader, self->http_port);
     } else if (node) {
-      return __send_handshake_response(node_id, conn, HANDSHAKE_SUCCESS, NULL,
-                                       http_port);
+      return __send_handshake_response(self->node_id, conn, HANDSHAKE_SUCCESS,
+                                       NULL, self->http_port);
     } else {
-      int e = __append_cfg_change(this, RAFT_LOGTYPE_ADD_NONVOTING_NODE,
-                                  conn->addr.toIp().data(), m.hs.raft_port,
-                                  m.hs.http_port, m.hs.node_id);
+      int e = self->__append_cfg_change(
+          self, RAFT_LOGTYPE_ADD_NONVOTING_NODE, conn->addr.toIp().data(),
+          m.hs.raft_port, m.hs.http_port, m.hs.node_id);
       if (0 != e)
-        return __send_handshake_response(node_id, conn, HANDSHAKE_FAILURE, NULL,
-                                         http_port);
-      return __send_handshake_response(node_id, conn, HANDSHAKE_SUCCESS, NULL,
-                                       http_port);
+        return __send_handshake_response(self->node_id, conn, HANDSHAKE_FAILURE,
+                                         NULL, self->http_port);
+      return __send_handshake_response(self->node_id, conn, HANDSHAKE_SUCCESS,
+                                       NULL, self->http_port);
     }
   } break;
   case MSG_HANDSHAKE_RESPONSE:
@@ -201,21 +203,21 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
 
       /* We're being redirected to the leader */
       if (m.hsr.leader_port) {
-        peer_connection_t *nconn = __find_connection(
+        peer_connection_t *nconn = self->__find_connection(
             InetAddress{m.hsr.leader_host, m.hsr.leader_port});
         if (!nconn) {
-          nconn = __new_connection();
+          nconn = self->__new_connection();
           printf("Redirecting to %s:%d...\n", m.hsr.leader_host,
                  m.hsr.leader_port);
-          __connect_to_peer_at_host(nconn, m.hsr.leader_host,
-                                    m.hsr.leader_port);
+          self->__connect_to_peer_at_host(nconn, m.hsr.leader_host,
+                                          m.hsr.leader_port);
         }
       }
     } else {
       printf("Connected to leader: %s:%d\n", conn->addr.toIp().data(),
              conn->raft_port);
       if (!conn->node)
-        conn->node = raft_get_node((raft_server_t *)raft, m.hsr.node_id);
+        conn->node = raft_get_node((raft_server_t *)self->raft, m.hsr.node_id);
     }
     break;
   case MSG_LEAVE: {
@@ -223,9 +225,9 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
       printf("ERROR: no node\n");
       return 0;
     }
-    int e = __append_cfg_change(this, RAFT_LOGTYPE_REMOVE_NODE,
-                                conn->addr.toIp().data(), conn->raft_port,
-                                conn->http_port, raft_node_get_id(conn->node));
+    int e = self->__append_cfg_change(
+        self, RAFT_LOGTYPE_REMOVE_NODE, conn->addr.toIp().data(),
+        conn->raft_port, conn->http_port, raft_node_get_id(conn->node));
     if (0 != e)
       printf("ERROR: Leave request failed\n");
   } break;
@@ -236,13 +238,13 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
     break;
   case MSG_REQUESTVOTE: {
     msg_t msg = {.type = MSG_REQUESTVOTE_RESPONSE};
-    e = raft_recv_requestvote((raft_server_t *)raft, conn->node, &m.rv,
+    e = raft_recv_requestvote((raft_server_t *)self->raft, conn->node, &m.rv,
                               &msg.rvr);
     string fmt = "S(I$(II))";
     __peer_msg_send(conn, tpl_map(fmt.data(), &msg), bufs, buf);
   } break;
   case MSG_REQUESTVOTE_RESPONSE:
-    e = raft_recv_requestvote_response((raft_server_t *)raft, conn->node,
+    e = raft_recv_requestvote_response((raft_server_t *)self->raft, conn->node,
                                        &m.rvr);
     break;
   case MSG_APPENDENTRIES:
@@ -255,16 +257,16 @@ int RaftService::__deserialize_and_handle_msg(void *img, size_t sz,
     {
       /* this is a keep alive message */
       msg_t msg = {.type = MSG_APPENDENTRIES_RESPONSE};
-      e = raft_recv_appendentries((raft_server_t *)raft, conn->node, &m.ae,
-                                  &msg.aer);
+      e = raft_recv_appendentries((raft_server_t *)self->raft, conn->node,
+                                  &m.ae, &msg.aer);
 
       string fmt = "S(I$(IIII))";
       __peer_msg_send(conn, tpl_map(fmt.data(), &msg), bufs, buf);
     }
     break;
   case MSG_APPENDENTRIES_RESPONSE:
-    e = raft_recv_appendentries_response((raft_server_t *)raft, conn->node,
-                                         &m.aer);
+    e = raft_recv_appendentries_response((raft_server_t *)self->raft,
+                                         conn->node, &m.aer);
     // uv_cond_signal(&sv->appendentries_received);
     break;
   default:
@@ -409,7 +411,8 @@ void RaftService::__connect_to_peer_at_host(peer_connection_t *conn, char *host,
 }
 
 static int __raft_send_appendentries(raft_server_t *raft, void *user_data,
-                              raft_node_t *node, msg_appendentries_t *m) {
+                                     raft_node_t *node,
+                                     msg_appendentries_t *m) {
   Buffer bufs[3];
   auto conn = (peer_connection_t *)raft_node_get_udata(node);
 
@@ -489,7 +492,7 @@ RaftService::RaftService() {
   assert(nullptr == self);
   self = this;
 
-  auto &config = Config::Instance();
+  auto &config = yuzhi::Config::Instance();
   auto startable = config.get<bool>(this, "start");
   auto joinable = config.get<bool>(this, "join");
   auto host = config.get<std::string>(this, "host");
@@ -517,7 +520,9 @@ RaftService::RaftService() {
         &loop_, serverAddr, "RaftServer"));
     server_->setConnectionCallback(
         bind(&RaftService::onConnection, this, std::placeholders::_1));
-
+    server_->setMessageCallback(
+        bind(&RaftService::onMessage, this, std::placeholders::_1,
+             std::placeholders::_2, std::placeholders::_3));
     if (startable) {
       raft_become_leader((raft_server_t *)raft);
       /* We store membership configuration inside the Raft log.
@@ -559,3 +564,27 @@ void RaftService::onConnection(const TcpConnectionPtr &conn) {
     conn->setContext(conn1);
   }
 }
+
+/**
+ * @brief RaftService::onConnection
+ * @param conn
+ * @details like __on_peer_connection
+ */
+void RaftService::onMessage(const muduo::net::TcpConnectionPtr &conn,
+                            muduo::net::Buffer *buf,
+                            muduo::Timestamp receiveTime) {
+  if (!conn->connected()) {
+    spdlog::error("Connection is not connected");
+    return;
+  }
+  if (0 < buf->readableBytes()) {
+    SPDLOG_INFO("raft onMessage timesatmp:{}", receiveTime.toString());
+    auto conn1 = std::any_cast<peer_connection_t *>(conn->getContext());
+    assert(conn1);
+    auto bf = buf->retrieveAllAsString();
+    std::lock_guard<std::mutex> lock(mutex_);
+    tpl_gather(TPL_GATHER_MEM, bf.data(), bf.size(), &conn1->gt,
+               __deserialize_and_handle_msg, conn1);
+  }
+}
+} // namespace yuzhi::raft_engine::net

@@ -78,5 +78,11 @@
       "hash_set": "cpp",
       "hash_map": "cpp"
     },
-    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "fileheader.customMade": {
+      "Author": "Leo",
+      "Date": "Do not edit",
+      "LastEditors": "Leo", 
+      "LastEditTime": "Do not edit"
+    }
   }

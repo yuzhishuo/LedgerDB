@@ -1,8 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-04 17:46:31
- * @LastEditTime: 2022-02-06 20:45:09
- * @LastEditors: Leo
+ * @LastEditTime: 2022-02-07 23:06:20
+ * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/include/raft_engine/net/interface_raft.h
@@ -14,7 +14,7 @@
 #include <functional>
 #include <muduo/net/InetAddress.h>
 #include <optional>
-
+#include <utility/tpl/tpl.h>
 extern "C" {
 #include <raft.h>
 }
@@ -81,11 +81,10 @@ typedef enum {
   CONNECTED,
 } conn_status_e;
 
-
 typedef enum {
-    HANDSHAKE_FAILURE,
-    HANDSHAKE_SUCCESS,
-} handshake_state_e; 
+  HANDSHAKE_FAILURE,
+  HANDSHAKE_SUCCESS,
+} handshake_state_e;
 
 struct peer_connection_t {
 
@@ -96,6 +95,9 @@ struct peer_connection_t {
 
   /* tell if we need to connect or not */
   conn_status_e connection_status;
+
+  /* gather TPL message */
+  tpl_gather_t *gt;
 
   /* peer's raft node_idx */
   raft_node_t *node;

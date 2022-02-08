@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-06 01:16:38
+ * @LastEditTime: 2022-02-08 01:45:42
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -30,9 +30,12 @@ struct peer_connection_t;
 
 #include <condition_variable>
 #include <mutex>
-namespace yuzhi::raft_engine::net {
+int __deserialize_and_handle_msg(void *img, size_t sz, void *data);
+ namespace yuzhi::raft_engine::net {
 
-class RaftService : public IConfigurable {
+class RaftService : public  yuzhi::IConfigurable {
+
+  friend int __deserialize_and_handle_msg(void *img, size_t sz, void *data);
 
 public:
   RaftService();
@@ -41,6 +44,8 @@ public:
 
 public:
   void onConnection(const muduo::net::TcpConnectionPtr &conn);
+  void onMessage(const muduo::net::TcpConnectionPtr &conn,
+                 muduo::net::Buffer *buf, muduo::Timestamp receiveTime);
   peer_connection_t *__new_connection();
   void __connect_to_peer(peer_connection_t *peer);
   void __connect_to_peer_at_host(peer_connection_t *conn, char *host, int port);
@@ -51,7 +56,7 @@ public:
   int __append_cfg_change(RaftService *sv, raft_logtype_e change_type,
                           char *host, int raft_port, int http_port,
                           int node_id);
-  int __deserialize_and_handle_msg(void *img, size_t sz, void *data);
+
   peer_connection_t *__find_connection(const muduo::net::InetAddress &addr);
   void __delete_connection(peer_connection_t *conn);
 
@@ -61,7 +66,7 @@ public:
   int16_t getHttpPort() const { return http_port; }
 
 private:
-  std::mutex mutex;
+  std::mutex mutex_;
   std::condition_variable cond;
   int32_t node_id;
   void *raft;

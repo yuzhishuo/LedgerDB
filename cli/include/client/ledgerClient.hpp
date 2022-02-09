@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-08 22:59:45
  * @LastEditors: Leo
- * @LastEditTime: 2022-02-08 23:40:37
+ * @LastEditTime: 2022-02-09 17:23:57
  */
 
 #pragma once
@@ -12,6 +12,7 @@
 #include <grpcpp/grpcpp.h>
 #include <ledger_engine.grpc.pb.h>
 #include <ledger_engine.pb.h>
+#include <spdlog/spdlog.h>
 #include <string>
 namespace yuzhi::cli {
 
@@ -31,11 +32,12 @@ public:
     if (auto status = stub_->CreateLedger(&context, request, &response);
         status.ok()) {
       if (response.success()) {
+        spdlog::info(response.message());
         return true;
       }
-    } else {
-      return false;
     }
+    spdlog::error("CreateLedger failed");
+    return false;
   }
 
 private:

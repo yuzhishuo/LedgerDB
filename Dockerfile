@@ -1,19 +1,31 @@
-# GCC support can be specified at major, minor, or micro version
-# (e.g. 8, 8.2 or 8.2.0).
-# See https://hub.docker.com/r/library/gcc/ for all supported GCC
-# tags from Docker Hub.
-# See https://docs.docker.com/samples/library/gcc/ for more on how to use this image
-FROM gcc:latest
+FROM ubuntu:18.04
 
-# These commands copy your files into the specified directory in the image
-# and set that as the working location
-COPY . /usr/src/myapp
-WORKDIR /usr/src/myapp
+RUN apt update -y \
+    && apt install -y cmake ccache libssl-dev libcrypto++-dev \
+    libglib2.0-dev libltdl-dev libicu-dev libmysql++-dev \
+    libreadline-dev libmysqlclient-dev unixodbc-dev \
+    unixodbc-dev devscripts dupload fakeroot debhelper \
+    gcc-7 g++-7 unixodbc-dev devscripts dupload fakeroot debhelper \
+    liblld-5.0-dev libclang-5.0-dev liblld-5.0 \
+    build-essential autoconf libtool pkg-config \
+    libgflags-dev libgtest-dev \
+    && apt-get update -y \
+    && apt-get install -y gdb \
+    && apt-get install libspdlog-dev \
+    wget 
 
-# This command compiles your app using GCC, adjust for your source code
-RUN g++ -o myapp main.cpp
+RUN cd / 
 
-# This command runs your application, comment out this line to compile only
-CMD ["./myapp"]
+RUN git clone https://github.com/grpc/grpc.git && cd grpc && git checkout v1.24.3 && git submodule update --init \
+    && cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release && make install -j $(nproc || grep -c ^processor /proc/cpuinfo) \
+    && rm -rf /grpc/.build \
+    && cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release && make install -j $(nproc || grep -c ^processor /proc/cpuinfo)
 
-LABEL Name=exampleauthoritycpp Version=0.0.1
+RUN git clone --branch v1.9.2 https://github.com/gabime/spdlog.git && cd spdlog && mkdir build && cd build \
+    && cmake .. && make -j && make install
+
+
+RUN cd rocksdb && mkdir .build && cd .build &&  cmake .. -DCMAKE_BUILD_TYPE=Release && make -j $(nproc || grep -c ^processor /proc/cpuinfo) && make install -j $(nproc || grep -c ^processor /proc/cpuinfo)
+
+RUN git clone --branch v1.9.2 https://gitee.com/y980620641/spdlog.git && cd spdlog && mkdir build && cd build \
+    && cmake .. && make -j && make install

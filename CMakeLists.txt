@@ -13,6 +13,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+add_definitions(
+  -DMUDUO_BUILD_EXAMPLES=OFF
+)
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
@@ -52,14 +55,14 @@ foreach(OBJ ${PROTO_FILES})
     list(APPEND SRCS ${grpc_srcs})
     message(STATUS "Compiling ${_PROTOBUF_PROTOC}")
     add_custom_command(
-      OUTPUT "${proto_srcs}" "${proto_hdrs}" "${grpc_srcs}" "${grpc_hdrs}"
+      OUTPUT ${proto_srcs} ${proto_hdrs} ${grpc_srcs} ${grpc_hdrs}
       COMMAND ${_PROTOBUF_PROTOC}
-      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}/protos"
-        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/protos"
-        -I "${CMAKE_CURRENT_LIST_DIR}/protos"
-        --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-        "${OBJ}"
-      DEPENDS "${OBJ}")
+      ARGS --grpc_out ${CMAKE_CURRENT_BINARY_DIR}/protos
+        --cpp_out ${CMAKE_CURRENT_BINARY_DIR}/protos
+        -I ${CMAKE_CURRENT_LIST_DIR}/protos
+        --plugin=protoc-gen-grpc=${_GRPC_CPP_PLUGIN_EXECUTABLE}
+        ${OBJ}
+      DEPENDS ${OBJ})
 endforeach()
 
 # raft 
@@ -69,8 +72,7 @@ add_custom_target(build_raft ALL
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft
         COMMENT "Original raft makefile target")
 
-        message(status "${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft/libraft.a")
-add_library(raft STATIC IMPORTED)
+        add_library(raft STATIC IMPORTED)
 set_property(TARGET raft APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
 set_target_properties(raft PROPERTIES IMPORTED_LOCATION_NOCONFIG ${RAFT_LIBRARY})
 
@@ -84,11 +86,13 @@ include_directories(3rdParty/muduo)
 include_directories(build/protos)
 include_directories(include)
 
-add_subdirectory(cli)
+
 
 aux_source_directory(src DIR_SRCS)
 add_executable(Ledger ${DIR_SRCS} ${SRCS} main.cpp )
 
+add_subdirectory(cli cli EXCLUDE_FROM_ALL)
+# add_dependencies(Ledger Cli)
 add_dependencies(Ledger raft)
 
 target_link_libraries(Ledger

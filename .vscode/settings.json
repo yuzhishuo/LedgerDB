@@ -2,6 +2,12 @@
     "cmake.configureSettings": {
       "CMAKE_TOOLCHAIN_FILE": "/home/yuzhi/projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
+    "cmake.debugConfig": {
+      "args": [
+          "--Create=1",
+          "--name=1",
+      ]
+    },
     "files.associations": {
       "functional": "cpp",
       "array": "cpp",

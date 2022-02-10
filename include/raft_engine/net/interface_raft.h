@@ -1,8 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-04 17:46:31
- * @LastEditTime: 2022-02-07 23:06:20
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-02-09 21:15:56
+ * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/include/raft_engine/net/interface_raft.h
@@ -22,9 +22,9 @@ extern "C" {
 #define IP_STR_LEN strlen("111.111.111.111")
 
 typedef struct {
-  int raft_port;
-  int http_port;
-  int node_id;
+  uint16_t raft_port;
+  uint16_t http_port;
+  uint16_t node_id;
   char host[IP_STR_LEN];
 } entry_cfg_change_t;
 
@@ -73,7 +73,7 @@ typedef struct {
     msg_appendentries_response_t aer;
   };
   int padding[100];
-} msg_t; // size 440
+} msg_t; // size 456
 
 typedef enum {
   DISCONNECTED,

@@ -1,11 +1,11 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-08 01:45:42
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-02-10 22:04:42
+ * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /example-authority-cpp/include/raft_engine/net/RaftService.hpp
+ * @FilePath: /Ledger/include/raft_engine/net/RaftService.hpp
  */
 #pragma once
 
@@ -13,8 +13,8 @@
 #include <memory>
 #include <muduo/net/EventLoop.h>
 #include <spdlog/spdlog.h>
+#include <store/PersistenceStore.h>
 #include <unordered_map>
-
 extern "C" {
 #include <raft.h>
 #include <raft_log.h>
@@ -30,35 +30,50 @@ struct peer_connection_t;
 
 #include <condition_variable>
 #include <mutex>
-int __deserialize_and_handle_msg(void *img, size_t sz, void *data);
- namespace yuzhi::raft_engine::net {
+namespace yuzhi::raft_engine::net {
 
-class RaftService : public  yuzhi::IConfigurable {
+class RaftService : public yuzhi::IConfigurable {
 
   friend int __deserialize_and_handle_msg(void *img, size_t sz, void *data);
+  friend peer_connection_t *__new_connection();
+  friend void __connect_to_peer(peer_connection_t *peer);
+  friend void __connect_to_peer_at_host(peer_connection_t *conn, char *host,
+                                        int port);
+
+  friend void __send_handshake(peer_connection_t *conn);
+  friend void
+  __on_connection_accepted_by_peer(peer_connection_t *data,
+                                   const muduo::net::TcpConnectionPtr &conn);
+
+  friend int __append_cfg_change(RaftService *sv, raft_logtype_e change_type,
+                                 char *host, int raft_port, int http_port,
+                                 int node_id);
+  friend int __raft_applylog(raft_server_t *raft, void *udata,
+                             raft_entry_t *ety, raft_index_t entry_idx);
+  friend peer_connection_t *
+  __find_connection(const muduo::net::InetAddress &addr);
+  friend void __delete_connection(peer_connection_t *conn);
+  friend int __offer_cfg_change(raft_server_t *raft, const unsigned char *data,
+                                raft_logtype_e change_type);
+
+  friend int __raft_persist_vote(raft_server_t *raft, void *udata,
+                                 const int voted_for);
+  friend int __raft_persist_term(raft_server_t *raft, void *udata,
+                                 raft_term_t current_term, raft_node_id_t vote);
+  friend int __raft_persist_term(raft_server_t *raft, void *udata,
+                                 raft_term_t current_term, raft_node_id_t vote);
+  friend int __raft_persist_vote(raft_server_t *raft, void *udata,
+                                 const int voted_for);
 
 public:
   RaftService();
   virtual ~RaftService() {}
   virtual const char *Field() const override { return "raft"; }
-
+  
 public:
   void onConnection(const muduo::net::TcpConnectionPtr &conn);
   void onMessage(const muduo::net::TcpConnectionPtr &conn,
                  muduo::net::Buffer *buf, muduo::Timestamp receiveTime);
-  peer_connection_t *__new_connection();
-  void __connect_to_peer(peer_connection_t *peer);
-  void __connect_to_peer_at_host(peer_connection_t *conn, char *host, int port);
-  void
-  __on_connection_accepted_by_peer(peer_connection_t *data,
-                                   const muduo::net::TcpConnectionPtr &conn);
-
-  int __append_cfg_change(RaftService *sv, raft_logtype_e change_type,
-                          char *host, int raft_port, int http_port,
-                          int node_id);
-
-  peer_connection_t *__find_connection(const muduo::net::InetAddress &addr);
-  void __delete_connection(peer_connection_t *conn);
 
 public:
   int32_t getNodeId() const { return node_id; }
@@ -74,7 +89,7 @@ private:
   muduo::net::EventLoop loop_;
   std::unique_ptr<muduo::net::TcpServer> server_;
   std::vector<std::unique_ptr<muduo::net::TcpClient>> cls_;
-
+  PersistenceStore persistenceStore;
   int16_t http_port;
   int16_t raft_port;
 };

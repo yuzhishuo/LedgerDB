@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-10 22:54:42
+ * @LastEditTime: 2022-02-11 16:45:27
  * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -601,15 +601,19 @@ raft_cbs_t raft_funcs = {
 
 RaftService::RaftService() : persistenceStore("raft", "raft_store") {
 
-  assert(nullptr == self);
+  assert(!self);
   self = this;
 
   auto &config = yuzhi::Config::Instance();
   auto startable = config.get<bool>(this, "start");
   auto joinable = config.get<bool>(this, "join");
-  auto host = config.get<std::string>(this, "host");
-  auto raft_port = config.get<int>(this, "raft_port");
+  auto host = config.get<std::string>(this, "server_address");
+  auto raft_port = config.get<int>(this, "server_port");
   http_port = config.get<int>(this, "http_port");
+
+  SPDLOG_INFO("RaftService::RaftServicev startable: {} joinable: {} host: {} "
+              "raft_port: {} http_port: {}",
+              startable, joinable, host, raft_port, http_port);
 
   raft = raft_new();
 
@@ -628,6 +632,7 @@ RaftService::RaftService() : persistenceStore("raft", "raft_store") {
     uint16_t port = static_cast<uint16_t>(raft_port);
     InetAddress serverAddr(port);
 
+    SPDLOG_INFO("bind message callback on Connection && Message");
     server_ = std::move(std::make_unique<muduo::net::TcpServer>(
         &loop_, serverAddr, "RaftServer"));
     server_->setConnectionCallback(
@@ -661,18 +666,19 @@ RaftService::RaftService() : persistenceStore("raft", "raft_store") {
 
 void RaftService::onConnection(const TcpConnectionPtr &conn) {
 
-  spdlog::info("{} -> {} is {}", conn->localAddress().toIpPort(),
-               conn->peerAddress().toIpPort(),
-               conn->connected() ? "UP" : "DOWN");
+  SPDLOG_INFO("{} -> {} is {}", conn->localAddress().toIpPort(),
+              conn->peerAddress().toIpPort(),
+              conn->connected() ? "UP" : "DOWN");
 
   if (conn->connected()) {
-    spdlog::info("Connection established");
     peer_connection_t *conn1 = __new_connection();
     conn1->connection_status = CONNECTED;
     conn1->node = NULL;
     conn1->peer = conn;
     conn1->addr = conn->peerAddress();
-
+    SPDLOG_INFO(
+        "Connection established, assemble peer with coonection, addr: {}",
+        conn1->addr.toIpPort());
     conn->setContext(conn1);
   }
 }
@@ -705,10 +711,12 @@ std::optional<Error> RaftService::Save(const std::string &key,
   raft_node_t *leader = raft_get_current_leader_node((raft_server_t *)raft);
 
   if (!leader) {
+    SPDLOG_ERROR("inter error, No leader node");
     return Error::UnLeader();
   }
 
   if (raft_node_get_id(leader) != node_id) {
+    SPDLOG_ERROR("inter error, leader node is not me");
     return Error::Redirect();
   }
 
@@ -718,22 +726,27 @@ std::optional<Error> RaftService::Save(const std::string &key,
   entry.data.buf = (void *)en.data();
   entry.data.len = sizeof(en.size());
 
+  SPDLOG_INFO("raft_append_entry, node_id : {}, entry.id : {}, data:{},  "
+              "entry.data.len: {} ",
+              node_id, entry.id, key, entry.data.len);
+
   std::unique_lock<std::mutex> lk(mutex_);
   SPDLOG_DEBUG("raft_append_entry will be lock"); // only test
   lk.lock();
   msg_entry_response_t r;
   if (auto e = raft_recv_entry((raft_server_t *)raft, &entry, &r); e != 0) {
+    SPDLOG_ERROR("raft inter error, node_id : {} ", node_id);
     return Error::RaftError();
   }
 
   int done = 0, tries = 0;
   do {
     if (3 < tries) {
-      SPDLOG_INFO("ERROR: failed to commit entry");
+      SPDLOG_ERROR("failed to commit entry");
       return Error::RaftError();
     }
 
-    cond.wait_for(lk, std::chrono::milliseconds(1000));
+    cond.wait_for(lk, std::chrono::milliseconds(50 * 1000));
 
     auto e = raft_msg_entry_response_committed((raft_server_t *)raft, &r);
     tries += 1;
@@ -747,6 +760,7 @@ std::optional<Error> RaftService::Save(const std::string &key,
       break;
     case -1:
       lk.unlock();
+      SPDLOG_ERROR("raft inter error, node_id : {} ", node_id);
       return Error::RaftError();
     }
   } while (!done);

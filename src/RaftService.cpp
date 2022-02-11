@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-10 09:48:07
+ * @LastEditTime: 2022-02-10 22:54:42
  * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -698,5 +698,59 @@ void RaftService::onMessage(const muduo::net::TcpConnectionPtr &conn,
     tpl_gather(TPL_GATHER_MEM, bf.data(), bf.size(), &conn1->gt,
                __deserialize_and_handle_msg, conn1);
   }
+}
+
+std::optional<Error> RaftService::Save(const std::string &key,
+                                       const std::string &value) {
+  raft_node_t *leader = raft_get_current_leader_node((raft_server_t *)raft);
+
+  if (!leader) {
+    return Error::UnLeader();
+  }
+
+  if (raft_node_get_id(leader) != node_id) {
+    return Error::Redirect();
+  }
+
+  auto en = key + "\n" + value;
+  msg_entry_t entry = {};
+  entry.id = rand();
+  entry.data.buf = (void *)en.data();
+  entry.data.len = sizeof(en.size());
+
+  std::unique_lock<std::mutex> lk(mutex_);
+  SPDLOG_DEBUG("raft_append_entry will be lock"); // only test
+  lk.lock();
+  msg_entry_response_t r;
+  if (auto e = raft_recv_entry((raft_server_t *)raft, &entry, &r); e != 0) {
+    return Error::RaftError();
+  }
+
+  int done = 0, tries = 0;
+  do {
+    if (3 < tries) {
+      SPDLOG_INFO("ERROR: failed to commit entry");
+      return Error::RaftError();
+    }
+
+    cond.wait_for(lk, std::chrono::milliseconds(1000));
+
+    auto e = raft_msg_entry_response_committed((raft_server_t *)raft, &r);
+    tries += 1;
+    switch (e) {
+    case 0:
+      /* not committed yet */
+      break;
+    case 1:
+      done = 1;
+      lk.unlock();
+      break;
+    case -1:
+      lk.unlock();
+      return Error::RaftError();
+    }
+  } while (!done);
+
+  return std::nullopt;
 }
 } // namespace yuzhi::raft_engine::net

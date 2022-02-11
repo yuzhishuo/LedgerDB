@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-10 22:04:42
+ * @LastEditTime: 2022-02-11 13:39:29
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -66,10 +66,20 @@ class RaftService : public yuzhi::IConfigurable {
                                  const int voted_for);
 
 public:
+  std::optional<Error> Save(const std::string &key, const std::string &value);
+
+public:
+  static RaftService &Instance() {
+    static RaftService instance;
+    return instance;
+  }
+
+public:
   RaftService();
   virtual ~RaftService() {}
   virtual const char *Field() const override { return "raft"; }
-  
+
+public:
 public:
   void onConnection(const muduo::net::TcpConnectionPtr &conn);
   void onMessage(const muduo::net::TcpConnectionPtr &conn,
@@ -80,6 +90,7 @@ public:
   int16_t getRaftPort() const { return raft_port; }
   int16_t getHttpPort() const { return http_port; }
 
+public:
 private:
   std::mutex mutex_;
   std::condition_variable cond;

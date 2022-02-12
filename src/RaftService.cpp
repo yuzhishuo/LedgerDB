@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-11 16:45:27
+ * @LastEditTime: 2022-02-13 01:04:07
  * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -68,7 +68,11 @@ int __offer_cfg_change(raft_server_t *raft, const unsigned char *data,
     assert(0);
   }
 
-  raft_node_set_udata(conn->node, conn);
+  if (conn->node || !raft_is_leader(raft)) {
+    raft_node_set_udata(conn->node, conn);
+  } else if (!conn->node) {
+    SPDLOG_ERROR("conn->node is null");
+  }
 
   return 0;
 }
@@ -186,6 +190,7 @@ void __send_handshake(peer_connection_t *conn) {
 int __send_handshake_response(int node_id, peer_connection_t *conn,
                               handshake_state_e success, raft_node_t *leader,
                               int16_t http_port) {
+  SPDLOG_INFO("send handshake response");
   Buffer bufs[1];
   char buf[RAFT_BUFLEN];
 
@@ -354,7 +359,7 @@ int __deserialize_and_handle_msg(void *img, size_t sz, void *data) {
   case MSG_APPENDENTRIES_RESPONSE:
     e = raft_recv_appendentries_response((raft_server_t *)self->raft,
                                          conn->node, &m.aer);
-    // uv_cond_signal(&sv->appendentries_received);
+    self->cond.notify_all();
     break;
   default:
     printf("unknown msg\n");
@@ -366,6 +371,8 @@ int __deserialize_and_handle_msg(void *img, size_t sz, void *data) {
 int __append_cfg_change(RaftService *sv, raft_logtype_e change_type, char *host,
                         int raft_port, int http_port, int node_id) {
   // FIXME: memory leak
+  spdlog::info("Appending cfg change: {} {} {} {} {}", change_type, host,
+               raft_port, http_port, node_id);
   entry_cfg_change_t *change = (entry_cfg_change_t *)calloc(1, sizeof(*change));
   change->raft_port = raft_port;
   change->http_port = http_port;
@@ -383,8 +390,11 @@ int __append_cfg_change(RaftService *sv, raft_logtype_e change_type, char *host,
 
   };
   msg_entry_response_t r;
-  if (int e = raft_recv_entry((raft_server_t *)self->raft, &entry, &r); 0 != e)
-    return -1;
+  if (int e = raft_recv_entry((raft_server_t *)self->raft, &entry, &r);
+      0 != e) {
+    printf("ERROR: failed to append entry\n");
+    return e;
+  }
   return 0;
 }
 
@@ -440,7 +450,52 @@ int __raft_persist_term(raft_server_t *raft, void *udata,
 // TODO: import this from raft.c
 static int __raft_logentry_offer(raft_server_t *raft, void *udata,
                                  raft_entry_t *ety, raft_index_t ety_idx) {
-  return -1;
+  SPDLOG_INFO("__raft_logentry_offer");
+
+  if (raft_entry_is_cfg_change(ety))
+    __offer_cfg_change(raft, (const unsigned char *)ety->data.buf,
+                       (raft_logtype_e)ety->type);
+
+  Buffer bufs[1];
+  char buf[RAFT_BUFLEN];
+  string fmt = "S(III)";
+  __peer_msg_serialize(tpl_map(fmt.data(), ety), bufs, buf);
+
+  /* 1. put metadata */
+  ety_idx <<= 1;
+  if (auto e = self->Save(to_string(ety_idx), bufs->retrieveAllAsString()); e) {
+    SPDLOG_ERROR("__raft_logentry_offer: {}", e->message());
+    return -1;
+  }
+
+  /* 2. put entry */
+  ety_idx |= 1;
+  if (auto e = self->Save(to_string(ety_idx), (char *)ety->data.buf); e) {
+    SPDLOG_ERROR("__raft_logentry_offer: {}", e->message());
+    return -1;
+  }
+
+  /* So that our entry points to a valid buffer, get the mmap'd buffer.
+   * This is because the currently pointed to buffer is temporary. */
+  // e = mdb_txn_begin(sv->db_env, NULL, 0, &txn);
+  // if (0 != e)
+  //   mdb_fatal(e);
+
+  // e = mdb_get(txn, sv->entries, &key, &val);
+  // switch (e) {
+  // case 0:
+  //   break;
+  // default:
+  //   mdb_fatal(e);
+  // }
+  // ety->data.buf = val.mv_data;
+  // ety->data.len = val.mv_size;
+
+  // e = mdb_txn_commit(txn);
+  // if (0 != e)
+  //   mdb_fatal(e);
+
+  return 0;
 }
 
 /** Raft callback for deleting the most recent entry from the log.
@@ -625,7 +680,8 @@ RaftService::RaftService() : persistenceStore("raft", "raft_store") {
   }
 
   raft_set_callbacks((raft_server_t *)raft, &raft_funcs, this);
-  raft_add_node((raft_server_t *)raft, NULL, node_id, 1);
+  auto node = raft_add_node((raft_server_t *)raft, NULL, node_id, 1);
+  assert(node);
 
   if (startable || joinable) {
 
@@ -646,8 +702,8 @@ RaftService::RaftService() : persistenceStore("raft", "raft_store") {
        * This configuration change is going to be the initial membership
        * configuration (ie. original node) inside the Raft log. The
        * first configuration is for a cluster of 1 node. */
-      __append_cfg_change(this, RAFT_LOGTYPE_ADD_NODE, host.data(), (raft_port),
-                          (http_port), node_id);
+      __append_cfg_change(this, RAFT_LOGTYPE_ADD_NODE, host.data(), raft_port,
+                          http_port, node_id);
     } else {
       // joinable， 会连接到集群 不确定是不是 leader
       peer_connection_t *conn = __new_connection();
@@ -731,11 +787,13 @@ std::optional<Error> RaftService::Save(const std::string &key,
               node_id, entry.id, key, entry.data.len);
 
   std::unique_lock<std::mutex> lk(mutex_);
-  SPDLOG_DEBUG("raft_append_entry will be lock"); // only test
-  lk.lock();
+  SPDLOG_INFO("raft_append_entry will be lock"); // only test
+
   msg_entry_response_t r;
   if (auto e = raft_recv_entry((raft_server_t *)raft, &entry, &r); e != 0) {
     SPDLOG_ERROR("raft inter error, node_id : {} ", node_id);
+    SPDLOG_ERROR("raft error code : {}", e);
+    lk.unlock();
     return Error::RaftError();
   }
 

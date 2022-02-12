@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-13 01:04:07
+ * @LastEditTime: 2022-02-13 01:38:04
  * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -448,8 +448,8 @@ int __raft_persist_term(raft_server_t *raft, void *udata,
 
 /** Raft callback for appending an item to the log */
 // TODO: import this from raft.c
-static int __raft_logentry_offer(raft_server_t *raft, void *udata,
-                                 raft_entry_t *ety, raft_index_t ety_idx) {
+int __raft_logentry_offer(raft_server_t *raft, void *udata, raft_entry_t *ety,
+                          raft_index_t ety_idx) {
   SPDLOG_INFO("__raft_logentry_offer");
 
   if (raft_entry_is_cfg_change(ety))
@@ -463,14 +463,18 @@ static int __raft_logentry_offer(raft_server_t *raft, void *udata,
 
   /* 1. put metadata */
   ety_idx <<= 1;
-  if (auto e = self->Save(to_string(ety_idx), bufs->retrieveAllAsString()); e) {
+  if (auto e = self->persistenceStore.save(to_string(ety_idx),
+                                           bufs->retrieveAllAsString());
+      e) {
     SPDLOG_ERROR("__raft_logentry_offer: {}", e->message());
     return -1;
   }
 
   /* 2. put entry */
   ety_idx |= 1;
-  if (auto e = self->Save(to_string(ety_idx), (char *)ety->data.buf); e) {
+  if (auto e = self->persistenceStore.save(to_string(ety_idx),
+                                           (char *)ety->data.buf);
+      e) {
     SPDLOG_ERROR("__raft_logentry_offer: {}", e->message());
     return -1;
   }
@@ -538,6 +542,11 @@ peer_connection_t *__new_connection() {
   conn->next = self->conns;
   self->conns = conn;
   return conn;
+}
+
+int __raft_logget_node_id(raft_server_t *raft, void *udata, raft_entry_t *ety,
+                          raft_index_t ety_idx) {
+  return self->node_id;
 }
 
 void __on_connection_accepted_by_peer(peer_connection_t *data,
@@ -785,15 +794,14 @@ std::optional<Error> RaftService::Save(const std::string &key,
   SPDLOG_INFO("raft_append_entry, node_id : {}, entry.id : {}, data:{},  "
               "entry.data.len: {} ",
               node_id, entry.id, key, entry.data.len);
-
-  std::unique_lock<std::mutex> lk(mutex_);
+  // dead loop
+  std::unique_lock<std::mutex> lk(mutex_, std::try_to_lock);
   SPDLOG_INFO("raft_append_entry will be lock"); // only test
 
   msg_entry_response_t r;
   if (auto e = raft_recv_entry((raft_server_t *)raft, &entry, &r); e != 0) {
     SPDLOG_ERROR("raft inter error, node_id : {} ", node_id);
     SPDLOG_ERROR("raft error code : {}", e);
-    lk.unlock();
     return Error::RaftError();
   }
 

@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-11 16:36:03
+ * @LastEditTime: 2022-02-13 01:37:24
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -61,6 +61,10 @@ class RaftService : public yuzhi::IConfigurable {
                                  raft_term_t current_term, raft_node_id_t vote);
   friend int __raft_persist_vote(raft_server_t *raft, void *udata,
                                  const int voted_for);
+  friend int __raft_logentry_offer(raft_server_t *raft, void *udata,
+                                   raft_entry_t *ety, raft_index_t ety_idx);
+  friend int __raft_logget_node_id(raft_server_t *raft, void *udata,
+                                   raft_entry_t *ety, raft_index_t ety_idx);
 
 public:
   std::optional<Error> Save(const std::string &key, const std::string &value);

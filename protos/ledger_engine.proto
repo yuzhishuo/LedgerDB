@@ -1,0 +1,48 @@
+syntax = "proto3";
+package ledger_engine;
+// import "user_engine.proto";
+
+
+message Ledger 
+{
+    string name = 1;
+    uint32 id = 2;
+    // user_engine.User Owner = 3;
+    string Onwer=3;
+    string Regulator = 4;
+    repeated string Commons = 5;
+    repeated string Readonlys = 6;
+}
+
+// /ledger/delete/regulator/:regulatorName
+// /ledger/delete/common/:commonName
+// /ledger/delete/readonly/:readonlyName
+// /ledger/delete/ledger/:ledgerName
+
+
+// Ledger get("/ledger/get/ledger/:ledgerName")
+// {
+//     Ledger ledger = Ledger.GetLedger(ledgerName);
+//     return ledger;
+// }
+
+// boolean isCommon(string commonName)
+// {
+//     return Ledger.IsCommon(commonName);
+// }
+
+message Response
+{
+    string message = 1;
+    bool success = 2;
+}
+
+message CreateLedgerRequest
+{
+    string ledgerName = 1;
+}
+
+service LedgerService
+{
+    rpc CreateLedger(CreateLedgerRequest) returns (Response);
+}

@@ -1,35 +1,76 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-01-25 21:35:46
+ * @LastEditTime: 2022-02-13 21:54:12
+ * @LastEditors: Leo
+ * @Description: 打开koroFileHeader查看配置 进行设置:
+ * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: /LedgerDB/main.cpp
+ */
+
 #include <iostream>
-#include <casbin/casbin.h>
 #include <memory>
 
-int main(int, char **)
-{
+#include <rocksdb/db.h>
 
-    // auto e = casbin::Enforcer("rbac/rbac_model.conf", "rbac/rbac_policy.csv");
+#include "AuthorityCertification.h"
+#include "Spd.h"
+#include "User.h"
+#include "store/PersistenceStore.h"
 
-    auto m = std::make_shared<casbin::Model>("rbac/rbac_model.conf");
+// tmp
+#include "Ledgers.h"
+#include "Users.h"
+#include "interfaces/IUnique.h"
+#include <string>
+extern "C" {
+#include <raft.h>
+}
+#include <config/Config.h>
+#include <raft_engine/RaftEngine.h>
+#include <service/LedgerService.hpp>
 
-    auto a = std::make_shared<casbin::FileAdapter>("rbac/rbac_policy.csv");
+#include <grpcpp/ext/proto_server_reflection_plugin.h>
+#include <grpcpp/grpcpp.h>
+#include <grpcpp/health_check_service_interface.h>
 
-    auto e = casbin::Enforcer((m), std::dynamic_pointer_cast<casbin::Adapter>(a));
+namespace spd = spdlog;
+using namespace std;
+using namespace grpc;
+namespace yuzhi {
+class ledger final : public IConfigurable {
 
-    auto sub = "alice";
-    auto obj = "data1";
-    auto act = "read";
+public:
+  ledger() = default;
+  virtual ~ledger() {}
+  virtual const char *Field() const override { return "ledger"; }
 
-    auto ok = e.Enforce({sub, obj, act});
+  void start() {
 
-    if (ok)
-    {
-        std::cout << "auth sucessor" << std::endl;
-    }
+    auto &config = yuzhi::Config::Instance();
+    auto prot = config.get<int>(this, "server_port");
+    // grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+    ServerBuilder builder;
+    yuzhi::service::LedgerService ledgerService;
+    std::string service_address = "[::]:" + to_string(prot);
 
-    auto roles = e.GetRolesForUser(sub);
+    int selected_port = 0;
+    // TODO: repeat listen port, need to fix
+    builder.AddListeningPort(service_address, InsecureServerCredentials(),
+                             &selected_port);
+    // builder.set_health_check_service(new HealthCheckServiceImpl());
+    builder.RegisterService(&ledgerService);
+    auto server = builder.BuildAndStart();
+    SPDLOG_INFO("start ledger service at {}", service_address);
+    server->Wait();
+  }
+};
+} // namespace yuzhi
 
-    for (auto role : roles)
-    {
-        std::cout << "sub: " << sub << ",role is " << role << std::endl;
-    }
+int main(int argc, char **argv) {
+  yuzhi::raft_engine::net::RaftService::Instance();
+  yuzhi::ledger ledger;
+  ledger.start();
 
-    return 0;
+  return 0;
 }

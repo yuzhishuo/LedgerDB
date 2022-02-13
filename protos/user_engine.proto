@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package user_engine;
+
+enum Role
+{
+    REGULATOR = 0;
+    COMMON = 1;
+    READONLY = 2;
+    DBA = 3;
+}
+
+message User
+{
+    int64 id = 1;
+    string name = 2;
+    string password = 3;
+    string public_key = 4;
+    Role role = 5;
+}

@@ -1,0 +1,112 @@
+syntax = "proto3";
+package raft;
+
+import "google/protobuf/any.proto";
+
+
+enum RaftState {
+    follower = 0;
+    candidate = 1;
+    leader = 2;
+}
+
+message Node
+{
+    google.protobuf.Any udata = 1;
+    int64 next_idx = 2;
+    int64 match_idx = 3;
+    int64 flags = 4;
+    int64 id = 5;
+}
+
+
+// message 
+
+message Entry {}
+
+message VolatileState {
+   
+    // 已知的最大的已经被提交的日志条目的索引值
+    int64 commitIndex = 4;
+    // 最后被应用到状态机的日志条目索引值（初始化为 0，持续递增）
+    int64 lastApplied = 5;
+}
+
+message PersistentState {
+
+    //  服务器最后一次知道的任期号（初始化为 0，持续递增）
+    int64 currentTerm = 1;
+    // 投记录在当前任期内给哪个Candidate投过票
+    int64 votedFor = 2;
+    // 日志条目集：每一个条目包含一个用户状态机执行的指令，和收到时的任期号
+    repeated Entry log = 3;
+}
+
+message leaderState {
+    repeated int64 nextIndex = 1;
+    repeated int64 matchIndex = 2;
+}
+
+message RequestVote {
+
+    //当前任期, 通过任期号的大小与 其他 Candidate 比较 竞争 Leader
+    int64 term = 1;
+    // 发起投票的候选人的 id
+    int64 candidateId = 2;
+    // 发起投票的候选人的本地日志最后一条的 index
+    int64 lastLogIndex = 3;
+    // 发起投票的候选人的本地日志最后一条的 term (任期号)
+    int64 lastLogTerm = 4;
+}
+
+message RequestVoteResponse {
+    // node 的任期号，Candidate根据投票结果和node的任期号来更新自己的任期号
+    int64 term = 1;
+    // 投票结果，如果node给Candidate投票则为true
+    bool voteGranted = 2;
+}
+
+message AppendEntries {
+    // Leader当前的任期号
+    int64 term = 1;
+    // 最新日志的前一条日志的index，用于Follower确认与Leader的日志完全一致
+    int64 prevLogIndex = 2;
+    // 最新日志的前一条日志的任期号term
+    int64 prevLogTerm = 3;
+    // leader当前已经确认提交到状态机FSM的日志索引index，这意味着Follower也可以安全地将该索引index以前的日志提交
+    int64 leaderCommit = 4;
+    // 这条添加日志消息中携带的日志数组
+    repeated Entry entries = 5; // 包含长度为n的日志条目
+    // 这条添加日志消息携带的日志条数，该实现中最多只有一条日志
+    int64 n_entries =6;
+}
+
+message AppendEntriesResponse {
+    // Leader当前的任期号
+    int64 term = 1;
+    bool success = 2;
+
+    // 下面两个字段不是Raft论文中规定的字段:
+    // 用来优化日志追加过程，以加速日志的追加。Raft原文中的追加过程是一次只能追加一条日志。
+    /** 处理添加日志请求后本地的最大日志索引 */
+    int32 current_idx=3;
+    /** 从添加日志请求中接受的第一条日志索引 */
+    int32 first_idx=4;
+}
+
+message KeepAlive {
+    int64 term = 1;
+    int64 leaderId = 2;
+}
+
+message KeepAliveResponse {
+    int64 term = 1;
+    bool success = 2;
+}
+
+
+service Raft {
+    rpc RRequestVote(RequestVote) returns (RequestVoteResponse);
+    rpc RAppendEntries(AppendEntries) returns (AppendEntriesResponse);
+ }
+ 

@@ -1,0 +1,22 @@
+
+syntax = "proto3";
+
+package example;
+
+service Example {
+    rpc HealthyStatus (Empty) returns (GeneralReply) {}
+    rpc Register(User) returns (GeneralReply) {}
+}
+
+message Empty{
+}
+
+message GeneralReply{
+    int32 error_code = 1;
+    string message = 2;
+}
+
+message User {
+    string name = 1;
+    string  password  = 2;
+}

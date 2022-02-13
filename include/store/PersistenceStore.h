@@ -4,9 +4,11 @@
 #include <rocksdb/utilities/optimistic_transaction_db.h>
 #include <rocksdb/utilities/transaction.h>
 
+#include <spdlog/spdlog.h>
+
+#include <filesystem>
 #include <memory>
 #include <mutex>
-#include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
 
@@ -22,6 +24,14 @@ public:
                    const std::string &path = db_name)
       : db_path_(std::string(default_db_path) + path), db_(nullptr),
         options_(rocksdb::Options()), family_(family), handles{} {
+
+    if (std::filesystem::exists(db_path_) ||
+        std::filesystem::create_directories(db_path_)) {
+      SPDLOG_INFO("create db path {}", db_path_);
+    } else {
+      SPDLOG_ERROR("create db path {} failed", db_path_);
+      exit(1);
+    }
     _RockdbInit();
   }
 
@@ -99,8 +109,8 @@ public:
     {
       SPDLOG_INFO("PersistenceStore save key {}, value {}", key, value);
       std::string old_value;
-      if (auto read_status = db_->Get(rocksdb::ReadOptions(),
-                                              handles[1], key, &old_value);
+      if (auto read_status =
+              db_->Get(rocksdb::ReadOptions(), handles[1], key, &old_value);
           read_status.ok()) {
         return Error{"Key already exists"};
       }

@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-13 01:37:24
+ * @LastEditTime: 2022-02-13 22:50:57
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -77,7 +77,7 @@ public:
 
 public:
   RaftService();
-  virtual ~RaftService() {}
+  virtual ~RaftService() = default;
   virtual const char *Field() const override { return "raft"; }
 
 public:
@@ -96,7 +96,7 @@ private:
   std::mutex mutex_;
   std::condition_variable cond;
   int32_t node_id;
-  void *raft;
+  raft_server_t *raft;
   peer_connection_t *conns = nullptr;
   muduo::net::EventLoop loop_;
   std::unique_ptr<muduo::net::TcpServer> server_;

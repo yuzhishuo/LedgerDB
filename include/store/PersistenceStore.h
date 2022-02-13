@@ -88,7 +88,7 @@ public:
   }
 
   /**
-   * @brief save object to storage with key,  atomically
+   * @brief save object to storage with key, atomically
    *
    * @param key
    * @param value
@@ -97,10 +97,11 @@ public:
   virtual std::optional<Error> save(const std::string &key,
                                     const std::string &value) override {
     {
+      SPDLOG_INFO("PersistenceStore save key {}, value {}", key, value);
       std::string old_value;
-      if (auto read_status = db_->KeyMayExist(rocksdb::ReadOptions(),
+      if (auto read_status = db_->Get(rocksdb::ReadOptions(),
                                               handles[1], key, &old_value);
-          read_status) {
+          read_status.ok()) {
         return Error{"Key already exists"};
       }
     }

@@ -1,13 +1,14 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-02-13 01:38:04
+ * @LastEditTime: 2022-02-13 22:29:00
  * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/src/RaftService.cpp
  */
 
+#include <chrono>
 #include <muduo/net/TcpClient.h>
 #include <muduo/net/TcpServer.h>
 #include <raft_engine/net/RaftService.hpp>
@@ -68,10 +69,10 @@ int __offer_cfg_change(raft_server_t *raft, const unsigned char *data,
     assert(0);
   }
 
-  if (conn->node || !raft_is_leader(raft)) {
+  if (conn->node && !raft_is_leader(raft)) {
     raft_node_set_udata(conn->node, conn);
-  } else if (!conn->node) {
-    SPDLOG_ERROR("conn->node is null");
+  } else if (!raft_is_leader(raft)) {
+    SPDLOG_INFO("conn->node is null");
   }
 
   return 0;
@@ -371,8 +372,8 @@ int __deserialize_and_handle_msg(void *img, size_t sz, void *data) {
 int __append_cfg_change(RaftService *sv, raft_logtype_e change_type, char *host,
                         int raft_port, int http_port, int node_id) {
   // FIXME: memory leak
-  spdlog::info("Appending cfg change: {} {} {} {} {}", change_type, host,
-               raft_port, http_port, node_id);
+  SPDLOG_INFO("Appending cfg change: {} {} {} {} {}", change_type, host,
+              raft_port, http_port, node_id);
   entry_cfg_change_t *change = (entry_cfg_change_t *)calloc(1, sizeof(*change));
   change->raft_port = raft_port;
   change->http_port = http_port;
@@ -402,6 +403,8 @@ int __append_cfg_change(RaftService *sv, raft_logtype_e change_type, char *host,
 // TODO: import this from raft.h
 int __raft_applylog(raft_server_t *raft, void *udata, raft_entry_t *ety,
                     raft_index_t entry_idx) {
+
+  SPDLOG_INFO("Applying log entry {}", entry_idx);
 
   std::vector<std::pair<std::string, std::string>> kvs;
 
@@ -433,6 +436,7 @@ commit:
 /** Raft callback for saving voted_for field to disk.
  * This only returns when change has been made to disk. */
 int __raft_persist_vote(raft_server_t *raft, void *udata, const int voted_for) {
+  SPDLOG_INFO("Persisting vote for {}", voted_for);
   self->persistenceStore.save("voted_for", std::to_string(voted_for));
   return 0;
 }
@@ -441,7 +445,7 @@ int __raft_persist_vote(raft_server_t *raft, void *udata, const int voted_for) {
  * This only returns when change has been made to disk. */
 int __raft_persist_term(raft_server_t *raft, void *udata,
                         raft_term_t current_term, raft_node_id_t vote) {
-
+  SPDLOG_INFO("Persisting term {}", current_term);
   self->persistenceStore.save("current_term", std::to_string(current_term));
   return 0;
 }
@@ -462,67 +466,54 @@ int __raft_logentry_offer(raft_server_t *raft, void *udata, raft_entry_t *ety,
   __peer_msg_serialize(tpl_map(fmt.data(), ety), bufs, buf);
 
   /* 1. put metadata */
-  ety_idx <<= 1;
-  if (auto e = self->persistenceStore.save(to_string(ety_idx),
-                                           bufs->retrieveAllAsString());
-      e) {
-    SPDLOG_ERROR("__raft_logentry_offer: {}", e->message());
-    return -1;
+  std::string meta_key = "raft_log_index";
+  std::string value = std::to_string(ety_idx);
+  if (auto e = self->persistenceStore.update_key(meta_key, value); e) {
+    SPDLOG_ERROR("Failed to update key {}, error message : {}", meta_key,
+                 e->message());
+    if (e = self->persistenceStore.save(meta_key, value); e) {
+      SPDLOG_ERROR("__raft_logentry_offer put metadata error: {}",
+                   e->message());
+      return -1;
+    }
   }
-
   /* 2. put entry */
-  ety_idx |= 1;
-  if (auto e = self->persistenceStore.save(to_string(ety_idx),
-                                           (char *)ety->data.buf);
+  auto current_time = std::chrono::steady_clock::now().time_since_epoch();
+  auto sec = std::chrono::duration_cast<std::chrono::nanoseconds>(current_time);
+
+  auto entry_key = to_string(sec.count()) + "-" + to_string(ety_idx);
+  if (auto e = self->persistenceStore.save(entry_key, (char *)ety->data.buf);
       e) {
-    SPDLOG_ERROR("__raft_logentry_offer: {}", e->message());
+    SPDLOG_ERROR("__raft_logentry_offer put entry error: {}", e->message());
     return -1;
   }
-
-  /* So that our entry points to a valid buffer, get the mmap'd buffer.
-   * This is because the currently pointed to buffer is temporary. */
-  // e = mdb_txn_begin(sv->db_env, NULL, 0, &txn);
-  // if (0 != e)
-  //   mdb_fatal(e);
-
-  // e = mdb_get(txn, sv->entries, &key, &val);
-  // switch (e) {
-  // case 0:
-  //   break;
-  // default:
-  //   mdb_fatal(e);
-  // }
-  // ety->data.buf = val.mv_data;
-  // ety->data.len = val.mv_size;
-
-  // e = mdb_txn_commit(txn);
-  // if (0 != e)
-  //   mdb_fatal(e);
-
   return 0;
 }
 
-/** Raft callback for deleting the most recent entry from the log.
- * This happens when an invalid leader finds a valid leader and has to delete
- * superseded log entries. */
+/** Raft callback for removing the first entry from the log
+ * @note this is provided to support log compaction in the future */
+// TODO: unnecessary for now
 int __raft_logentry_poll(raft_server_t *raft, void *udata, raft_entry_t *entry,
                          raft_index_t ety_idx) {
-
+  SPDLOG_INFO("__raft_logentry_poll");
   return 0;
 }
 
 /** Raft callback for deleting the most recent entry from the log.
  * This happens when an invalid leader finds a valid leader and has to delete
  * superseded log entries. */
+// TODO: temporary unnecessary function, 无效leader删除日志,保持一致性
 int __raft_logentry_pop(raft_server_t *raft, void *udata, raft_entry_t *entry,
                         raft_index_t ety_idx) {
-  return -1;
+  SPDLOG_INFO("__raft_logentry_pop");
+  return 0;
 }
 
 /** Non-voting node now has enough logs to be able to vote.
  * Append a finalization cfg log entry. */
 int __raft_node_has_sufficient_logs(raft_server_t *raft, void *user_data,
                                     raft_node_t *node) {
+  SPDLOG_INFO("__raft_node_has_sufficient_logs");
   peer_connection_t *conn = (peer_connection_t *)raft_node_get_udata(node);
   __append_cfg_change(self, RAFT_LOGTYPE_ADD_NODE, conn->addr.toIp().data(),
                       conn->raft_port, conn->http_port,
@@ -533,19 +524,19 @@ int __raft_node_has_sufficient_logs(raft_server_t *raft, void *user_data,
 /** Raft callback for displaying debugging information */
 static void __raft_log(raft_server_t *raft, raft_node_t *node, void *udata,
                        const char *buf) {
-  spdlog::debug("raft: {}", buf);
+  spdlog::debug("raft log : {}", buf);
 }
 
 peer_connection_t *__new_connection() {
+  SPDLOG_INFO("__new_connection");
   peer_connection_t *conn =
       (peer_connection_t *)calloc(1, sizeof(peer_connection_t));
   conn->next = self->conns;
   self->conns = conn;
   return conn;
 }
-
-int __raft_logget_node_id(raft_server_t *raft, void *udata, raft_entry_t *ety,
-                          raft_index_t ety_idx) {
+int __raft_logget_node_id(raft_server_t *raft, void *user_data,
+                          raft_entry_t *entry, raft_index_t entry_idx) {
   return self->node_id;
 }
 
@@ -576,7 +567,7 @@ void __connect_to_peer(peer_connection_t *conn) {
 
 void __connection_set_peer(peer_connection_t *conn, char *host, int port) {
   conn->raft_port = port;
-  spdlog::info("Connecting to {}:{}", host, conn->raft_port);
+  SPDLOG_INFO("Connecting to {}:{}", host, conn->raft_port);
   muduo::net::InetAddress addr(host, port);
   conn->addr = addr;
 }
@@ -589,6 +580,7 @@ void __connect_to_peer_at_host(peer_connection_t *conn, char *host, int port) {
 static int __raft_send_appendentries(raft_server_t *raft, void *user_data,
                                      raft_node_t *node,
                                      msg_appendentries_t *m) {
+  SPDLOG_INFO("__raft_send_appendentries");
   Buffer bufs[3];
   auto conn = (peer_connection_t *)raft_node_get_udata(node);
 
@@ -634,8 +626,21 @@ static int __raft_send_appendentries(raft_server_t *raft, void *user_data,
   return 0;
 }
 
+/**
+ * @brief
+ *
+ * @param raft
+ * @param user_data
+ * @param node
+ * @param m
+ * @return int
+ * @note
+ * TODO: important
+ */
 int __raft_send_requestvote(raft_server_t *raft, void *user_data,
                             raft_node_t *node, msg_requestvote_t *m) {
+  SPDLOG_INFO("__raft_send_requestvote");
+
   peer_connection_t *conn = (peer_connection_t *)raft_node_get_udata(node);
 
   if (int e = __connect_if_needed(conn); e == -1)
@@ -651,20 +656,23 @@ int __raft_send_requestvote(raft_server_t *raft, void *user_data,
 }
 
 raft_cbs_t raft_funcs = {
-    .send_requestvote = __raft_send_requestvote,
-    .send_appendentries = __raft_send_appendentries,
-    .applylog = __raft_applylog,
-    .persist_vote = __raft_persist_vote,
-    .persist_term = __raft_persist_term,
-    .log_offer = __raft_logentry_offer,
+    .send_requestvote = __raft_send_requestvote,     // need
+    .send_appendentries = __raft_send_appendentries, // need
+    .applylog = __raft_applylog,                     // need
+    .persist_vote = __raft_persist_vote,             // need
+    .persist_term = __raft_persist_term,             // need
+
+    .log_offer = __raft_logentry_offer, // need
     .log_poll = __raft_logentry_poll,
     .log_pop = __raft_logentry_pop,
     .node_has_sufficient_logs = __raft_node_has_sufficient_logs,
+
     .log = __raft_log,
 };
 
 RaftService::RaftService() : persistenceStore("raft", "raft_store") {
-
+  // unknow
+  raft_funcs.log_get_node_id = __raft_logget_node_id;
   assert(!self);
   self = this;
 
@@ -675,8 +683,8 @@ RaftService::RaftService() : persistenceStore("raft", "raft_store") {
   auto raft_port = config.get<int>(this, "server_port");
   http_port = config.get<int>(this, "http_port");
 
-  SPDLOG_INFO("RaftService::RaftServicev startable: {} joinable: {} host: {} "
-              "raft_port: {} http_port: {}",
+  SPDLOG_INFO("RaftService::config is startable: {}, joinable: {}, host: {}, "
+              "raft_port: {}, http_port: {}",
               startable, joinable, host, raft_port, http_port);
 
   raft = raft_new();
@@ -785,16 +793,16 @@ std::optional<Error> RaftService::Save(const std::string &key,
     return Error::Redirect();
   }
 
-  auto en = key + "\n" + value;
+  auto en = key + "&yuzhi&" + value;
   msg_entry_t entry = {};
   entry.id = rand();
   entry.data.buf = (void *)en.data();
   entry.data.len = sizeof(en.size());
 
-  SPDLOG_INFO("raft_append_entry, node_id : {}, entry.id : {}, data:{},  "
+  SPDLOG_INFO("raft_append_entry, node_id: {}, entry.id: {}, data:{},"
               "entry.data.len: {} ",
               node_id, entry.id, key, entry.data.len);
-  // dead loop
+
   std::unique_lock<std::mutex> lk(mutex_, std::try_to_lock);
   SPDLOG_INFO("raft_append_entry will be lock"); // only test
 
@@ -808,11 +816,16 @@ std::optional<Error> RaftService::Save(const std::string &key,
   int done = 0, tries = 0;
   do {
     if (3 < tries) {
-      SPDLOG_ERROR("failed to commit entry");
+      SPDLOG_ERROR("tries 3s, failed to commit entry");
       return Error::RaftError();
     }
 
-    cond.wait_for(lk, std::chrono::milliseconds(50 * 1000));
+    // if  node num is 1, then commit immediately
+    auto node_num = raft_get_num_voting_nodes((raft_server_t *)raft);
+    if (1 < node_num) {
+      SPDLOG_INFO("raft_append_entry will be condition lock"); // only test
+      cond.wait(lk);
+    }
 
     auto e = raft_msg_entry_response_committed((raft_server_t *)raft, &r);
     tries += 1;

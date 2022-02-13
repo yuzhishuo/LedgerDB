@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-02-11 23:53:23
+ * @LastEditTime: 2022-02-13 21:54:12
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -52,20 +52,23 @@ public:
     // grpc::reflection::InitProtoReflectionServerBuilderPlugin();
     ServerBuilder builder;
     yuzhi::service::LedgerService ledgerService;
-    std::string service_address = "localhost:" + to_string(prot);
-    spdlog::info("start ledger service at {}", service_address);
-    builder.AddListeningPort(service_address, InsecureServerCredentials());
+    std::string service_address = "[::]:" + to_string(prot);
+
+    int selected_port = 0;
+    // TODO: repeat listen port, need to fix
+    builder.AddListeningPort(service_address, InsecureServerCredentials(),
+                             &selected_port);
     // builder.set_health_check_service(new HealthCheckServiceImpl());
     builder.RegisterService(&ledgerService);
     auto server = builder.BuildAndStart();
-
+    SPDLOG_INFO("start ledger service at {}", service_address);
     server->Wait();
   }
 };
 } // namespace yuzhi
 
 int main(int argc, char **argv) {
-
+  yuzhi::raft_engine::net::RaftService::Instance();
   yuzhi::ledger ledger;
   ledger.start();
 

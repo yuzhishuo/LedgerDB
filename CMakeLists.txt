@@ -91,7 +91,7 @@ include_directories(include)
 aux_source_directory(src DIR_SRCS)
 add_executable(Ledger ${DIR_SRCS} ${SRCS} main.cpp )
 
-add_subdirectory(cli cli EXCLUDE_FROM_ALL)
+# add_subdirectory(cli cli EXCLUDE_FROM_ALL)
 # add_dependencies(Ledger Cli)
 add_dependencies(Ledger raft)
 

@@ -22,6 +22,8 @@ RUN git clone  https://ghproxy.com/https://github.com/facebook/rocksdb.git && cd
 RUN git clone --branch v1.9.2  https://ghproxy.com/https://github.com/gabime/spdlog.git && cd spdlog && mkdir build && cd build \
     && cmake .. && make -j && make install
 
+RUN git clone https://github.com/google/googletest && cd googletest  && mkdir build && cd build && cmake .. && make -j $(nproc || grep -c ^processor /proc/cpuinfo) && make install
+
 RUN git clone   https://ghproxy.com/https://github.com/grpc/grpc.git && cd /grpc && git submodule update --init --recursive 
 
 
@@ -30,7 +32,5 @@ RUN cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_BUILD_TESTS=OFF -DC
     && cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release && make install -j $(nproc || grep -c ^processor /proc/cpuinfo)
 
 COPY *  /Ledger/
-
-WORKDIR /Ledger/
 
 RUN cd /Ledger/ && mkdir .build && cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j $(nproc || grep -c ^processor /proc/cpuinfo)

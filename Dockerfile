@@ -11,7 +11,7 @@ RUN apt update -y \
     libgflags-dev libgtest-dev \
     && apt-get update -y \
     && apt-get install -y gdb \
-    && apt-get install libspdlog-dev \ 
+    && apt-get install -y libspdlog-dev \
     wget 
 
 RUN cd /
@@ -33,4 +33,4 @@ RUN cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_BUILD_TESTS=OFF -DC
 
 COPY *  /Ledger/
 
-RUN cd /Ledger/ && mkdir .build && cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j $(nproc || grep -c ^processor /proc/cpuinfo)
+RUN cd /Ledger/ && git submodule update --init --recursive  && mkdir .build && cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j $(nproc || grep -c ^processor /proc/cpuinfo)

@@ -1,10 +1,14 @@
 #pragma once
 
+#ifndef YUZHI_LEDGERDB_STORE_PERSISTENCESTORE_H_
+#define YUZHI_LEDGERDB_STORE_PERSISTENCESTORE_H_
+
+#include <config/Config.h>
 #include <rocksdb/db.h>
 #include <rocksdb/utilities/optimistic_transaction_db.h>
 #include <rocksdb/utilities/transaction.h>
-
 #include <spdlog/spdlog.h>
+#include <store/IStore.h>
 
 #include <filesystem>
 #include <memory>
@@ -12,19 +16,19 @@
 #include <string>
 #include <vector>
 
-#include <store/IStore.h>
-
-constexpr char const *default_db_path = "/tmp/store/rockdb/";
+constexpr char const *default_db_path = "/tmp/store/rockdb/"; // TODO: configable path by config file
 constexpr char const *db_name = "db";
 constexpr char const *default_default_family = "default";
 
-class PersistenceStore : public IStorage {
-public:
+class PersistenceStore : public IStorage, public yuzhi::IConfigurable {
+ public:
   PersistenceStore(std::string family = default_default_family,
-                   const std::string &path = db_name)
-      : db_path_(std::string(default_db_path) + path), db_(nullptr),
-        options_(rocksdb::Options()), family_(family), handles{} {
-
+                   const std::string &name = db_name)
+      : db_path_(std::string(default_db_path) + yuzhi::Config::Instance().get<std::string>(this, "store_path") + name),
+        db_(nullptr),
+        options_(rocksdb::Options()),
+        family_(family),
+        handles{} {
     if (std::filesystem::exists(db_path_) ||
         std::filesystem::create_directories(db_path_)) {
       SPDLOG_INFO("create db path {}", db_path_);
@@ -35,7 +39,10 @@ public:
     _RockdbInit();
   }
 
-private:
+public: // IConfigurable
+  virtual const char *Field() const { return "persistence"; }
+
+ private:
   void _RockdbInit() noexcept {
     // #ifdef DEBUG
     //         if (auto ds_status = rocksdb::DestroyDB(db_path_,
@@ -86,7 +93,7 @@ private:
     }
   }
 
-public:
+ public:
   virtual ~PersistenceStore() {
     for (auto handle : handles) {
       if (handle) {
@@ -130,9 +137,8 @@ public:
    * @param kvs key-value pairs
    * @return std::optional<Error> error
    */
-  virtual std::optional<Error>
-  save(const std::vector<std::pair<std::string, std::string>> &kvs) override {
-
+  virtual std::optional<Error> save(
+      const std::vector<std::pair<std::string, std::string>> &kvs) override {
     rocksdb::WriteBatch batch;
 
     for (auto &kv : kvs) {
@@ -146,8 +152,8 @@ public:
     return std::nullopt;
   }
 
-  virtual std::pair<std::string, std::optional<Error>>
-  load(const std::string &key) override {
+  virtual std::pair<std::string, std::optional<Error>> load(
+      const std::string &key) override {
     std::string value;
 
     if (rocksdb::Status status =
@@ -159,7 +165,6 @@ public:
   }
 
   virtual std::optional<Error> delete_key(const std::string &key) override {
-
     if (rocksdb::Status status =
             db_->Delete(rocksdb::WriteOptions(), handles[1], key);
         !status.ok()) {
@@ -195,10 +200,12 @@ public:
     return store;
   }
 
-private:
+ private:
   const std::string db_path_;
   const std::string family_;
   rocksdb::Options options_;
   rocksdb::DB *db_;
   std::vector<rocksdb::ColumnFamilyHandle *> handles;
 };
+
+#endif // YUZHI_LEDGERDB_STORE_PERSISTENCESTORE_H_

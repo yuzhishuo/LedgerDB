@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 19:06:00
- * @LastEditTime: 2022-02-08 18:39:37
+ * @LastEditTime: 2022-02-28 17:00:49
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -10,20 +10,19 @@
 
 #pragma once
 
+#include <rude/config.h>
+#include <spdlog/spdlog.h>
+
 #include <atomic>
+#include <config/IConfigurable.hpp>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <type_traits>
-
-#include <rude/config.h>
-#include <spdlog/spdlog.h>
-
-#include <config/IConfigurable.hpp>
 namespace yuzhi {
 
 class Config {
-public:
+ public:
   Config(std::string config_file_path) {
     if (!config_.load(config_file_path.data())) {
       spdlog::error("load config file failed");
@@ -58,34 +57,38 @@ public:
     return res;
   }
 
-private:
-  template <typename T> inline T _get(const std::string &key) {
+ private:
+  template <typename T>
+  inline T _get(const std::string &key) {
     throw std::runtime_error("not implemented");
   }
 
-public:
+ public:
   static Config &Instance() {
     static Config instance{"config.default.conf"};
     return instance;
   }
 
-private:
+ private:
   std::atomic<bool> loaded{false};
   rude::Config config_;
 };
 
-template <> inline int Config::_get<int>(const std::string &key) {
+template <>
+inline int Config::_get<int>(const std::string &key) {
   return config_.getIntValue(key.data());
 }
-template <> inline double Config::_get<double>(const std::string &key) {
+template <>
+inline double Config::_get<double>(const std::string &key) {
   return config_.getDoubleValue(key.data());
 }
 
-template <> inline bool Config::_get<bool>(const std::string &key) {
+template <>
+inline bool Config::_get<bool>(const std::string &key) {
   return config_.getBoolValue(key.data());
 }
 template <>
 inline std::string Config::_get<std::string>(const std::string &key) {
   return config_.getStringValue(key.data());
 }
-} // namespace yuzhi
+}  // namespace yuzhi

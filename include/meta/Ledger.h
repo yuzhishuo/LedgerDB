@@ -1,3 +1,9 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-02-14 02:36:28
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-03-11 01:51:36
+ */
 #pragma once
 
 #include <string>
@@ -27,8 +33,9 @@ enum class LEDGER_ROLE : uint8_t
 class User;
 namespace yuzhi
 {
-    class LedgerEngine;
-}
+
+class LedgerEngine;
+} // namespace yuzhi
 
 class Ledger final : public IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
 {

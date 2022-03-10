@@ -1,8 +1,14 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-02-14 02:36:28
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-03-11 02:01:46
+ */
 #pragma once
 
-#include "AuthorityCertification.h"
+#include "rbac/AuthorityCertification.h"
 #include "Strategy.h"
-#include "Role.h"
+#include "meta/Role.h"
 #include "utility.h"
 
 #include <initializer_list>

@@ -1,3 +1,4 @@
+syntax = "proto2";
 package muduo;
 option java_package = "muduo.codec.tests";
 option java_outer_classname = "QueryProtos";

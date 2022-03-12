@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-03-11 02:01:21
+ * @LastEditTime: 2022-03-12 14:37:45
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -13,19 +13,17 @@
 
 #include <rocksdb/db.h>
 
-#include "rbac/AuthorityCertification.h"
 #include "Spd.h"
 #include "meta/User.h"
+#include "rbac/AuthorityCertification.h"
 #include "store/PersistenceStore.h"
 
 // tmp
+#include "interfaces/IUnique.h"
 #include "meta/Ledgers.h"
 #include "meta/Users.h"
-#include "interfaces/IUnique.h"
 #include <string>
-extern "C" {
-#include <raft.h>
-}
+
 #include <config/Config.h>
 #include <raft_engine/RaftEngine.h>
 #include <service/LedgerService.hpp>
@@ -38,11 +36,11 @@ namespace spd = spdlog;
 using namespace std;
 using namespace grpc;
 namespace yuzhi {
-class ledger final : public IConfigurable {
+class Ledger final : public IConfigurable {
 
 public:
-  ledger() = default;
-  virtual ~ledger() {}
+  Ledger() = default;
+  virtual ~Ledger() {}
   virtual const char *Field() const override { return "ledger"; }
 
   void start() {
@@ -68,9 +66,9 @@ public:
 } // namespace yuzhi
 
 int main(int argc, char **argv) {
-  
+
   yuzhi::raft_engine::net::RaftService::Instance();
-  yuzhi::ledger ledger;
+  yuzhi::Ledger ledger;
   ledger.start();
 
   return 0;

@@ -17,4 +17,5 @@ target_link_libraries(Cli
 
 target_link_libraries(Cli
     gen
+    readline
 )

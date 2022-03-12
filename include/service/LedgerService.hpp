@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-07 15:44:35
- * @LastEditTime: 2022-03-11 01:55:19
+ * @LastEditTime: 2022-03-12 14:31:04
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -12,11 +12,13 @@
 #ifndef YUZHI_SERVICE_Ledger_SERVICE_HPP
 #define YUZHI_SERVICE_Ledger_SERVICE_HPP
 
-#include <meta/Ledgers.h>
 #include <ledger_engine.grpc.pb.h>
+#include <meta/Ledgers.h>
 #include <raft_engine/net/RaftService.hpp>
 #include <spdlog/spdlog.h>
+
 namespace yuzhi::service {
+
 class LedgerService : public ledger_engine::LedgerService::Service {
 
 public:
@@ -49,6 +51,8 @@ public:
     SPDLOG_INFO("create {} ledger success", request->ledgername());
     return ::grpc::Status::OK;
   }
+
+  virtual ~LedgerService() {}
 
 private:
 };

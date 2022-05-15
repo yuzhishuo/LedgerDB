@@ -15,6 +15,8 @@ target_link_libraries(Cli
 
 )
 
+add_subdirectory(parser)
+
 target_link_libraries(Cli
     gen
     readline

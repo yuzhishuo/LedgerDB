@@ -52,7 +52,7 @@ public:
     return ::grpc::Status::OK;
   }
 
-  virtual ~LedgerService() {}
+  virtual ~LedgerService() = default;
 
 private:
 };

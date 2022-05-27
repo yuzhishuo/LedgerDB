@@ -2,6 +2,7 @@
     "cmake.configureSettings": {
       "CMAKE_TOOLCHAIN_FILE": "/home/yuzhi/projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
+    "cmake.configureOnOpen": false,
     "cmake.debugConfig": {
       "args": [
           "--Create=1",
@@ -90,5 +91,6 @@
       "Date": "Do not edit",
       "LastEditors": "Leo", 
       "LastEditTime": "Do not edit"
-    }
+    },
+    "editor.suggest.snippetsPreventQuickSuggestions": false
   }

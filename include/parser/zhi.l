@@ -3,6 +3,7 @@
 #include <lzhi.tab.h>
 #include <stdarg.h>
 #include <string.h>
+#include <unistd.h>
 
 void yyerror(char *s, ...);
 int oldstate;

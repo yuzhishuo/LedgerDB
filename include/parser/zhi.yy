@@ -3,6 +3,7 @@
     #include<stdlib.h>
     #include<string.h>
     #include<stdarg.h> // for va_list, va_start, va_end, va_arg
+    extern void emit(char *s, ...);
 %}
 
 %code requires {
@@ -39,9 +40,6 @@
         while (0)
 }
 
-
-
-
 /* names and literal values */
 
 %union {
@@ -75,7 +73,6 @@
 %{
 void yyerror(char *s, ...);
 void lyyerror(YYLTYPE, char *s, ...);
-void emit(char *s, ...);
 %}
 
   /* free discarded tokens */
@@ -96,8 +93,8 @@ stmt_list: error ';'
 stmt: create_stmt { emit("STMT"); }
     ;
 
-create_stmt: CREATE LEDGER opt_if_not_exists NAME  { emit("CREATE_LEADGER %d %s", $3, $4); free($4); } ;
-            | CREATE LEDGER opt_if_not_exists NAME WITH GRANT  '(' grant_list ')' { emit("CREATE_LEADGER %d %s %d", $3, $4, $8); free($4); } ;
+create_stmt: CREATE LEDGER opt_if_not_exists NAME  { emit("CREATE_LEDGER", $3, $4); free($4); } ;
+            | CREATE LEDGER opt_if_not_exists NAME WITH GRANT  '(' grant_list ')' { emit("CREATE_LEDGER", $3, $4, $8); free($4); } ;
 
 opt_if_not_exists:  /* nil */ { $$ = 0; }
    | IF EXISTS        { if(!$2) { lyyerror(@2,"IF EXISTS doesn't exist"); YYERROR; }
@@ -114,17 +111,7 @@ grant_item: OWN  {  $$=1; }
 
 %%
 
-void emit(char *s, ...)
-{
-  extern int yylineno;
 
-  va_list ap;
-  va_start(ap, s);
-
-  printf("rpn: ");
-  vfprintf(stdout, s, ap);
-  printf("\n");
-}
 
 void yyerror(char *s, ...)
 {

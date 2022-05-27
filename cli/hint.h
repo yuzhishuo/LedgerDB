@@ -5,4 +5,4 @@
  * @LastEditTime: 2022-03-12 15:46:47
  */
 
-constexpr char *const prompt = "ledger> ";
+constexpr auto prompt = "ledger> ";

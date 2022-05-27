@@ -37,7 +37,7 @@ class Error {
   static inline Error UnLeader() { return Error("Leader unavailable"); };
   static inline Error Redirect() { return Error("redirect"); };
   static inline Error RaftError() { return Error("RaftError"); };
-
+  static inline Error UndefineGammarError() {return Error("Undefine Gammar");};
  private:
   std::string message_;
 };

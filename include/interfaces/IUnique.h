@@ -71,9 +71,6 @@ public:
 
 public:
     virtual T GetUnique() const = 0;
-    // SetUnique(const Key &key)
-    // {
-    // }
 };
 
 template <typename U>

@@ -5,7 +5,9 @@
  * @LastEditTime: 2022-05-03 02:25:21
  */
 extern "C" {
-#include <lzhi.tab.h>
+#include "lzhi.tab.h"
+extern int yydebug;
+extern int yyparse();
 }
 #include <spdlog/spdlog.h>
 #include <stdio.h>
@@ -13,8 +15,6 @@ extern "C" {
 #include <string.h>
 
 extern FILE *yyin;
-extern int yydebug;
-extern int yyparse();
 
 int main(int ac, char **av) 
 {

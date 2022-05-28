@@ -5,19 +5,11 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="2118" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/include/parser/zhi.yy" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/include/parser/zhi.l" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="478" />
+          <option name="caretOffset" value="2209" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/cli/main.cpp" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="2665" />
+          <option name="caretOffset" value="523" />
           <option name="fileUrl" value="file:///usr/include/readline/rltypedefs.h" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -25,8 +17,16 @@
           <option name="fileUrl" value="file:///usr/include/c++/9/bits/basic_string.h" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="552" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/include/parser/Parser.cpp" />
+          <option name="caretOffset" value="502" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/CMakeLists.txt" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1741" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/.github/workflows/build.yml" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/sonar-project.properties" />
         </OpenedFileInfo>
       </list>
     </option>

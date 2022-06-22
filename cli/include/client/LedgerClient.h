@@ -9,40 +9,41 @@
 #ifndef CLI_INCLUDE_SERVICE_LEDGER_SERVICE_HPP_
 #define CLI_INCLUDE_SERVICE_LEDGER_SERVICE_HPP_
 
-#include <grpcpp/grpcpp.h>
-#include "ledger_engine.grpc.pb.h"
-#include "ledger_engine.pb.h"
-#include <spdlog/spdlog.h>
 #include <string>
+#include <spdlog/spdlog.h>
+#include <grpcpp/grpcpp.h>
+
+#include <ledger_engine.pb.h>
+#include <ledger_engine.grpc.pb.h>
+
 namespace yuzhi::cli {
 
-    class LedgerClient {
-    public:
-        LedgerClient(std::shared_ptr<grpc::Channel> channel)
-                : stub_(ledger_engine::LedgerService::NewStub(channel)){};
-        ~LedgerClient() = default;
+class LedgerClient {
+public:
+    LedgerClient(std::shared_ptr<grpc::Channel> channel)
+            : stub_(ledger_engine::LedgerService::NewStub(channel)){};
+    ~LedgerClient() = default;
 
-    public:
-        bool CreateLedger(std::string name) {
-            ledger_engine::CreateLedgerRequest request;
-            request.set_ledgername(name);
-            ledger_engine::Response response;
+public:
+    bool CreateLedger(std::string name) {
+        ledger_engine::CreateLedgerRequest request;
+        request.set_ledgername(name);
+        ledger_engine::Response response;
 
-
-            ::grpc::ClientContext context;
-            if (auto status = stub_->CreateLedger(&context, request, &response); status.ok()) {
-                if (response.success()) {
-                    spdlog::info(response.message());
-                    return true;
-                }
+        ::grpc::ClientContext context;
+        if (auto status = stub_->CreateLedger(&context, request, &response); status.ok()) {
+            if (response.success()) {
+                spdlog::info(response.message());
+                return true;
             }
-            spdlog::error("CreateLedger failed");
-            return false;
         }
+        spdlog::error("CreateLedger failed");
+        return false;
+    }
 
-    private:
-        std::shared_ptr<ledger_engine::LedgerService::Stub> stub_;
-    };
+private:
+    std::shared_ptr<ledger_engine::LedgerService::Stub> stub_;
+};
 
 } // namespace yuzhi::cli
 

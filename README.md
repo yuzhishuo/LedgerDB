@@ -10,11 +10,9 @@
 
 # LedgerDB
 
-
 # Feature
 
 ## User
-
 
 ## ledger
 
@@ -22,7 +20,6 @@
 | :-----| :---- | :----: |
 | Create | Create(ledger_uri, enum, op_metadata) | ✔️ |
 | Append | GrantRole(ledger_uri, member_id, role) | ❌ |
-
 
 ## install
 
@@ -33,7 +30,7 @@ mkdir build && cd build
 cmake ..
 
 make
-
 ```
 
-Yang, Xinying, et al. "LedgerDB: a centralized ledger database for universal audit and verification." Proceedings of the VLDB Endowment 13.12 (2020): 3138-3151.
+Yang, Xinying, et al. "LedgerDB: a centralized ledger database for universal audit and verification." Proceedings of the
+VLDB Endowment 13.12 (2020): 3138-3151.

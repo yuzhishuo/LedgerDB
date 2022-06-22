@@ -5,28 +5,44 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="2209" />
+          <option name="caretOffset" value="546" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/cli/main.cpp" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="523" />
-          <option name="fileUrl" value="file:///usr/include/readline/rltypedefs.h" />
+          <option name="caretOffset" value="397" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/cli/include/CreateLedger.h" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="80050" />
-          <option name="fileUrl" value="file:///usr/include/c++/9/bits/basic_string.h" />
+          <option name="caretOffset" value="962" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/include/parser/GrammarCommandFactory.h" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="502" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/CMakeLists.txt" />
+          <option name="caretOffset" value="1180" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/cli/include/client/LedgerClient.h" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1741" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/.github/workflows/build.yml" />
+          <option name="caretOffset" value="146" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/cli/include/interface/IHelper.h" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1034" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/include/store/PersistenceStore.h" />
         </OpenedFileInfo>
         <OpenedFileInfo>
           <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/sonar-project.properties" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/include/store/SoftPersistenceStore.h" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="906" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/include/store/StoreCreator.h" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="191" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/include/store/ITransaction.h" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="599" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/include/store/IStore.h" />
         </OpenedFileInfo>
       </list>
     </option>

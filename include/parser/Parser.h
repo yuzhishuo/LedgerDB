@@ -7,13 +7,13 @@
 
 #include <stdio.h>
 #include <stdlib.h> // for malloc, exit
-#include <string.h>
+#include <string.h> // for std::string
 #include <memory> // for std::shared_ptr
+#include <parser/GrammarCommandFactory.h>
 
 #include <utility/VaStack.h>
 #include <config/IConfigurable.hpp> // for interface IConfigurable
-
-#include "exector/CreateLedger.h"
+#include <config/Config.h>
 
 namespace yuzhi::grammar {
 
@@ -24,25 +24,24 @@ namespace yuzhi::grammar {
             static std::shared_ptr<Parser> parser = std::make_shared<Parser>();
             return parser;
         }
-
-    public:
-        void handle(const std::string& type, utility::VaStack& vaStack)
-        {
-            spdlog::info("parser::handle type is {}", type);
-            auto createLedger = new CreateLedger;
-            createLedger->operator()(type, vaStack);
-        }
     public:
         Parser();
         ~Parser();
     public:
+        void handle(const std::string& type, utility::VaStack& vaStack)
+        {
+            spdlog::info("parser::handle type is {}", type);
+
+            auto& config = Config::Instance();
+            auto cli_config = config.get<std::string>(this, "cli");
+            GrammarCommandFactory::Instance().get(type)(vaStack);
+        }
+
+    public:
+        const char *Field() const override;
         Parser& load(std::string_view view);
         int handle(const std::string& sentence);
         int yy () const;
-    public:
-        virtual const char *Field() const {
-            return "parser";
-        }
     private:
         FILE* fp_;
     };

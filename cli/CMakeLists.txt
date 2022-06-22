@@ -1,6 +1,5 @@
 project(Cli VERSION 0.1.0)
 
-
 find_package(gRPC CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
 
@@ -20,4 +19,5 @@ target_link_libraries(Cli
     gen
     readline
     parser
+    rudeconfig
 )

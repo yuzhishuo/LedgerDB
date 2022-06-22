@@ -23,6 +23,21 @@ class Error {
     return out;
   }
 
+  bool operator == (const std::optional<Error>& error)
+  {
+        if(!error.has_value())
+        {
+            return false;
+        }
+
+        return *this == error.value();
+  }
+
+  bool eq (Error (*f)())
+  {
+        return this->message_ == f().message_;
+  }
+
  public:
   static inline Error InvalidLedger() { return Error("InvalidLedger"); };
   static inline Error MerkleTreeUpdateError() {
@@ -38,8 +53,16 @@ class Error {
   static inline Error Redirect() { return Error("redirect"); };
   static inline Error RaftError() { return Error("RaftError"); };
   static inline Error UndefineGammarError() {return Error("Undefine Gammar");};
+  static inline Error RepeatKey() {return Error("Repeat Key Exist"); }
  private:
-  std::string message_;
+  const std::string message_;
 };
+
+
+inline bool operator == (const Error& r, const std::optional<Error>& l)
+{
+    return l == r;
+}
+
 
 #endif  // YUZHI_LEDGERDB_ERROR

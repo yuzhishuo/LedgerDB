@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 9 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 10 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
 
 
     char *file_name;
@@ -106,7 +106,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 45 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 46 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
 
     int intval;
     double floatval;

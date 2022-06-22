@@ -34,38 +34,39 @@ namespace spd = spdlog;
 using namespace std;
 using namespace grpc;
 namespace yuzhi {
-class Ledger final : public IConfigurable {
+  class Ledger final : public IConfigurable {
 
 public:
-  Ledger() = default;
-  virtual ~Ledger() {}
-  virtual const char *Field() const override { return "ledger"; }
+    Ledger() = default;
+    ~Ledger() override = default;
+    const char *Field() const override { return "ledger"; }
 
-  void start() {
+    void start() const
+    {
+      auto &config = yuzhi::Config::Instance();
+      auto prot = config.get<int>(this, "server_port");
+      // grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+      ServerBuilder builder;
+      yuzhi::service::LedgerService ledgerService;
+      const auto service_address = "[::]:" + to_string(prot);
 
-    auto &config = yuzhi::Config::Instance();
-    auto prot = config.get<int>(this, "server_port");
-    // grpc::reflection::InitProtoReflectionServerBuilderPlugin();
-    ServerBuilder builder;
-    yuzhi::service::LedgerService ledgerService;
-    std::string service_address = "[::]:" + to_string(prot);
+      int selected_port = 0;
+      // TODO: repeat listen port, need to fix
+      builder.AddListeningPort(service_address, InsecureServerCredentials(),
+                               &selected_port);
+      // builder.set_health_check_service(new HealthCheckServiceImpl());
+      builder.RegisterService(&ledgerService);
+      auto server = builder.BuildAndStart();
+      SPDLOG_INFO("start ledger service at {}", service_address);
+      server->Wait();
+    }
+  };
+}// namespace yuzhi
 
-    int selected_port = 0;
-    // TODO: repeat listen port, need to fix
-    builder.AddListeningPort(service_address, InsecureServerCredentials(),
-                             &selected_port);
-    // builder.set_health_check_service(new HealthCheckServiceImpl());
-    builder.RegisterService(&ledgerService);
-    auto server = builder.BuildAndStart();
-    SPDLOG_INFO("start ledger service at {}", service_address);
-    server->Wait();
-  }
-};
-} // namespace yuzhi
-
-int main(int argc, char **argv) {
-
-  yuzhi::raft_engine::net::RaftService::Instance();
+int main(int argc, char **argv)
+{
+  using yuzhi::raft_engine::net::RaftService;
+  RaftService::Instance();
   yuzhi::Ledger ledger;
   ledger.start();
 

@@ -40,8 +40,8 @@ int Parser::handle(const std::string& sentence)
         fp_ = nullptr;
     }
 
-    char tem[] = "template-XXXXXX";
-    auto file_name = mktemp(tem);
+    char file_template_name[] = "template-XXXXXX";
+    auto file_name = mktemp(file_template_name);
 
     if(fp_ = fopen(file_name, "w+"); fp_)
     {
@@ -78,6 +78,10 @@ int Parser::yy () const
     return yyparse();
 }
 
+const char *Parser::Field() const
+{
+    return "parser";
+}
 
 #include<stdarg.h> // for va_list, va_start, va_end, va_arg
 #include <utility/VaStack.h> // for Vastack

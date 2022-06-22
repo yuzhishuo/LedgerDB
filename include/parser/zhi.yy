@@ -4,6 +4,7 @@
     #include<string.h>
     #include<stdarg.h> // for va_list, va_start, va_end, va_arg
     extern void emit(char *s, ...);
+    extern int yylex (void);
 %}
 
 %code requires {

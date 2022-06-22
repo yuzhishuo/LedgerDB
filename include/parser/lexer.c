@@ -678,6 +678,7 @@ char *yytext;
 #include <string.h>
 #include <unistd.h>
 
+
 void yyerror(char *s, ...);
 int oldstate;
 
@@ -689,9 +690,9 @@ int yycolumn = 1;
     yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
     yycolumn += yyleng;
 
-#line 693 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
+#line 694 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
 
-#line 695 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
+#line 696 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -901,10 +902,10 @@ YY_DECL
 		}
 
 	{
-#line 24 "zhi.l"
+#line 25 "zhi.l"
 
 
-#line 908 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
+#line 909 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -969,69 +970,69 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 26 "zhi.l"
+#line 27 "zhi.l"
 { return CREATE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 27 "zhi.l"
+#line 28 "zhi.l"
 {return LEDGER; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 28 "zhi.l"
+#line 29 "zhi.l"
 { return USER; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 29 "zhi.l"
+#line 30 "zhi.l"
 { return GRANT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 30 "zhi.l"
+#line 31 "zhi.l"
 { return IF; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 31 "zhi.l"
+#line 32 "zhi.l"
 { return NOT; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 32 "zhi.l"
+#line 33 "zhi.l"
 { return WITH; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 33 "zhi.l"
+#line 34 "zhi.l"
 { return OWN; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "zhi.l"
+#line 35 "zhi.l"
 { return COMMENT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "zhi.l"
+#line 36 "zhi.l"
 { yylval.subtok = 0; return EXISTS; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 36 "zhi.l"
+#line 37 "zhi.l"
 { yylval.subtok = 1; return EXISTS; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 39 "zhi.l"
+#line 40 "zhi.l"
 { return yytext[0]; }
 	YY_BREAK
 case 13:
-#line 42 "zhi.l"
+#line 43 "zhi.l"
 case 14:
 YY_RULE_SETUP
-#line 42 "zhi.l"
+#line 43 "zhi.l"
 { yylval.strval = strdup(yytext); return STRING; }
 	YY_BREAK
 case 15:
@@ -1039,7 +1040,7 @@ case 15:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 44 "zhi.l"
+#line 45 "zhi.l"
 { yyerror("Unterminated string %s", yytext); }
 	YY_BREAK
 case 16:
@@ -1047,18 +1048,18 @@ case 16:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 45 "zhi.l"
+#line 46 "zhi.l"
 { yyerror("Unterminated string %s", yytext); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 49 "zhi.l"
+#line 50 "zhi.l"
 { yylval.strval = strdup(yytext);
                           return NAME; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 51 "zhi.l"
+#line 52 "zhi.l"
 { yylval.strval = strdup(yytext+1);
                           yylval.strval[yyleng-2] = 0;
                           return NAME; }
@@ -1068,66 +1069,66 @@ case 19:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 55 "zhi.l"
+#line 56 "zhi.l"
 { yyerror("unterminated quoted name %s", yytext); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 59 "zhi.l"
+#line 60 "zhi.l"
 ;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 60 "zhi.l"
+#line 61 "zhi.l"
 ;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 62 "zhi.l"
+#line 63 "zhi.l"
 { oldstate = YY_START; BEGIN COMMENT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 63 "zhi.l"
+#line 64 "zhi.l"
 { BEGIN oldstate; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 64 "zhi.l"
+#line 65 "zhi.l"
 ;
 	YY_BREAK
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 65 "zhi.l"
+#line 66 "zhi.l"
 { yycolumn = 1; }
 	YY_BREAK
 case YY_STATE_EOF(COMMENT):
-#line 66 "zhi.l"
+#line 67 "zhi.l"
 { yyerror("unclosed comment"); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 69 "zhi.l"
+#line 70 "zhi.l"
 /* white space */
 	YY_BREAK
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 70 "zhi.l"
+#line 71 "zhi.l"
 { yycolumn = 1; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 71 "zhi.l"
+#line 72 "zhi.l"
 { yyerror("mystery character '%c'", *yytext); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 74 "zhi.l"
+#line 75 "zhi.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1131 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
+#line 1132 "/home/yuzhi/projects/ledger/include/parser/lexer.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2142,5 +2143,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 74 "zhi.l"
+#line 75 "zhi.l"
 

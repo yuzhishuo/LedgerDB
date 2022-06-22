@@ -5,6 +5,9 @@
 #include <parser/Parser.h>
 #include <stdlib.h>  // for
 
+#include <parser/GrammarCommandFactory.h>
+#include <CreateLedger.h>
+
 // delete  ${ledger_name}
 // create leadger ${ledger_name} [if not exists] [with type ${type} ${user}]
 int com_view(char *para) {
@@ -12,20 +15,20 @@ int com_view(char *para) {
   return 0;
 }
 
-
 int com_stat(char *para)
 {
     auto parser = yuzhi::grammar::Parser::Instance();
     return parser->handle(std::string(para));
 }
 
-int com_help(char *para) {
+int com_help(char *para)
+{
   printf("do com_help:%s\n", para);
   return 0;
 }
 
-
-int com_quit(char *para) {
+int com_quit(char *para)
+{
   printf("do com_quit:%s\n", para);
   exit(0);
 }
@@ -95,13 +98,11 @@ int execute_line(char *line) {
   while (line[i] && whitespace(line[i]))
     i++;
     ptr = line + i;
-
-  while (line[i] && !whitespace(line[i]))
-    i++;
+    while (line[i] && !whitespace(line[i]))
+      i++;
 
 
   std::string word = std::string(ptr, i);
-
   command = find_command(word);
 
   if (!command) {
@@ -184,8 +185,19 @@ void initialize_readline() {
   rl_attempted_completion_function = fileman_completion;
 }
 
-int main(int argc, char **argv)
+void parse_int ()
 {
+  using yuzhi::grammar::GrammarCommandFactory;
+
+  auto& factory = GrammarCommandFactory::Instance();
+
+  factory.add(std::make_shared<yuzhi::grammar::cli::CreateLedger>());
+}
+
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
+{
+  parse_int();
+
   char *line, *s;
 
   initialize_readline();

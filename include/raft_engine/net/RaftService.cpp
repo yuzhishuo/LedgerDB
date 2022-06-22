@@ -471,7 +471,7 @@ int __raft_logentry_offer(raft_server_t *raft, void *udata, raft_entry_t *ety,
   if (auto e = self->persistenceStore.update_key(meta_key, value); e) {
     SPDLOG_ERROR("Failed to update key {}, error message : {}", meta_key,
                  e->message());
-    if (e = self->persistenceStore.save(meta_key, value); e) {
+    if (auto e = self->persistenceStore.save(meta_key, value); e) {
       SPDLOG_ERROR("__raft_logentry_offer put metadata error: {}",
                    e->message());
       return -1;

@@ -37,7 +37,7 @@ add_custom_target(build_raft ALL
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft
         COMMENT "Original raft makefile target")
 
-        add_library(raft STATIC IMPORTED)
+add_library(raft STATIC IMPORTED)
 set_property(TARGET raft APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
 set_target_properties(raft PROPERTIES IMPORTED_LOCATION_NOCONFIG ${RAFT_LIBRARY})
 

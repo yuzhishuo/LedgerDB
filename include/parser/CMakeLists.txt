@@ -22,9 +22,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(Parser example/main.cpp
     ${FLEX_lexer_OUTPUTS}
     ${BISON_parser_OUTPUTS}
-        GammarHandler.cpp
 )
 
 
 
-add_library(parser Parser.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS} GammarHandler.cpp)
+add_library(parser Parser.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})

@@ -73,8 +73,9 @@
     #include<string.h>
     #include<stdarg.h> // for va_list, va_start, va_end, va_arg
     extern void emit(char *s, ...);
+    extern int yylex (void);
 
-#line 78 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 79 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -117,7 +118,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 9 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 10 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
 
 
     char *file_name;
@@ -151,7 +152,7 @@ extern int yydebug;
         }								\
         while (0)
 
-#line 155 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 156 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -179,14 +180,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 45 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 46 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
 
     int intval;
     double floatval;
     char *strval;
     int subtok;
 
-#line 190 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 191 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -216,12 +217,12 @@ int yyparse (void);
 #endif /* !YY_YY_HOME_YUZHI_PROJECTS_LEDGER_INCLUDE_PARSER_LZHI_TAB_H_INCLUDED  */
 
 /* Second part of user prologue.  */
-#line 73 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 74 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
 
 void yyerror(char *s, ...);
 void lyyerror(YYLTYPE, char *s, ...);
 
-#line 225 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 226 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
 
 
 #ifdef short
@@ -587,8 +588,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    84,    84,    85,    88,    89,    93,    96,    97,    99,
-     100,   104,   108,   109
+       0,    85,    85,    86,    89,    90,    94,    97,    98,   100,
+     101,   105,   109,   110
 };
 #endif
 
@@ -1197,15 +1198,15 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocatio
   switch (yytype)
     {
     case 3: /* NAME  */
-#line 79 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 80 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
             { printf ("free at %d %s\n",(*yylocationp).first_line, ((*yyvaluep).strval)); free(((*yyvaluep).strval)); }
-#line 1203 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1204 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
         break;
 
     case 4: /* STRING  */
-#line 79 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 80 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
             { printf ("free at %d %s\n",(*yylocationp).first_line, ((*yyvaluep).strval)); free(((*yyvaluep).strval)); }
-#line 1209 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1210 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
         break;
 
       default:
@@ -1499,56 +1500,56 @@ yyreduce:
   switch (yyn)
     {
   case 6:
-#line 93 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 94 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                   { emit("STMT"); }
-#line 1505 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1506 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
   case 7:
-#line 96 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 97 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                                                    { emit("CREATE_LEDGER", (yyvsp[-1].intval), (yyvsp[0].strval)); free((yyvsp[0].strval)); }
-#line 1511 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1512 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
   case 8:
-#line 97 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 98 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                                                                                   { emit("CREATE_LEDGER", (yyvsp[-6].intval), (yyvsp[-5].strval), (yyvsp[-1].intval)); free((yyvsp[-5].strval)); }
-#line 1517 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1518 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
   case 9:
-#line 99 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 100 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                               { (yyval.intval) = 0; }
-#line 1523 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1524 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
   case 10:
-#line 100 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 101 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                       { if(!(yyvsp[0].subtok)) { lyyerror((yylsp[0]),"IF EXISTS doesn't exist"); YYERROR; }
                         (yyval.intval) = (yyvsp[0].subtok); /* NOT EXISTS hack */ }
-#line 1530 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1531 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
   case 11:
-#line 104 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 105 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                             { emit("GRANT_LIST %s %d", (yyvsp[-1].strval), (yyvsp[0].intval)); free((yyvsp[-1].strval)); (yyval.intval) = 1; }
-#line 1536 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1537 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
   case 12:
-#line 108 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 109 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                  {  (yyval.intval)=1; }
-#line 1542 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1543 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
   case 13:
-#line 109 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 110 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
                   {  (yyval.intval)=2; }
-#line 1548 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1549 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
     break;
 
 
-#line 1552 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
+#line 1553 "/home/yuzhi/projects/ledger/include/parser/lzhi.tab.c"
 
       default: break;
     }
@@ -1786,7 +1787,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 112 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
+#line 113 "/home/yuzhi/projects/ledger/include/parser/zhi.yy"
 
 
 

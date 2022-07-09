@@ -1,6 +1,6 @@
 {
     "cmake.configureSettings": {
-      "CMAKE_TOOLCHAIN_FILE": "/home/yuzhi/projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      // "CMAKE_TOOLCHAIN_FILE": "/home/yuzhi/projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     "cmake.configureOnOpen": false,
     "cmake.debugConfig": {

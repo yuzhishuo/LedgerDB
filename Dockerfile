@@ -34,6 +34,6 @@ RUN cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_BUILD_TESTS=OFF -DC
     && rm -rf /grpc/.build \
     && cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release && make install -j $(nproc || grep -c ^processor /proc/cpuinfo)
 
-COPY *  /Ledger/
+# COPY *  /Ledger/
 
-RUN cd /Ledger/ && git submodule update --init --recursive  && mkdir .build && cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j $(nproc || grep -c ^processor /proc/cpuinfo)
+# RUN cd /Ledger/ && git submodule update --init --recursive  && mkdir .build && cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j $(nproc || grep -c ^processor /proc/cpuinfo)

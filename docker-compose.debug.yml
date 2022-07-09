@@ -1,8 +1,7 @@
 version: '3.4'
 
 services:
-  exampleauthoritycpp:
-    image: exampleauthoritycpp
+  ledger:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile

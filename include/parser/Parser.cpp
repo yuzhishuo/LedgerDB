@@ -20,6 +20,17 @@ using namespace yuzhi::grammar;
 
 Parser::Parser():fp_{} {}
 
+
+void Parser::handle(const std::string& type, utility::VaStack& vaStack)
+{
+    spdlog::info("parser::handle type is {}", type);
+
+    auto& config = Config::Instance();
+    auto cli_config = config.get<std::string>(this, "cli");
+    GrammarCommandFactory::Instance().get(type)(vaStack);
+}
+
+
 Parser& Parser::load(std::string_view view)
 {
     if(fp_)
@@ -41,9 +52,9 @@ int Parser::handle(const std::string& sentence)
     }
 
     char file_template_name[] = "template-XXXXXX";
-    auto file_name = mktemp(file_template_name);
+    auto filename = mktemp(file_template_name);
 
-    if(fp_ = fopen(file_name, "w+"); fp_)
+    if(fp_ = fopen(filename, "w+"); fp_)
     {
 
     }

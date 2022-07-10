@@ -1,9 +1,4 @@
-/*
- * @Author: Leo
- * @Date: 2022-05-02 22:40:56
- * @LastEditors: Leo
- * @LastEditTime: 2022-05-03 02:25:21
- */
+
 extern "C" {
 #include "lzhi.tab.h"
 extern int yydebug;
@@ -15,6 +10,7 @@ extern int yyparse();
 #include <string.h>
 
 extern FILE *yyin;
+extern char *file_name;
 
 int main(int ac, char **av) 
 {

@@ -28,14 +28,7 @@ namespace yuzhi::grammar {
         Parser();
         ~Parser();
     public:
-        void handle(const std::string& type, utility::VaStack& vaStack)
-        {
-            spdlog::info("parser::handle type is {}", type);
-
-            auto& config = Config::Instance();
-            auto cli_config = config.get<std::string>(this, "cli");
-            GrammarCommandFactory::Instance().get(type)(vaStack);
-        }
+        void handle(const std::string& type, utility::VaStack& vaStack);
 
     public:
         const char *Field() const override;

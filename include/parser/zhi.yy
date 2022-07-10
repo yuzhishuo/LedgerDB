@@ -5,12 +5,12 @@
     #include<stdarg.h> // for va_list, va_start, va_end, va_arg
     extern void emit(char *s, ...);
     extern int yylex (void);
+    char *file_name;
 %}
 
 %code requires {
 
-    char *file_name;
-
+    extern char *file_name;
     typedef struct YYLTYPE {
     int first_line;
     int first_column;

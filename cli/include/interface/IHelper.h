@@ -13,7 +13,7 @@ namespace yuzhi::cli {
 class IHelper {
 
   public:
-      virtual std::pair<std::string, std::string> explain() const;
+    virtual std::pair<std::string, std::string> explain() const = 0;;
 };
 
 } // namespace yuzi::cli

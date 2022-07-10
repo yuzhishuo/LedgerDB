@@ -14,11 +14,13 @@
 #include <spdlog/spdlog.h>
 
 #include <atomic>
-#include <config/IConfigurable.hpp>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <type_traits>
+
+#include <config/IConfigurable.hpp>
+
 namespace yuzhi {
 
 class Config {

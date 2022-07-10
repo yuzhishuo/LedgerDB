@@ -19,11 +19,20 @@ add_flex_bison_dependency(lexer parser)
 include_directories(../interfaces)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(Parser example/main.cpp
-    ${FLEX_lexer_OUTPUTS}
-    ${BISON_parser_OUTPUTS}
+LINK_DIRECTORIES(
+        /user/local/lib
 )
 
-
-
 add_library(parser Parser.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})
+target_link_libraries(
+        parser
+        rudeconfig
+)
+
+add_executable(Parser example/main.cpp )
+
+
+target_link_libraries(
+        Parser
+        parser
+)

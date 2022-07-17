@@ -1,3 +1,9 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-07-17 00:23:49
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-07-17 01:34:56
+ */
 #pragma once
 
 #include <string>
@@ -59,7 +65,7 @@ public:
         return role_;
     }
 
-    static uint64_t GeneratorId()
+    static uint64_t generatorId()
     {
         static uint64_t id = 0;
         return ++id;

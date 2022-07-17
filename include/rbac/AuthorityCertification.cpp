@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-03-11 02:01:29
+ * @LastEditTime: 2022-07-17 01:36:26
  */
 #include "rbac/AuthorityCertification.h"
 #include "meta/User.h"
@@ -31,7 +31,7 @@ bool AuthorityCertification::LedgerPass(const std::string &command_name, const s
 
         if (const auto &ledger = ledgers.getLedger(ledger_name); ledger != nullptr)
         {
-            return command->second->Pass(ledger->GetRoleByUserName(user_name));
+            return command->second->Pass(ledger->getRoleByUserName(user_name));
         }
     }
     return false;

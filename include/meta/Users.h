@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-03-11 01:56:05
+ * @LastEditTime: 2022-07-17 09:23:10
  */
 #pragma once
 
@@ -10,8 +10,11 @@
 #include <memory>
 #include <initializer_list>
 
+#include <spdlog/spdlog.h>
+
 #include "meta/User.h"
 #include "UserStoreCreator.h"
+
 // #define PREDEF_USER "admin"
 
 class Users : public IStorable<User>
@@ -35,10 +38,16 @@ private:
     {
         for (auto &[name, user] : init)
         {
-            users_.insert(std::make_pair(name, user));
+            if(auto erro = store(user); !erro)
+            {
+                users_.insert(std::make_pair(name, user));
+            } 
+            else
+            {
+                
+            }
         }
     }
-
 
 public: // IStorable
     virtual std::optional<Error> store(const Element &element) const override
@@ -46,7 +55,7 @@ public: // IStorable
         return store_creator_->store(element);
     }
 
-    virtual Element load(const std::shared_ptr<IUnique<UniqueType>> &element) override
+    virtual Element load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
     {
         return store_creator_->load(element);
     }

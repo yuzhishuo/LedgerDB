@@ -83,7 +83,11 @@
       "cfenv": "cpp",
       "typeindex": "cpp",
       "hash_set": "cpp",
-      "hash_map": "cpp"
+      "hash_map": "cpp",
+      "compare": "cpp",
+      "concepts": "cpp",
+      "ranges": "cpp",
+      "stop_token": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "fileheader.customMade": {

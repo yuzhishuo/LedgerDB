@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
  * @LastEditors: Leo
- * @LastEditTime: 2022-02-10 09:17:29
+ * @LastEditTime: 2022-07-17 01:57:42
  */
 #pragma once
 
@@ -35,7 +35,7 @@ public:
   }
 
   virtual std::shared_ptr<T>
-  load(const std::shared_ptr<IUnique<typename T::Key>> &object) {
+  load(const std::shared_ptr<IUnique<typename T::Key>> &object) const {
     if (auto storage = create(); storage) {
       auto key = prefix_ + "_" + object->GetUnique() + "_" + suffix_;
 

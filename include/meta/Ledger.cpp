@@ -20,7 +20,7 @@ Ledger::Ledger(const std::string &name, const std::string &owner)
 {
     ledger_->set_onwer(owner);
     ledger_->set_name(name);
-    ledger_->set_id(Ledger::GeneratorId());
+    ledger_->set_id(Ledger::generatorId());
 }
 
 Ledger::Ledger(ledger_engine::Ledger &&ledger_inner)
@@ -113,7 +113,7 @@ std::optional<Error> Ledger::removeReadOnly(const std::string &name)
     return std::nullopt;
 }
 
-LEDGER_ROLE Ledger::GetRoleByUserName(const std::string &name) const
+LEDGER_ROLE Ledger::getRoleByUserName(const std::string &name) const
 {
     if (isOwner(name))
     {

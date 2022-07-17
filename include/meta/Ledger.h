@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-03-11 01:51:36
+ * @LastEditTime: 2022-07-17 01:36:33
  */
 #pragma once
 
@@ -59,7 +59,7 @@ public: // meta
         return ledger_->name();
     }
 
-    LEDGER_ROLE GetRoleByUserName(const std::string &name) const;
+    LEDGER_ROLE getRoleByUserName(const std::string &name) const;
 
     bool isOwner(const std::string &name) const;
     bool isCommon(const std::string &name) const;
@@ -94,7 +94,7 @@ public:
     }
 
 public:
-    static uint64_t GeneratorId()
+    static uint64_t generatorId()
     {
         static uint64_t id = 0;
         return ++id;

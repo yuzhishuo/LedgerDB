@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-18 09:57:11
+ * @LastEditTime: 2022-07-18 10:05:58
  */
 #include "Users.h"
 #include "User.h"
@@ -14,7 +14,7 @@ std::shared_ptr<User> Users::createUser(const std::string &user_name, const std:
         return nullptr;
     }
 
-    auto user = std::make_shared<User>(new{user_name, ledger_name, role});
+    auto user = std::make_shared<User>(user_name, ledger_name, role);
     users_.insert(std::make_pair(user_name, user));
     return user;
 }

@@ -69,12 +69,13 @@ enum Role : int {
   COMMON = 1,
   READONLY = 2,
   DBA = 3,
+  READ_ONLY = 4,
   Role_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   Role_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool Role_IsValid(int value);
 constexpr Role Role_MIN = REGULATOR;
-constexpr Role Role_MAX = DBA;
+constexpr Role Role_MAX = READ_ONLY;
 constexpr int Role_ARRAYSIZE = Role_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Role_descriptor();
@@ -218,8 +219,9 @@ class User final :
     kNameFieldNumber = 2,
     kPasswordFieldNumber = 3,
     kPublicKeyFieldNumber = 4,
+    kAttachmentLedgerFieldNumber = 5,
     kIdFieldNumber = 1,
-    kRoleFieldNumber = 5,
+    kRoleFieldNumber = 6,
   };
   // string name = 2;
   void clear_name();
@@ -263,6 +265,20 @@ class User final :
   std::string* _internal_mutable_public_key();
   public:
 
+  // string attachment_ledger = 5;
+  void clear_attachment_ledger();
+  const std::string& attachment_ledger() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_attachment_ledger(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_attachment_ledger();
+  PROTOBUF_NODISCARD std::string* release_attachment_ledger();
+  void set_allocated_attachment_ledger(std::string* attachment_ledger);
+  private:
+  const std::string& _internal_attachment_ledger() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_attachment_ledger(const std::string& value);
+  std::string* _internal_mutable_attachment_ledger();
+  public:
+
   // int64 id = 1;
   void clear_id();
   int64_t id() const;
@@ -272,7 +288,7 @@ class User final :
   void _internal_set_id(int64_t value);
   public:
 
-  // .user_engine.Role role = 5;
+  // .user_engine.Role role = 6;
   void clear_role();
   ::user_engine::Role role() const;
   void set_role(::user_engine::Role value);
@@ -291,6 +307,7 @@ class User final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr public_key_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr attachment_ledger_;
   int64_t id_;
   int role_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -480,7 +497,58 @@ inline void User::set_allocated_public_key(std::string* public_key) {
   // @@protoc_insertion_point(field_set_allocated:user_engine.User.public_key)
 }
 
-// .user_engine.Role role = 5;
+// string attachment_ledger = 5;
+inline void User::clear_attachment_ledger() {
+  attachment_ledger_.ClearToEmpty();
+}
+inline const std::string& User::attachment_ledger() const {
+  // @@protoc_insertion_point(field_get:user_engine.User.attachment_ledger)
+  return _internal_attachment_ledger();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void User::set_attachment_ledger(ArgT0&& arg0, ArgT... args) {
+ 
+ attachment_ledger_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:user_engine.User.attachment_ledger)
+}
+inline std::string* User::mutable_attachment_ledger() {
+  std::string* _s = _internal_mutable_attachment_ledger();
+  // @@protoc_insertion_point(field_mutable:user_engine.User.attachment_ledger)
+  return _s;
+}
+inline const std::string& User::_internal_attachment_ledger() const {
+  return attachment_ledger_.Get();
+}
+inline void User::_internal_set_attachment_ledger(const std::string& value) {
+  
+  attachment_ledger_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* User::_internal_mutable_attachment_ledger() {
+  
+  return attachment_ledger_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* User::release_attachment_ledger() {
+  // @@protoc_insertion_point(field_release:user_engine.User.attachment_ledger)
+  return attachment_ledger_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void User::set_allocated_attachment_ledger(std::string* attachment_ledger) {
+  if (attachment_ledger != nullptr) {
+    
+  } else {
+    
+  }
+  attachment_ledger_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), attachment_ledger,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (attachment_ledger_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    attachment_ledger_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:user_engine.User.attachment_ledger)
+}
+
+// .user_engine.Role role = 6;
 inline void User::clear_role() {
   role_ = 0;
 }

@@ -2,20 +2,20 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-03-11 14:12:18
+ * @LastEditTime: 2022-07-18 09:57:11
  */
 #include "Users.h"
 #include "User.h"
 
-std::shared_ptr<User> Users::createUser(const std::string &name)
+std::shared_ptr<User> Users::createUser(const std::string &user_name, const std::string &ledger_name, USER_ROLE role)
 {
-    if (auto itr = users_.find(name); itr != users_.end())
+    if (auto itr = users_.find(user_name); itr != users_.end())
     {
         return nullptr;
     }
 
-    auto user = std::make_shared<User>(name);
-    users_.insert(std::make_pair(name, user));
+    auto user = std::make_shared<User>(new{user_name, ledger_name, role});
+    users_.insert(std::make_pair(user_name, user));
     return user;
 }
 

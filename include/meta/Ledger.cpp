@@ -52,27 +52,24 @@ void Ledger::dispose()
     auto is_remove = Ledgers::getInstance().removeLedger(shared_from_this());
     assert(is_remove);
 }
-
-std::optional<Error> Ledger::addRegulator(const std::string &name)
+std::optional<Error> Ledger::addUser(const std::string &name, USER_ROLE role)
 {
-    auto regulators = ledger_->mutable_regulator();
-    auto &regulators_ref = *regulators;
-    regulators_ref = name;
+    auto& users = Users::getInstance();
+    auto new_user = users.createUser(name, this->name(), role);
     return std::nullopt;
 }
+std::optional<Error> Ledger::addRegulator(const std::string &name)
+{
+    return addUser(name, USER_ROLE::REGULATOR);
+}
+
 std::optional<Error> Ledger::addCommon(const std::string &name)
 {
-    auto commons = ledger_->mutable_commons();
-    auto &commons_ref = *commons;
-    commons_ref.Add(std::string(name));
-    return std::nullopt;
+    return addUser(name, USER_ROLE::COMMON);
 }
 std::optional<Error> Ledger::addReadOnly(const std::string &name)
 {
-    auto read_onlys = ledger_->mutable_readonlys();
-    auto read_onlys_ref = *read_onlys;
-    read_onlys_ref.Add(std::string(name));
-    return std::nullopt;
+    return addUser(name, USER_ROLE::READ_ONLY);
 }
 
 std::optional<Error> Ledger::removeCommon(const std::string &name)

@@ -87,7 +87,8 @@
       "compare": "cpp",
       "concepts": "cpp",
       "ranges": "cpp",
-      "stop_token": "cpp"
+      "stop_token": "cpp",
+      "filesystem": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "fileheader.customMade": {

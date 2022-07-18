@@ -22,6 +22,7 @@ constexpr User::User(
   : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , password_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , public_key_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , attachment_ledger_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , id_(int64_t{0})
   , role_(0)
 {}
@@ -50,6 +51,7 @@ const uint32_t TableStruct_user_5fengine_2eproto::offsets[] PROTOBUF_SECTION_VAR
   PROTOBUF_FIELD_OFFSET(::user_engine::User, name_),
   PROTOBUF_FIELD_OFFSET(::user_engine::User, password_),
   PROTOBUF_FIELD_OFFSET(::user_engine::User, public_key_),
+  PROTOBUF_FIELD_OFFSET(::user_engine::User, attachment_ledger_),
   PROTOBUF_FIELD_OFFSET(::user_engine::User, role_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -61,16 +63,17 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_user_5fengine_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\021user_engine.proto\022\013user_engine\"g\n\004User"
-  "\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\020\n\010password\030\003"
-  " \001(\t\022\022\n\npublic_key\030\004 \001(\t\022\037\n\004role\030\005 \001(\0162\021"
-  ".user_engine.Role*8\n\004Role\022\r\n\tREGULATOR\020\000"
-  "\022\n\n\006COMMON\020\001\022\014\n\010READONLY\020\002\022\007\n\003DBA\020\003b\006pro"
-  "to3"
+  "\n\021user_engine.proto\022\013user_engine\"\202\001\n\004Use"
+  "r\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\020\n\010password\030"
+  "\003 \001(\t\022\022\n\npublic_key\030\004 \001(\t\022\031\n\021attachment_"
+  "ledger\030\005 \001(\t\022\037\n\004role\030\006 \001(\0162\021.user_engine"
+  ".Role*G\n\004Role\022\r\n\tREGULATOR\020\000\022\n\n\006COMMON\020\001"
+  "\022\014\n\010READONLY\020\002\022\007\n\003DBA\020\003\022\r\n\tREAD_ONLY\020\004b\006"
+  "proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_user_5fengine_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_user_5fengine_2eproto = {
-  false, false, 203, descriptor_table_protodef_user_5fengine_2eproto, "user_engine.proto", 
+  false, false, 246, descriptor_table_protodef_user_5fengine_2eproto, "user_engine.proto", 
   &descriptor_table_user_5fengine_2eproto_once, nullptr, 0, 1,
   schemas, file_default_instances, TableStruct_user_5fengine_2eproto::offsets,
   file_level_metadata_user_5fengine_2eproto, file_level_enum_descriptors_user_5fengine_2eproto, file_level_service_descriptors_user_5fengine_2eproto,
@@ -92,6 +95,7 @@ bool Role_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -141,6 +145,14 @@ User::User(const User& from)
     public_key_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_public_key(), 
       GetArenaForAllocation());
   }
+  attachment_ledger_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    attachment_ledger_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_attachment_ledger().empty()) {
+    attachment_ledger_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_attachment_ledger(), 
+      GetArenaForAllocation());
+  }
   ::memcpy(&id_, &from.id_,
     static_cast<size_t>(reinterpret_cast<char*>(&role_) -
     reinterpret_cast<char*>(&id_)) + sizeof(role_));
@@ -160,6 +172,10 @@ public_key_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringA
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
   public_key_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+attachment_ledger_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  attachment_ledger_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&id_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&role_) -
@@ -178,6 +194,7 @@ inline void User::SharedDtor() {
   name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   public_key_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  attachment_ledger_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void User::ArenaDtor(void* object) {
@@ -199,6 +216,7 @@ void User::Clear() {
   name_.ClearToEmpty();
   password_.ClearToEmpty();
   public_key_.ClearToEmpty();
+  attachment_ledger_.ClearToEmpty();
   ::memset(&id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&role_) -
       reinterpret_cast<char*>(&id_)) + sizeof(role_));
@@ -249,9 +267,19 @@ const char* User::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inter
         } else
           goto handle_unusual;
         continue;
-      // .user_engine.Role role = 5;
+      // string attachment_ledger = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          auto str = _internal_mutable_attachment_ledger();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "user_engine.User.attachment_ledger"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .user_engine.Role role = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_role(static_cast<::user_engine::Role>(val));
@@ -323,11 +351,21 @@ uint8_t* User::_InternalSerialize(
         4, this->_internal_public_key(), target);
   }
 
-  // .user_engine.Role role = 5;
+  // string attachment_ledger = 5;
+  if (!this->_internal_attachment_ledger().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_attachment_ledger().data(), static_cast<int>(this->_internal_attachment_ledger().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "user_engine.User.attachment_ledger");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_attachment_ledger(), target);
+  }
+
+  // .user_engine.Role role = 6;
   if (this->_internal_role() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      5, this->_internal_role(), target);
+      6, this->_internal_role(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -367,12 +405,19 @@ size_t User::ByteSizeLong() const {
         this->_internal_public_key());
   }
 
+  // string attachment_ledger = 5;
+  if (!this->_internal_attachment_ledger().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_attachment_ledger());
+  }
+
   // int64 id = 1;
   if (this->_internal_id() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_id());
   }
 
-  // .user_engine.Role role = 5;
+  // .user_engine.Role role = 6;
   if (this->_internal_role() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_role());
@@ -408,6 +453,9 @@ void User::MergeFrom(const User& from) {
   }
   if (!from._internal_public_key().empty()) {
     _internal_set_public_key(from._internal_public_key());
+  }
+  if (!from._internal_attachment_ledger().empty()) {
+    _internal_set_attachment_ledger(from._internal_attachment_ledger());
   }
   if (from._internal_id() != 0) {
     _internal_set_id(from._internal_id());
@@ -448,6 +496,11 @@ void User::InternalSwap(User* other) {
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &public_key_, lhs_arena,
       &other->public_key_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &attachment_ledger_, lhs_arena,
+      &other->attachment_ledger_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(User, role_)

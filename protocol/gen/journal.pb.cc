@@ -77,7 +77,7 @@ constexpr JournalReceipt::JournalReceipt(
   , proxying_hash_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , block_hash_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , server_id_(uint64_t{0u})
-  , serverimestamp_(uint64_t{0u})
+  , server_timestamp_(uint64_t{0u})
   , execute_status_(uint64_t{0u})
   , execute_result_(uint64_t{0u}){}
 struct JournalReceiptDefaultTypeInternal {
@@ -156,7 +156,7 @@ const uint32_t TableStruct_journal_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalReceipt, proxying_hash_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalReceipt, block_hash_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalReceipt, server_id_),
-  PROTOBUF_FIELD_OFFSET(::journal_engine::JournalReceipt, serverimestamp_),
+  PROTOBUF_FIELD_OFFSET(::journal_engine::JournalReceipt, server_timestamp_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalReceipt, execute_status_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalReceipt, execute_result_),
   ~0u,  // no _has_bits_
@@ -198,21 +198,21 @@ const char descriptor_table_protodef_journal_2eproto[] PROTOBUF_SECTION_VARIABLE
   "\021\n\tserver_id\030\005 \001(\004\022\030\n\020server_timestamp\030\006"
   " \001(\004\022\026\n\016execute_status\030\007 \001(\004\022\026\n\016execute_"
   "result\030\010 \001(\004\022\030\n\020root_hash_status\030\t \001(\004\022\014"
-  "\n\004hash\030\n \001(\014\"\254\001\n\016JournalReceipt\022\024\n\014reque"
+  "\n\004hash\030\n \001(\014\"\256\001\n\016JournalReceipt\022\024\n\014reque"
   "st_hash\030\001 \001(\014\022\025\n\rproxying_hash\030\002 \001(\014\022\022\n\n"
-  "block_hash\030\003 \001(\014\022\021\n\tserver_id\030\004 \001(\004\022\026\n\016s"
-  "erverimestamp\030\005 \001(\004\022\026\n\016execute_status\030\006 "
-  "\001(\004\022\026\n\016execute_result\030\007 \001(\004\"\205\001\n\022JournalR"
-  "equestByte\0229\n\017journal_request\030\001 \001(\0132\036.jo"
-  "urnal_engine.JournalRequestH\000\022*\n\007payload"
-  "\030\002 \001(\0132\027.journal_engine.PayloadH\000B\010\n\006str"
-  "eam2b\n\016JournalService\022P\n\010AppendTx\022\".jour"
-  "nal_engine.JournalRequestByte\032\036.journal_"
-  "engine.JournalReceipt(\001b\006proto3"
+  "block_hash\030\003 \001(\014\022\021\n\tserver_id\030\004 \001(\004\022\030\n\020s"
+  "erver_timestamp\030\005 \001(\004\022\026\n\016execute_status\030"
+  "\006 \001(\004\022\026\n\016execute_result\030\007 \001(\004\"\205\001\n\022Journa"
+  "lRequestByte\0229\n\017journal_request\030\001 \001(\0132\036."
+  "journal_engine.JournalRequestH\000\022*\n\007paylo"
+  "ad\030\002 \001(\0132\027.journal_engine.PayloadH\000B\010\n\006s"
+  "tream2b\n\016JournalService\022P\n\010AppendTx\022\".jo"
+  "urnal_engine.JournalRequestByte\032\036.journa"
+  "l_engine.JournalReceipt(\001b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_journal_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_journal_2eproto = {
-  false, false, 911, descriptor_table_protodef_journal_2eproto, "journal.proto", 
+  false, false, 913, descriptor_table_protodef_journal_2eproto, "journal.proto", 
   &descriptor_table_journal_2eproto_once, nullptr, 0, 5,
   schemas, file_default_instances, TableStruct_journal_2eproto::offsets,
   file_level_metadata_journal_2eproto, file_level_enum_descriptors_journal_2eproto, file_level_service_descriptors_journal_2eproto,
@@ -1534,10 +1534,10 @@ const char* JournalReceipt::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
         } else
           goto handle_unusual;
         continue;
-      // uint64 serverimestamp = 5;
+      // uint64 server_timestamp = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
-          serverimestamp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          server_timestamp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1611,10 +1611,10 @@ uint8_t* JournalReceipt::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(4, this->_internal_server_id(), target);
   }
 
-  // uint64 serverimestamp = 5;
-  if (this->_internal_serverimestamp() != 0) {
+  // uint64 server_timestamp = 5;
+  if (this->_internal_server_timestamp() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(5, this->_internal_serverimestamp(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(5, this->_internal_server_timestamp(), target);
   }
 
   // uint64 execute_status = 6;
@@ -1671,9 +1671,9 @@ size_t JournalReceipt::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_server_id());
   }
 
-  // uint64 serverimestamp = 5;
-  if (this->_internal_serverimestamp() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_serverimestamp());
+  // uint64 server_timestamp = 5;
+  if (this->_internal_server_timestamp() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_server_timestamp());
   }
 
   // uint64 execute_status = 6;
@@ -1720,8 +1720,8 @@ void JournalReceipt::MergeFrom(const JournalReceipt& from) {
   if (from._internal_server_id() != 0) {
     _internal_set_server_id(from._internal_server_id());
   }
-  if (from._internal_serverimestamp() != 0) {
-    _internal_set_serverimestamp(from._internal_serverimestamp());
+  if (from._internal_server_timestamp() != 0) {
+    _internal_set_server_timestamp(from._internal_server_timestamp());
   }
   if (from._internal_execute_status() != 0) {
     _internal_set_execute_status(from._internal_execute_status());

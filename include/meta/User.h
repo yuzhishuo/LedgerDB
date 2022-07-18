@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 00:23:49
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-17 01:34:56
+ * @LastEditTime: 2022-07-18 09:47:18
  */
 #pragma once
 
@@ -17,12 +17,8 @@
 #include "interfaces/IMonostate.h"
 #include "interfaces/IDisposable.h"
 
-enum class USER_ROLE : uint8_t
-{
-    DBA,
-    REGULATOR,
-    COMMON
-};
+
+using USER_ROLE = user_engine::Role;
 
 class User final : public std::enable_shared_from_this<User>, public IDisposable, public StringUnique, public IMonostate<user_engine::User>
 {
@@ -30,10 +26,11 @@ public:
     using MonoType = user_engine::User;
 
 public:
-    User(const std::string &name, USER_ROLE role = USER_ROLE::COMMON)
-        : role_(role)
+    User(const std::string &name, const std::string& ledger_name, USER_ROLE role = USER_ROLE::COMMON)
     {
         user_->set_name(name);
+        user_->set_attachment_ledger(ledger_name);
+        user_->set_role(role);
     }
 
     User(user_engine::User &&user_inner)
@@ -62,7 +59,7 @@ public:
 
     USER_ROLE role() const
     {
-        return role_;
+        return user_->role();
     }
 
     static uint64_t generatorId()
@@ -99,6 +96,5 @@ public:
     }
 
 private:
-    USER_ROLE role_;
     Monostate<MonoType> user_;
 };

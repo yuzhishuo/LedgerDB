@@ -908,7 +908,7 @@ class JournalReceipt final :
     kProxyingHashFieldNumber = 2,
     kBlockHashFieldNumber = 3,
     kServerIdFieldNumber = 4,
-    kServerimestampFieldNumber = 5,
+    kServerTimestampFieldNumber = 5,
     kExecuteStatusFieldNumber = 6,
     kExecuteResultFieldNumber = 7,
   };
@@ -963,13 +963,13 @@ class JournalReceipt final :
   void _internal_set_server_id(uint64_t value);
   public:
 
-  // uint64 serverimestamp = 5;
-  void clear_serverimestamp();
-  uint64_t serverimestamp() const;
-  void set_serverimestamp(uint64_t value);
+  // uint64 server_timestamp = 5;
+  void clear_server_timestamp();
+  uint64_t server_timestamp() const;
+  void set_server_timestamp(uint64_t value);
   private:
-  uint64_t _internal_serverimestamp() const;
-  void _internal_set_serverimestamp(uint64_t value);
+  uint64_t _internal_server_timestamp() const;
+  void _internal_set_server_timestamp(uint64_t value);
   public:
 
   // uint64 execute_status = 6;
@@ -1001,7 +1001,7 @@ class JournalReceipt final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr proxying_hash_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr block_hash_;
   uint64_t server_id_;
-  uint64_t serverimestamp_;
+  uint64_t server_timestamp_;
   uint64_t execute_status_;
   uint64_t execute_result_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2144,24 +2144,24 @@ inline void JournalReceipt::set_server_id(uint64_t value) {
   // @@protoc_insertion_point(field_set:journal_engine.JournalReceipt.server_id)
 }
 
-// uint64 serverimestamp = 5;
-inline void JournalReceipt::clear_serverimestamp() {
-  serverimestamp_ = uint64_t{0u};
+// uint64 server_timestamp = 5;
+inline void JournalReceipt::clear_server_timestamp() {
+  server_timestamp_ = uint64_t{0u};
 }
-inline uint64_t JournalReceipt::_internal_serverimestamp() const {
-  return serverimestamp_;
+inline uint64_t JournalReceipt::_internal_server_timestamp() const {
+  return server_timestamp_;
 }
-inline uint64_t JournalReceipt::serverimestamp() const {
-  // @@protoc_insertion_point(field_get:journal_engine.JournalReceipt.serverimestamp)
-  return _internal_serverimestamp();
+inline uint64_t JournalReceipt::server_timestamp() const {
+  // @@protoc_insertion_point(field_get:journal_engine.JournalReceipt.server_timestamp)
+  return _internal_server_timestamp();
 }
-inline void JournalReceipt::_internal_set_serverimestamp(uint64_t value) {
+inline void JournalReceipt::_internal_set_server_timestamp(uint64_t value) {
   
-  serverimestamp_ = value;
+  server_timestamp_ = value;
 }
-inline void JournalReceipt::set_serverimestamp(uint64_t value) {
-  _internal_set_serverimestamp(value);
-  // @@protoc_insertion_point(field_set:journal_engine.JournalReceipt.serverimestamp)
+inline void JournalReceipt::set_server_timestamp(uint64_t value) {
+  _internal_set_server_timestamp(value);
+  // @@protoc_insertion_point(field_set:journal_engine.JournalReceipt.server_timestamp)
 }
 
 // uint64 execute_status = 6;

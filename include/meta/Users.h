@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-17 09:23:10
+ * @LastEditTime: 2022-07-18 09:58:59
  */
 #pragma once
 
@@ -28,7 +28,8 @@ public:
     static Users &getInstance()
     {
         static Users instance{
-            std::make_pair("admin", std::make_shared<User>("admin", USER_ROLE::DBA))};
+            // std::make_pair("admin", std::make_shared<User>("admin", USER_ROLE::DBA))
+        };
         return instance;
     }
 
@@ -61,7 +62,7 @@ public: // IStorable
     }
 
 public:
-    std::shared_ptr<User> createUser(const std::string &name);
+    std::shared_ptr<User> createUser(const std::string &user_name, const std::string &ledger_name, USER_ROLE role);
     std::shared_ptr<User> getUser(const std::string &name);
     const std::shared_ptr<User> getUser(const std::string &name) const;
     bool removeUser(const std::shared_ptr<User> &user);

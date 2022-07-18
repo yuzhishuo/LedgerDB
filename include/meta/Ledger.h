@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-17 01:36:33
+ * @LastEditTime: 2022-07-18 09:42:31
  */
 #pragma once
 
@@ -13,13 +13,16 @@
 #include <variant>
 #include <optional>
 #include <string>
+#include <optional>
 
 #include <ledger_engine.pb.h>
 
+#include "meta/User.h"
 #include "common/Error.h"
 #include "interfaces/IUnique.h"
 #include "interfaces/IMonostate.h"
 #include "interfaces/IDisposable.h"
+
 
 enum class LEDGER_ROLE : uint8_t
 {
@@ -30,7 +33,7 @@ enum class LEDGER_ROLE : uint8_t
     READONLY
 };
 
-class User;
+
 namespace yuzhi
 {
 
@@ -67,9 +70,9 @@ public: // meta
     bool isReadOnly(const std::string &name) const;
 
     std::shared_ptr<User> Onwer() const;
-
-    std::optional<Error> addRegulator(const std::string &name);
+    
     std::optional<Error> addCommon(const std::string &name);
+    std::optional<Error> addRegulator(const std::string &name);
     std::optional<Error> addReadOnly(const std::string &name);
 
     std::optional<Error> removeCommon(const std::string &name);
@@ -78,13 +81,15 @@ public: // meta
 
     const std::string &name() const;
     uint64_t id() const;
-
+private:
+    std::optional<Error> addUser(const std::string &name, USER_ROLE role);
 public: // engine
     std::shared_ptr<yuzhi::LedgerEngine> engine();
 
 public:
     virtual std::pair<std::string, std::optional<Error>> serialize() const override
     {
+        
         return ledger_.serialize();
     }
 

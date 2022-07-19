@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-17 03:00:46
+ * @LastEditTime: 2022-07-19 10:13:28
  */
 #pragma once
 
@@ -13,6 +13,7 @@
 #include <type_traits>
 
 #include "meta/Ledger.h"
+#include "meta/LedgersImpl.h"
 #include "interfaces/IStorable.h"
 #include "store/PersistenceStore.h"
 #include "ledger_engine.pb.h"
@@ -64,7 +65,7 @@ public: // IStorable
 
 public:
     std::shared_ptr<Ledger> createLedger(const std::string &name, const std::string &owner);
-    bool removeLedger(const std::shared_ptr<Ledger> &ledger);
+    bool removeLedger(const std::string& ledger_name);
     /**
      * @brief remove all ledgers which owner is user
      *
@@ -80,4 +81,6 @@ public:
 private:
     std::map<std::string, Element> ledgers_;
     std::unique_ptr<IStorable<Ledger>> store_creator_;
+
+    yuzhi::LedgersImpl impl_;
 };

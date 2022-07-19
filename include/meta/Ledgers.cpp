@@ -2,10 +2,13 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-17 01:55:48
+ * @LastEditTime: 2022-07-19 10:26:33
  */
-#include <cassert>
 #include <algorithm>
+#include <cassert>
+#include <memory>
+
+#include <ledger_engine.pb.h>
 
 #include "Ledgers.h"
 #include "Users.h"
@@ -21,15 +24,18 @@ std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std
         return nullptr;
     }
 
-    auto ledger = std::make_shared<Ledger>(name, owner);
+    ledger_engine::Ledger mono_ledger;
+    mono_ledger.set_name(name);
+    impl_.createLedger(mono_ledger);
+    auto ledger = std::make_shared<Ledger>(std::move(mono_ledger));
     ledgers_.insert(std::make_pair(name, ledger));
-    store(ledger);
+
     return ledger;
 }
 
-bool Ledgers::removeLedger(const std::shared_ptr<Ledger> &ledger)
+bool Ledgers::removeLedger(const std::string& ledger_name)
 {
-    auto it = ledgers_.find(ledger->name());
+    auto it = ledgers_.find(ledger_name);
     if (it == ledgers_.end())
     {
         return false;
@@ -37,6 +43,7 @@ bool Ledgers::removeLedger(const std::shared_ptr<Ledger> &ledger)
 
     ledgers_.erase(it);
     // assert(it->second.unique());
+    impl_.deleteLedger(ledger_name);
     return true;
 }
 

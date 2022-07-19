@@ -36,14 +36,14 @@ class PersistenceStore : public IStorage, public yuzhi::IConfigurable {
       SPDLOG_ERROR("create db path {} failed", db_path_);
       exit(1);
     }
-    _RockdbInit();
+    init();
   }
 
 public: // IConfigurable
   virtual const char *Field() const { return "persistence"; }
 
  private:
-  void _RockdbInit() noexcept {
+  void init() noexcept {
     // #ifdef DEBUG
     //         if (auto ds_status = rocksdb::DestroyDB(db_path_,
     //         rocksdb::Options()); !ds_status.ok())
@@ -62,6 +62,10 @@ public: // IConfigurable
                                         rocksdb::ColumnFamilyOptions())};
 
     do {
+      // rocksdb::OptimisticTransactionDB* tdb;
+      // rocksdb::OptimisticTransactionDB::Open(
+      //    options_, db_path_, column_families, &handles, &tdb
+      // );
       if (rocksdb::Status db_status = rocksdb::DB::Open(
               options_, db_path_, column_families, &handles, &db_);
           !db_status.ok()) {

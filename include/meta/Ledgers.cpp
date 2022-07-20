@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-20 04:02:01
+ * @LastEditTime: 2022-07-20 07:17:32
  */
 #include <algorithm>
 #include <cassert>
@@ -54,9 +54,7 @@ bool Ledgers::removeLedger(const std::string& ledger_name)
 
 bool Ledgers::hasLedger(const std::string &name) const
 {
-
-    auto ledger = std::make_shared<Ledger>(name, "unkonw");
-    return ledgers_.count(name) && this->load(ledger);
+    return ledgers_.count(name) && impl_.hasLedger(name);
 }
 
 bool Ledgers::removeLedgerByUser(const std::shared_ptr<User> &user)

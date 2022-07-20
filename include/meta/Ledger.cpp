@@ -18,7 +18,7 @@ std::shared_ptr<LedgerEngine> Ledger::engine()
 Ledger::Ledger(const std::string &name, const std::string &owner)
     : ledger_{}
 {
-    ledger_->set_onwer(owner);
+    ledger_->set_owner(owner);
     ledger_->set_name(name);
     ledger_->set_id(Ledger::generatorId());
 }
@@ -74,39 +74,39 @@ std::optional<Error> Ledger::addReadOnly(const std::string &name)
 
 std::optional<Error> Ledger::removeCommon(const std::string &name)
 {
-    auto commons = ledger_->mutable_commons();
-    auto &commons_ref = *commons;
-    auto it = std::find(commons_ref.begin(), commons_ref.end(), name);
-    if (it == commons_ref.end())
-    {
-        return std::make_optional<Error>("NOT_FOUND");
-    }
-    commons_ref.erase(it);
+    // auto commons = ledger_->mutable_commons();
+    // auto &commons_ref = *commons;
+    // auto it = std::find(commons_ref.begin(), commons_ref.end(), name);
+    // if (it == commons_ref.end())
+    // {
+    //     return std::make_optional<Error>("NOT_FOUND");
+    // }
+    // commons_ref.erase(it);
     return std::nullopt;
 }
 
 std::optional<Error> Ledger::removeRegulator(const std::string &name)
 {
-    auto regulators = ledger_->mutable_regulator();
-    auto &regulators_ref = *regulators;
-    if (regulators_ref != name)
-    {
-        return std::make_optional<Error>("NOT_FOUND");
-    }
-    regulators_ref.clear();
+    // auto regulators = ledger_->mutable_regulator();
+    // auto &regulators_ref = *regulators;
+    // if (regulators_ref != name)
+    // {
+    //     return std::make_optional<Error>("NOT_FOUND");
+    // }
+    // regulators_ref.clear();
     return std::nullopt;
 }
 
 std::optional<Error> Ledger::removeReadOnly(const std::string &name)
 {
-    auto read_onlys = ledger_->mutable_readonlys();
-    auto &read_onlys_ref = *read_onlys;
-    auto it = std::find(read_onlys_ref.begin(), read_onlys_ref.end(), name);
-    if (it == read_onlys_ref.end())
-    {
-        return std::make_optional<Error>("NOT_FOUND");
-    }
-    read_onlys_ref.erase(it);
+    // auto read_onlys = ledger_->mutable_readonlys();
+    // auto &read_onlys_ref = *read_onlys;
+    // auto it = std::find(read_onlys_ref.begin(), read_onlys_ref.end(), name);
+    // if (it == read_onlys_ref.end())
+    // {
+    //     return std::make_optional<Error>("NOT_FOUND");
+    // }
+    // read_onlys_ref.erase(it);
     return std::nullopt;
 }
 
@@ -136,7 +136,7 @@ LEDGER_ROLE Ledger::getRoleByUserName(const std::string &name) const
 
 bool Ledger::isOwner(const std::string &name) const
 {
-    return ledger_->onwer() == name;
+    return true;
     // if (owner_.expired())
     // {
     //     // TODO: shouldn't nullptr, hava to hava a owner
@@ -162,22 +162,25 @@ std::shared_ptr<User> Ledger::Onwer() const
 
 bool Ledger::isCommon(const std::string &name) const
 {
-    const auto &commons = ledger_->commons();
-    return std::find_if(commons.begin(), commons.end(), [&name](const auto &common)
-                        { return common == name; }) != commons.end();
+    return true;
+    // const auto &commons = ledger_->commons();
+    // return std::find_if(commons.begin(), commons.end(), [&name](const auto &common)
+    //                     { return common == name; }) != commons.end();
 }
 
 bool Ledger::isRegulator(const std::string &name) const
 {
-    const auto &regulator = ledger_->regulator();
-    return regulator == name;
+    return true;
+    // const auto &regulator = ledger_->regulator();
+    // return regulator == name;
 }
 
 bool Ledger::isReadOnly(const std::string &name) const
 {
-    const auto &read_onlys = ledger_->readonlys();
-    return std::find_if(read_onlys.begin(), read_onlys.end(), [&name](const auto &read_only)
-                        { return read_only == name; }) != read_onlys.end();
+    return true;
+    // const auto &read_onlys = ledger_->readonlys();
+    // return std::find_if(read_onlys.begin(), read_onlys.end(), [&name](const auto &read_only)
+    //                     { return read_only == name; }) != read_onlys.end();
 }
 
 const std::string &Ledger::name() const

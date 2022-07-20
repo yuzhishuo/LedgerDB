@@ -2,12 +2,15 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-20 02:41:21
+ * @LastEditTime: 2022-07-20 04:46:54
  */
 #pragma once
 #include <common/Error.h>
 #include <optional>
 #include <rocksdb/db.h>
+#include <rocksdb/utilities/optimistic_transaction_db.h>
+#include <rocksdb/utilities/transaction_db.h>
+
 #include <string>
 
 #include <ledger_engine.pb.h>
@@ -47,10 +50,12 @@ public:
       ReadOptions read_options;
       OptimisticTransactionOptions txn_options;
       txn_options.set_snapshot = true;
-      Transaction *txn = txn_db->BeginTransaction(write_options, txn_options);
+      auto *txn = txn_db->BeginTransaction(write_options, txn_options);
       std::string val;
+      Slice key{"ledger_db_" + mono_ledger.name()};
+
       if (
-              auto status = txn->Get(read_options, handles[1], "ledger_db_" + mono_ledger.name(), &val);
+              auto status = txn->Get(read_options, handles[1], key, &val);
               status.ok()) {
         return Error::RepeatKey();
       }
@@ -65,8 +70,9 @@ public:
       auto current_ledger_id = std::stoi(val);
 
       if (
-              auto status = txn->Put(handles[1], "current_ledger_id",
-                                     std::to_string(current_ledger_id + 1));
+              auto status = txn->Put(
+                      handles[1], "current_ledger_id",
+                      std::to_string(current_ledger_id + 1));
               !status.ok()) {
 
         return Error::InternalError(
@@ -75,7 +81,7 @@ public:
 
       mono_ledger.SerializeToString(&val);
       if (
-              auto status = txn->Put(handles[1], mono_ledger.name(), val);
+              auto status = txn->Put(handles[1], "ledger_db_" + mono_ledger.name(), val);
               !status.ok()) {
 
         return Error::InternalError(
@@ -109,24 +115,29 @@ public:
     */
     // deleteLedger
     std::optional<Error> deleteLedger(const std::string &ledger_name) {
-        using namespace rocksdb;
-        WriteOptions write_options;
-        ReadOptions read_options;
-        OptimisticTransactionOptions txn_options;
-        txn_options.set_snapshot = true;
-        Transaction *txn = txn_db->BeginTransaction(write_options, txn_options);
+      using namespace rocksdb;
+      WriteOptions write_options;
+      ReadOptions read_options;
+      OptimisticTransactionOptions txn_options;
+      txn_options.set_snapshot = true;
+      Transaction *txn = txn_db->BeginTransaction(write_options, txn_options);
 
       std::string val;
       if (
-              auto status = txn->GetForUpdate(read_options, handles[1], "ledger_db_" + mono_ledger.name(), &val);
-              status.ok()) {
-        ledger_engine::Ledger mono_ledger;
+              auto status = txn->GetForUpdate(read_options, handles[1], "ledger_db_" + ledger_name, &val);
+              !status.ok()) {
 
-        
+        return Error::InternalError(
+                "get ledger_db_" + ledger_name + " failed: " + status.ToString());
       }
+      ledger_engine::Ledger mono_ledger;
+      mono_ledger.ParseFromString(val);
+      mono_ledger.set_is_deleted(true);
 
-        return std::nullopt;
-
+      mono_ledger.SerializeToString(&val);
+      txn->Put(handles[1], "ledger_db_" + mono_ledger.name(), val);
+      txn->Commit();
+      return std::nullopt;
     }
 
 private:

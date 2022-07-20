@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-19 13:22:48
+ * @LastEditTime: 2022-07-20 03:51:12
  */
 #pragma once
 
@@ -69,6 +69,7 @@ public: // IStorable
 public:
     std::shared_ptr<Ledger> createLedger(const std::string &name, const std::string &owner);
     bool removeLedger(const std::string& ledger_name);
+    bool removeLedger(const std::shared_ptr<Ledger>& ledger);
     /**
      * @brief remove all ledgers which owner is user
      *

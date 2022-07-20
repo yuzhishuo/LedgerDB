@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-19 10:26:33
+ * @LastEditTime: 2022-07-20 04:02:01
  */
 #include <algorithm>
 #include <cassert>
@@ -31,6 +31,11 @@ std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std
     ledgers_.insert(std::make_pair(name, ledger));
 
     return ledger;
+}
+
+bool Ledgers::removeLedger(const std::shared_ptr<Ledger>& ledger)
+{
+    return removeLedger(ledger->name());
 }
 
 bool Ledgers::removeLedger(const std::string& ledger_name)

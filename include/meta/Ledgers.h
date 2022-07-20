@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-19 10:13:28
+ * @LastEditTime: 2022-07-19 13:22:48
  */
 #pragma once
 
@@ -21,6 +21,8 @@
 
 class User;
 
+constexpr auto kLedgerStoreName = "ledgerdb";
+
 class Ledgers : public IStorable<Ledger>
 {
 public:
@@ -32,6 +34,7 @@ public:
     Ledgers()
         : ledgers_(),
           store_creator_{dynamic_cast<IStorable<Ledger> *>(new LedgerStoreCreator{"Ledger"})},
+          impl_(kLedgerStoreName),
           IStorable<Ledger>()
     {
     }

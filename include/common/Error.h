@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
  * @LastEditors: Leo
- * @LastEditTime: 2022-02-16 16:17:07
+ * @LastEditTime: 2022-07-19 14:14:10
  */
 #pragma once
 #ifndef YUZHI_LEDGERDB_ERROR
@@ -54,6 +54,10 @@ class Error {
   static inline Error RaftError() { return Error("RaftError"); };
   static inline Error UndefineGammarError() {return Error("Undefine Gammar");};
   static inline Error RepeatKey() {return Error("Repeat Key Exist"); }
+  static inline Error InvalidKey() {return Error("Invalid Key"); }
+  static inline Error InvalidValue() {return Error("Invalid Value"); }
+  static inline Error InvalidType() {return Error("Invalid Type"); }
+  static inline Error InternalError(const std::string& msg) {return Error(msg); }
  private:
   const std::string message_;
 };

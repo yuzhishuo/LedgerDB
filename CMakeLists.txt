@@ -15,6 +15,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 add_definitions(
   -DMUDUO_BUILD_EXAMPLES=OFF
+  -DSPDLOG_FMT_EXTERNAL=ON
 )
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -22,7 +23,7 @@ endif()
 
 find_package(RocksDB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
+# find_package(spdlog CONFIG REQUIRED)
 
 find_package(gRPC CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
@@ -46,8 +47,15 @@ add_dependencies(raft build_raft)
 include_directories(3rdParty/raft/include)
 # raft end
 
+add_subdirectory(3rdParty/fmt)
+include_directories(3rdParty/fmt/include)
+
+add_subdirectory(3rdParty/spdlog)
+include_directories(3rdParty/spdlog/include)
+
 add_subdirectory(protocol)
 include_directories(protocol/gen)
+
 
 add_subdirectory(3rdParty/muduo)
 include_directories(3rdParty/muduo)

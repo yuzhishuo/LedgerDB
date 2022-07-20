@@ -20,4 +20,5 @@ target_link_libraries(Cli
     readline
     rudeconfig
     parser
+    fmt::fmt
 )

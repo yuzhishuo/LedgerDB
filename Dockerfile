@@ -16,7 +16,6 @@ RUN apt update -y \
     libgflags-dev \
     && apt-get update -y \
     && apt-get install -y gdb \
-    && apt-get install -y libspdlog-dev \
     wget tar
 
 RUN cd /

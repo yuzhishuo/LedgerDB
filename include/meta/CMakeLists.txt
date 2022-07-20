@@ -5,4 +5,5 @@ add_library(meta Ledger.cpp
                  User.cpp
                  Users.cpp)
 target_link_libraries(meta
-                 RocksDB::rocksdb)
+                 RocksDB::rocksdb
+                 fmt::fmt)

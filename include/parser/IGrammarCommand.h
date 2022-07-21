@@ -1,3 +1,9 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-07-17 14:09:42
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-07-21 08:01:05
+ */
 //
 // Created by yuzhi on 5/29/22.
 //
@@ -19,7 +25,7 @@ namespace yuzhi::grammar {
     public:
         using Key = IUnique<GrammarType>::Key;
     public:
-        virtual std::optional <Error> operator()(utility::VaStack& vaStack) = 0;
+        virtual std::optional <common::Error> operator()(utility::VaStack& vaStack) = 0;
 
         virtual GrammarType GetUnique() const = 0;
 

@@ -1,3 +1,9 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-07-17 14:09:42
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-07-21 08:06:21
+ */
 //
 // Created by yuzhi on 6/17/22.
 //
@@ -15,7 +21,7 @@ namespace yuzhi::grammar::cli {
   class CreateLedger : public IGrammarCommand, public yuzhi::cli::IHelper{
 
 public:
-    std::optional <Error> operator()(utility::VaStack& vaStack)  override
+    std::optional <common::Error> operator()(utility::VaStack& vaStack)  override
     {
       auto a0 = vaStack.pop<int>();
       auto a1 = vaStack.pop<const char *>();

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-17 01:57:42
+ * @LastEditTime: 2022-07-21 08:30:57
  */
 #pragma once
 
@@ -10,6 +10,7 @@
 
 #include <interfaces/IStorable.h>
 
+namespace yuzhi::store {
 class IStorage;
 
 template <typename T> class StoreCreator : public IStorable<T> {
@@ -20,7 +21,7 @@ public:
       : prefix_(prefix), suffix_(suffix), family_(family), IStorable<T>() {}
   virtual ~StoreCreator() = default;
   virtual IStorage *create() const = 0;
-  virtual std::optional<Error> store(const std::shared_ptr<T> &object) const {
+  virtual std::optional<common::Error> store(const std::shared_ptr<T> &object) const {
 
     if (auto storage = create(); storage) {
       if (auto [raw, err] = object->serialize(); !err) {
@@ -31,7 +32,7 @@ public:
       }
     }
 
-    return Error{"Failed to create storage"};
+    return common::Error{"Failed to create storage"};
   }
 
   virtual std::shared_ptr<T>
@@ -60,3 +61,5 @@ private:
   std::string suffix_;
   std::string family_;
 };
+
+} // namespace yuzhi

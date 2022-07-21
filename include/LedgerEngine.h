@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
- * @LastEditTime: 2022-02-07 18:20:28
+ * @LastEditTime: 2022-07-21 08:06:03
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -26,23 +26,23 @@ public:
 
 public:
   // Read, get 你存的东西 ，就要一个参数 jsn
-  std::pair<std::vector<uint8_t>, std::optional<Error>>
+  std::pair<std::vector<uint8_t>, std::optional<common::Error>>
   Read(const std::string &jsn);
   // Verify 1001 和 1000 来判断是否是合法的
-  std::optional<Error> Verify(const std::string &jsn,
+  std::optional<common::Error> Verify(const std::string &jsn,
                               std::vector<uint8_t> &data);
   // Write  set 你存的东西 ，就要一个参数 一个返回值 root hash ,jsn
   // 是一个叶子节点的id office
-  std::pair<std::string, std::optional<Error>>
+  std::pair<std::string, std::optional<common::Error>>
   Write(const std::vector<uint8_t> &content);
   // Grant
-  std::optional<Error> Grant(const std::string &id);
+  std::optional<common::Error> Grant(const std::string &id);
   // Delete
-  std::optional<Error> Delete();
+  std::optional<common::Error> Delete();
   // Purge
-  std::optional<Error> Purge();
+  std::optional<common::Error> Purge();
   // Hide
-  std::optional<Error> Hide();
+  std::optional<common::Error> Hide();
 
 private:
   std::weak_ptr<Ledger> ledger_;

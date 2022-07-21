@@ -7,6 +7,8 @@
 #include "User.h"
 #include "Users.h"
 
+using namespace yuzhi;
+
 void User::dispose()
 {
     auto is_removed = Users::getInstance().removeUser(shared_from_this());

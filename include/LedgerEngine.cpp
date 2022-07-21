@@ -18,18 +18,18 @@ LedgerEngine::LedgerEngine(std::shared_ptr<Ledger> ledger)
 }
 
 // Read  get 你存的东西 ，就要一个参数 jsn
-std::pair<std::vector<uint8_t>, std::optional<Error>> LedgerEngine::Read(const std::string &jsn)
+std::pair<std::vector<uint8_t>, std::optional<common::Error>> LedgerEngine::Read(const std::string &jsn)
 {
-    return std::make_pair(std::vector<uint8_t>(), std::optional<Error>());
+    return std::make_pair(std::vector<uint8_t>(), std::optional<common::Error>());
 }
 
 // Verify 1001 和 1000 来判断是否是合法的
-std::optional<Error> LedgerEngine::Verify(const std::string &jsn, std::vector<uint8_t> &content)
+std::optional<common::Error> LedgerEngine::Verify(const std::string &jsn, std::vector<uint8_t> &content)
 {
     merkle_engine::LeafMeta leaf_meta;
     if (!leaf_meta.ParseFromString(jsn))
     {
-        return Error::SerializeError();
+        return common::Error::SerializeError();
     }
 
     // hash data
@@ -43,14 +43,14 @@ std::optional<Error> LedgerEngine::Verify(const std::string &jsn, std::vector<ui
     // compare hash, if not equal, return error
     if (memcmp(hash, leaf_meta.hash().data(), SHA256_DIGEST_LENGTH) != 0)
     {
-        return Error::HashError();
+        return common::Error::HashError();
     }
 
-    return std::optional<Error>();
+    return std::optional<common::Error>();
 }
 
 // Write  set 你存的东西 ，就要一个参数 一个返回值 root hash ,jsn 是一个叶子节点的id office
-std::pair<std::string, std::optional<Error>> LedgerEngine::Write(const std::vector<uint8_t> &content)
+std::pair<std::string, std::optional<common::Error>> LedgerEngine::Write(const std::vector<uint8_t> &content)
 {
     // begin time
     auto now = chrono::system_clock::now();
@@ -58,7 +58,7 @@ std::pair<std::string, std::optional<Error>> LedgerEngine::Write(const std::vect
     auto ledger = ledger_.lock();
     if (!ledger)
     {
-        return {{}, Error::InvalidLedger()};
+        return {{}, common::Error::InvalidLedger()};
     }
 
     auto &ledger_ref = *ledger;
@@ -100,18 +100,18 @@ std::pair<std::string, std::optional<Error>> LedgerEngine::Write(const std::vect
         }
         else
         {
-            return {{}, Error::SerializeError()};
+            return {{}, common::Error::SerializeError()};
         }
     }
 }
 
 // Grant
-std::optional<Error> LedgerEngine::Grant(const std::string &id)
+std::optional<common::Error> LedgerEngine::Grant(const std::string &id)
 {
     auto ledger = ledger_.lock();
     if (!ledger)
     {
-        return Error::InvalidLedger();
+        return common::Error::InvalidLedger();
     }
     auto &ledger_ref = *ledger;
     ledger_ref.addCommon(id);
@@ -119,19 +119,19 @@ std::optional<Error> LedgerEngine::Grant(const std::string &id)
 }
 
 // Delete
-std::optional<Error> LedgerEngine::Delete()
+std::optional<common::Error> LedgerEngine::Delete()
 {
     return std::nullopt;
 }
 
 // Purge
-std::optional<Error> LedgerEngine::Purge()
+std::optional<common::Error> LedgerEngine::Purge()
 {
     return std::nullopt;
 }
 
 // Hide
-std::optional<Error> LedgerEngine::Hide()
+std::optional<common::Error> LedgerEngine::Hide()
 {
     return std::nullopt;
 }

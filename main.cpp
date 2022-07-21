@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-07-20 10:22:55
+ * @LastEditTime: 2022-07-21 08:51:39
  * @LastEditors: Leo
  * @FilePath: /LedgerDB/main.cpp
  */
@@ -34,11 +34,11 @@ namespace spd = spdlog;
 using namespace std;
 using namespace grpc;
 namespace yuzhi {
-  class Ledger final : public IConfigurable {
+  class LedgerDB final : public IConfigurable {
 
 public:
-    Ledger() = default;
-    ~Ledger() override = default;
+    LedgerDB() = default;
+    ~LedgerDB() override = default;
     const char *Field() const override { return "ledger"; }
 
     void start() const
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 {
   using yuzhi::raft_engine::net::RaftService;
   RaftService::Instance();
-  yuzhi::Ledger ledger;
+  yuzhi::LedgerDB ledger;
   ledger.start();
 
   return 0;

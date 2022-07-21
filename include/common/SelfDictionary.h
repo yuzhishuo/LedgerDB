@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
- * @LastEditTime: 2022-02-01 23:11:07
+ * @LastEditTime: 2022-07-21 08:05:37
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -35,19 +35,19 @@ public:
   ~SelfDictionary() = default;
 
 public:
-  std::optional<Error> Add(const Value &value) {
+  std::optional<common::Error> Add(const Value &value) {
 
     auto is_inserted =
         dictionary_.insert(std::make_pair(value.GetUnique(), value));
     if (!is_inserted.second) {
-      return Error("Duplicate key");
+      return common::Error("Duplicate key");
     }
     return std::nullopt;
   }
 
-  std::optional<Error> Update(const Value &value) {
+  std::optional<common::Error> Update(const Value &value) {
     if (dictionary_.find(value.GetUnique()) == dictionary_.end()) {
-      return Error("Key not found");
+      return common::Error("Key not found");
     }
 
     dictionary_.insert(std::move(std::make_pair(value.GetUnique(), value)));
@@ -55,17 +55,17 @@ public:
     return std::nullopt;
   }
 
-  std::optional<Error> Remove(const Value &value) {
+  std::optional<common::Error> Remove(const Value &value) {
     if (dictionary_.erase(value.GetUnique()) == 0) {
-      return Error("Key not found");
+      return common::Error("Key not found");
     }
     return std::nullopt;
   }
 
-  std::optional<Error> Remove(const Key &key) {
+  std::optional<common::Error> Remove(const Key &key) {
 
     if (dictionary_.erase(key) == 0) {
-      return Error("Key not found");
+      return common::Error("Key not found");
     }
     return std::nullopt;
   }
@@ -93,19 +93,19 @@ public:
     ~SelfDictionary() = default;
 
 public:
-    std::optional<Error> Add(SmartValue &value) {
+    std::optional<common::Error> Add(SmartValue &value) {
 
         auto is_inserted =
                 dictionary_.insert(std::make_pair(value->GetUnique(), value));
         if (!is_inserted.second) {
-            return Error::RepeatKey();
+            return common::Error::RepeatKey();
         }
         return std::nullopt;
     }
 
-    std::optional<Error> Update(SmartValue &value) {
+    std::optional<common::Error> Update(SmartValue &value) {
         if (dictionary_.find(value->GetUnique()) == dictionary_.end()) {
-            return Error("Key not found");
+            return common::Error("Key not found");
         }
 
         dictionary_.insert(std::move(std::make_pair(value->GetUnique(), value)));
@@ -113,17 +113,17 @@ public:
         return std::nullopt;
     }
 
-    std::optional<Error> Remove(SmartValue &value) {
+    std::optional<common::Error> Remove(SmartValue &value) {
         if (dictionary_.erase(value->GetUnique()) == 0) {
-            return Error("Key not found");
+            return common::Error("Key not found");
         }
         return std::nullopt;
     }
 
-    std::optional<Error> Remove(const Key &key) {
+    std::optional<common::Error> Remove(const Key &key) {
 
         if (dictionary_.erase(key) == 0) {
-            return Error("Key not found");
+            return common::Error("Key not found");
         }
         return std::nullopt;
     }

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-20 07:17:32
+ * @LastEditTime: 2022-07-21 08:14:36
  */
 #include <algorithm>
 #include <cassert>
@@ -12,7 +12,7 @@
 
 #include "Ledgers.h"
 #include "Users.h"
-
+using namespace yuzhi;
 std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std::string &owner)
 {
     if (hasLedger(name)

@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-02-13 22:50:57
+ * @LastEditTime: 2022-07-21 08:48:05
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -67,7 +67,7 @@ class RaftService : public yuzhi::IConfigurable {
                                    raft_entry_t *ety, raft_index_t ety_idx);
 
 public:
-  std::optional<Error> Save(const std::string &key, const std::string &value);
+  std::optional<common::Error> Save(const std::string &key, const std::string &value);
 
 public:
   static RaftService &Instance() {
@@ -101,7 +101,7 @@ private:
   muduo::net::EventLoop loop_;
   std::unique_ptr<muduo::net::TcpServer> server_;
   std::vector<std::unique_ptr<muduo::net::TcpClient>> cls_;
-  PersistenceStore persistenceStore;
+  yuzhi::store::PersistenceStore persistenceStore;
   int16_t http_port;
   int16_t raft_port;
 };

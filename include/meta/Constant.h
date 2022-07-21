@@ -2,25 +2,29 @@
  * @Author: Leo
  * @Date: 2022-07-20 08:29:41
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-20 10:09:03
+ * @LastEditTime: 2022-07-21 07:28:51
  */
+#pragma once
 #include <filesystem>
 #include <fmt/core.h>
 
 namespace yuzhi::meta {
-namespace {
-constexpr auto KLedgerStoreName = "ledgerdb";
 
-constexpr auto KLedgerStoreVersion = 1.0;
+static constexpr auto KLedgerStoreName = "ledgerdb";
 
-constexpr auto KLedgerStoreKey = "ledger_db_{}";
+static constexpr auto KLedgerStoreVersion = 1.0;
 
-constexpr auto KLedgerStoreKeyCurrentLedgerId = "current_ledger_id";
+static constexpr auto KLedgerStoreKey = "ledger_db_{}";
 
-constexpr auto KLedgerStoreKeyCurrentUserId = "current_user_id";
+static constexpr auto KLedgerColumnFamilyName = "ledger_column_family";
 
-constexpr auto KLedgerUserStoreKey = "ledger_db_user_{}_{}";
-} // namespace
+static constexpr auto KUserColumnFamilyName = "user_column_family";
+
+static constexpr auto KLedgerStoreKeyCurrentLedgerId = "current_ledger_id";
+
+static constexpr auto KLedgerStoreKeyCurrentUserId = "current_user_id";
+
+static constexpr auto KLedgerUserStoreKey = "ledger_db_user_{}_{}";
 
 inline std::string genLedgerDBStoreRootPath() noexcept {
   using namespace std::filesystem;
@@ -50,6 +54,14 @@ inline std::string genCurrentLedgerIdOfKey() noexcept {
 
 inline std::string genCurrentUserIdOfKey() noexcept {
   return KLedgerStoreKeyCurrentUserId;
+}
+
+inline std::string genLedgerColumnFamilyName() noexcept {
+  return KLedgerColumnFamilyName;
+}
+
+inline std::string genUserColumnFamilyName() noexcept {
+  return KUserColumnFamilyName;
 }
 
 } // namespace yuzhi::meta

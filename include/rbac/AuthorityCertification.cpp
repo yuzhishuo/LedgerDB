@@ -2,13 +2,14 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-17 01:36:26
+ * @LastEditTime: 2022-07-21 08:49:07
  */
 #include "rbac/AuthorityCertification.h"
 #include "meta/User.h"
 #include "meta/Users.h"
 #include "meta/Ledgers.h"
 
+using namespace yuzhi;
 bool AuthorityCertification::UserPass(const std::string &command_name, const std::string &user_name) const
 {
     if (auto command = strategys_.find(command_name); command != strategys_.end())

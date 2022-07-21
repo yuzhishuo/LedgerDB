@@ -1,16 +1,24 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-07-17 14:09:42
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-07-21 08:12:11
+ */
 #pragma once
 
 #include <optional>
 #include <type_traits>
 
-#include "common/Error.h"
 #include "IUnique.h"
+#include "common/Error.h"
 
+namespace yuzhi {
 template <typename T> class IMonostate {
 public:
   virtual ~IMonostate() = default;
-  virtual std::pair<std::string, std::optional<Error>> serialize() const = 0;
-  virtual std::pair<std::shared_ptr<T>, std::optional<Error>>
+  virtual std::pair<std::string, std::optional<common::Error>>
+  serialize() const = 0;
+  virtual std::pair<std::shared_ptr<T>, std::optional<common::Error>>
   deserialize(const std::string &serialized) = 0;
 };
 
@@ -28,7 +36,7 @@ private:
   Monostate &operator=(const Monostate &other) = delete;
 
 public:
-  virtual std::pair<std::string, std::optional<Error>>
+  virtual std::pair<std::string, std::optional<common::Error>>
   serialize() const override {
     if (auto serialized = std::string();
         value_.SerializeToString(&serialized)) {
@@ -36,15 +44,15 @@ public:
     }
 
     return std::make_pair(std::string{},
-                          Error{"Failed to serialize Monostate"});
+                          common::Error{"Failed to serialize Monostate"});
   }
 
-  virtual std::pair<std::shared_ptr<T>, std::optional<Error>>
+  virtual std::pair<std::shared_ptr<T>, std::optional<common::Error>>
   deserialize(const std::string &serialized) override {
     if (value_.ParseFromString(serialized)) {
       return {std::make_shared<T>(value_), std::nullopt};
     } else {
-      return {nullptr, Error{"Failed to deserialize Monostate"}};
+      return {nullptr, common::Error{"Failed to deserialize Monostate"}};
     }
   }
 
@@ -57,3 +65,4 @@ public:
 private:
   T value_;
 };
+} // namespace yuzhi

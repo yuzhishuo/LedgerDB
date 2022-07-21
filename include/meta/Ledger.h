@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-18 09:42:31
+ * @LastEditTime: 2022-07-21 08:03:55
  */
 #pragma once
 
@@ -38,7 +38,7 @@ namespace yuzhi
 {
 
 class LedgerEngine;
-} // namespace yuzhi
+
 
 class Ledger final : public IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
 {
@@ -71,29 +71,29 @@ public: // meta
 
     std::shared_ptr<User> Onwer() const;
     
-    std::optional<Error> addCommon(const std::string &name);
-    std::optional<Error> addRegulator(const std::string &name);
-    std::optional<Error> addReadOnly(const std::string &name);
+    std::optional<common::Error> addCommon(const std::string &name);
+    std::optional<common::Error> addRegulator(const std::string &name);
+    std::optional<common::Error> addReadOnly(const std::string &name);
 
-    std::optional<Error> removeCommon(const std::string &name);
-    std::optional<Error> removeRegulator(const std::string &name);
-    std::optional<Error> removeReadOnly(const std::string &name);
+    std::optional<common::Error> removeCommon(const std::string &name);
+    std::optional<common::Error> removeRegulator(const std::string &name);
+    std::optional<common::Error> removeReadOnly(const std::string &name);
 
     const std::string &name() const;
     uint64_t id() const;
 private:
-    std::optional<Error> addUser(const std::string &name, USER_ROLE role);
+    std::optional<common::Error> addUser(const std::string &name, USER_ROLE role);
 public: // engine
     std::shared_ptr<yuzhi::LedgerEngine> engine();
 
 public:
-    virtual std::pair<std::string, std::optional<Error>> serialize() const override
+    virtual std::pair<std::string, std::optional<common::Error>> serialize() const override
     {
         
         return ledger_.serialize();
     }
 
-    virtual std::pair<std::shared_ptr<ledger_engine::Ledger>, std::optional<Error>> deserialize(const std::string &serialized) override
+    virtual std::pair<std::shared_ptr<ledger_engine::Ledger>, std::optional<common::Error>> deserialize(const std::string &serialized) override
     {
         return ledger_.deserialize(serialized);
     }
@@ -108,3 +108,4 @@ public:
 private:
     Monostate<MonoType> ledger_;
 };
+} // namespace yuzhi

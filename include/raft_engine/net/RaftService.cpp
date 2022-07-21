@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-03 16:06:57
- * @LastEditTime: 2022-03-11 14:26:23
+ * @LastEditTime: 2022-07-21 08:48:26
  * @LastEditors: Leo
  * @Description:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -16,6 +16,7 @@
 #include <rocksdb/db.h>
 #include <utility/tpl.h>
 
+using namespace yuzhi::store;
 // g++ bug: friend declaration for ‘__deserialize_and_handle_msg’ not found
 namespace yuzhi::raft_engine::net {
 using namespace std;
@@ -779,18 +780,18 @@ void RaftService::onMessage(const muduo::net::TcpConnectionPtr &conn,
   }
 }
 
-std::optional<Error> RaftService::Save(const std::string &key,
+std::optional<common::Error> RaftService::Save(const std::string &key,
                                        const std::string &value) {
   raft_node_t *leader = raft_get_current_leader_node((raft_server_t *)raft);
 
   if (!leader) {
     SPDLOG_ERROR("inter error, No leader node");
-    return Error::UnLeader();
+    return common::Error::UnLeader();
   }
 
   if (raft_node_get_id(leader) != node_id) {
     SPDLOG_ERROR("inter error, leader node is not me");
-    return Error::Redirect();
+    return common::Error::Redirect();
   }
 
   auto en = key + "&yuzhi&" + value;
@@ -810,14 +811,14 @@ std::optional<Error> RaftService::Save(const std::string &key,
   if (auto e = raft_recv_entry((raft_server_t *)raft, &entry, &r); e != 0) {
     SPDLOG_ERROR("raft inter error, node_id : {} ", node_id);
     SPDLOG_ERROR("raft error code : {}", e);
-    return Error::RaftError();
+    return common::Error::RaftError();
   }
 
   int done = 0, tries = 0;
   do {
     if (3 < tries) {
       SPDLOG_ERROR("tries 3s, failed to commit entry");
-      return Error::RaftError();
+      return common::Error::RaftError();
     }
 
     // if  node num is 1, then commit immediately
@@ -840,7 +841,7 @@ std::optional<Error> RaftService::Save(const std::string &key,
     case -1:
       lk.unlock();
       SPDLOG_ERROR("raft inter error, node_id : {} ", node_id);
-      return Error::RaftError();
+      return common::Error::RaftError();
     }
   } while (!done);
 

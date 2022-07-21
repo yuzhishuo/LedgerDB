@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 16:36:55
- * @LastEditTime: 2022-02-01 22:52:35
+ * @LastEditTime: 2022-07-21 08:04:18
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /example-authority-cpp/include/merkle/MerkleEngine.h
@@ -36,9 +36,9 @@ namespace yuzhi
          * @brief add a node to merkle tree, and return the root hash
          *
          * @param jsn leaf node hash
-         * @return std::pair<merkle_engine::LeafMeta, std::optional<Error>>  leaf meta and error
+         * @return std::pair<merkle_engine::LeafMeta, std::optional<common::Error>>  leaf meta and error
          */
-        std::pair<merkle_engine::LeafMeta, std::optional<Error>> Add(const std::string &hash)
+        std::pair<merkle_engine::LeafMeta, std::optional<common::Error>> Add(const std::string &hash)
         {
             auto index = merkle_->num_leaves() + 1;
 
@@ -57,7 +57,7 @@ namespace yuzhi
                 if (rocksdb::Status status = db_->Put(rocksdb::WriteOptions(), kMerkleRoot, std::string(root_hash.begin(), root_hash.end()));
                     !status.ok())
                 {
-                    return {{}, Error::MerkleTreeUpdateError()};
+                    return {{}, common::Error::MerkleTreeUpdateError()};
                 }
                 // 清空
                 merkle_.reset(new merkle::Tree());
@@ -65,10 +65,10 @@ namespace yuzhi
 
             return {leaf_meta, {}};
         }
-        std::optional<Error> Compress(const std::string &jsn);
+        std::optional<common::Error> Compress(const std::string &jsn);
 
         // for test
-        std::optional<Error> Delete(const std::string &jsn);
+        std::optional<common::Error> Delete(const std::string &jsn);
 
     private:
         bool is_full()

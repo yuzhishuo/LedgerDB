@@ -2,14 +2,16 @@
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-19 14:14:10
+ * @LastEditTime: 2022-07-21 07:58:03
  */
 #pragma once
 #ifndef YUZHI_LEDGERDB_ERROR
 #define YUZHI_LEDGERDB_ERROR
 #include <ostream>
 #include <string>
+#include <optional>
 
+namespace yuzhi::common {
 class Error {
  public:
   Error(const std::string &message) : message_(message) {}
@@ -68,5 +70,6 @@ inline bool operator == (const Error& r, const std::optional<Error>& l)
     return l == r;
 }
 
+}
 
 #endif  // YUZHI_LEDGERDB_ERROR

@@ -22,7 +22,7 @@ public:
     }
 
     void add(std::shared_ptr<IGrammarCommand> command) {
-      if (auto err = selfDictionary_.Add(command); err == Error::RepeatKey()) {
+      if (auto err = selfDictionary_.Add(command); err == common::Error::RepeatKey()) {
         SPDLOG_ERROR("exist repeat key, program will exit");
         exit(-1);
       }

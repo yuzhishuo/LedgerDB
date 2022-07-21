@@ -28,7 +28,7 @@ RUN wget http://rudeserver.com/config/download/rudeconfig-5.0.5.tar.gz && tar -z
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.19.2/cmake-3.19.2.tar.gz && tar -zxvf cmake-3.19.2.tar.gz \
     && cd cmake-3.19.2/  && ./bootstrap && make -j4 && make install
 
-RUN git clone https://github.com/facebook/rocksdb.git && cd rocksdb && mkdir .build && cd .build &&  cmake .. -DCMAKE_BUILD_TYPE=Release && make -j $(nproc || grep -c ^processor /proc/cpuinfo) && make install -j $(nproc || grep -c ^processor /proc/cpuinfo)
+RUN git clone https://github.com/facebook/rocksdb.git && cd rocksdb && mkdir .build && cd .build &&  cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_RTTI=1 && make -j $(nproc || grep -c ^processor /proc/cpuinfo) && make install -j $(nproc || grep -c ^processor /proc/cpuinfo)
 
 RUN git clone --branch v1.9.2 https://github.com/gabime/spdlog.git && cd spdlog && mkdir build && cd build \
     && cmake .. && make -j && make install

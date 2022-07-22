@@ -12,21 +12,16 @@
 using namespace yuzhi;
 using namespace std;
 
-LedgerEngine::LedgerEngine(std::shared_ptr<Ledger> ledger)
-    : ledger_(ledger), merkle_engine_(ledger)
-{
-}
+LedgerEngine::LedgerEngine(std::shared_ptr<Ledger> ledger) : ledger_(ledger), merkle_engine_(ledger) {}
 
 // Read  get 你存的东西 ，就要一个参数 jsn
-std::pair<std::vector<uint8_t>, std::optional<common::Error>>
-LedgerEngine::Read(const std::string &jsn)
+std::pair<std::vector<uint8_t>, std::optional<common::Error>> LedgerEngine::Read(const std::string &jsn)
 {
   return std::make_pair(std::vector<uint8_t>(), std::optional<common::Error>());
 }
 
 // Verify 1001 和 1000 来判断是否是合法的
-std::optional<common::Error> LedgerEngine::Verify(const std::string &jsn,
-                                                  std::vector<uint8_t> &content)
+std::optional<common::Error> LedgerEngine::Verify(const std::string &jsn, std::vector<uint8_t> &content)
 {
   merkle_engine::LeafMeta leaf_meta;
   if (!leaf_meta.ParseFromString(jsn))
@@ -53,8 +48,7 @@ std::optional<common::Error> LedgerEngine::Verify(const std::string &jsn,
 
 // Write  set 你存的东西 ，就要一个参数 一个返回值 root hash ,jsn
 // 是一个叶子节点的id office
-std::pair<std::string, std::optional<common::Error>>
-LedgerEngine::Write(const std::vector<uint8_t> &content)
+std::pair<std::string, std::optional<common::Error>> LedgerEngine::Write(const std::vector<uint8_t> &content)
 {
   // begin time
   auto now = chrono::system_clock::now();
@@ -91,9 +85,7 @@ LedgerEngine::Write(const std::vector<uint8_t> &content)
   cout << "write time: " << duration.count() << endl;
 
   // 将hash和content存入  Merkle Engine
-  if (auto [res, e] =
-          merkle_engine_.Add(std::string{hash, hash + SHA256_DIGEST_LENGTH});
-      e)
+  if (auto [res, e] = merkle_engine_.Add(std::string{hash, hash + SHA256_DIGEST_LENGTH}); e)
   {
     return {{}, e};
   }

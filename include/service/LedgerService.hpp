@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-07 15:44:35
- * @LastEditTime: 2022-07-22 09:20:53
+ * @LastEditTime: 2022-07-22 09:32:07
  * @LastEditors: Leo
  */
 
@@ -21,10 +21,8 @@ class LedgerService : public ledger_engine::LedgerService::Service
 {
 
 public:
-  virtual ::grpc::Status
-  CreateLedger(::grpc::ServerContext *context,
-               const ::ledger_engine::CreateLedgerRequest *request,
-               ::ledger_engine::Response *response)
+  virtual grpc::Status CreateLedger(grpc::ServerContext *context, const ::ledger_engine::CreateLedgerRequest *request,
+                                    ::ledger_engine::Response *response)
   {
     // grpc debug string contian the '\n'
     SPDLOG_INFO("create leadger request: {}", request->DebugString());
@@ -33,13 +31,10 @@ public:
 
     if (auto e = raft.Save("create_ledger", request->ledgername()); !e)
     {
-      return ::grpc::Status(::grpc::StatusCode::INTERNAL,
-                            "create ledger failed");
+      return ::grpc::Status(::grpc::StatusCode::INTERNAL, "create ledger failed");
     }
 
-    if (auto new_ledger = ledgers.createLedger(request->ledgername(),
-                                               ("request->owner()", "admin"));
-        !new_ledger)
+    if (auto new_ledger = ledgers.createLedger(request->ledgername(), ("request->owner()", "admin")); !new_ledger)
     {
       response->set_success(false);
       response->set_message("create ledger failed");

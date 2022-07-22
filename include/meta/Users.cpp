@@ -2,16 +2,14 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:16:44
+ * @LastEditTime: 2022-07-22 09:49:29
  */
 #include "Users.h"
 #include "User.h"
 
 namespace yuzhi
 {
-std::shared_ptr<User> Users::createUser(const std::string &user_name,
-                                        const std::string &ledger_name,
-                                        USER_ROLE role)
+std::shared_ptr<User> Users::createUser(const std::string &user_name, const std::string &ledger_name, USER_ROLE role)
 {
   if (auto itr = users_.find(user_name); itr != users_.end())
   {

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:21:16
+ * @LastEditTime: 2022-07-22 09:51:11
  */
 #pragma once
 
@@ -17,16 +17,13 @@ class IStorage;
 template <typename T> class StoreCreator : public IStorable<T>
 {
 public:
-  StoreCreator(const std::string &prefix = "",
-               const std::string family = "default",
-               const std::string &suffix = "")
+  StoreCreator(const std::string &prefix = "", const std::string family = "default", const std::string &suffix = "")
       : prefix_(prefix), suffix_(suffix), family_(family), IStorable<T>()
   {
   }
   virtual ~StoreCreator() = default;
   virtual IStorage *create() const = 0;
-  virtual std::optional<common::Error>
-  store(const std::shared_ptr<T> &object) const
+  virtual std::optional<common::Error> store(const std::shared_ptr<T> &object) const
   {
 
     if (auto storage = create(); storage)
@@ -45,8 +42,7 @@ public:
     return common::Error{"Failed to create storage"};
   }
 
-  virtual std::shared_ptr<T>
-  load(const std::shared_ptr<IUnique<typename T::Key>> &object) const
+  virtual std::shared_ptr<T> load(const std::shared_ptr<IUnique<typename T::Key>> &object) const
   {
     if (auto storage = create(); storage)
     {

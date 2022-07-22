@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:15:03
+ * @LastEditTime: 2022-07-22 09:48:27
  */
 #pragma once
 
@@ -18,10 +18,8 @@ template <typename T> class IMonostate
 {
 public:
   virtual ~IMonostate() = default;
-  virtual std::pair<std::string, std::optional<common::Error>>
-  serialize() const = 0;
-  virtual std::pair<std::shared_ptr<T>, std::optional<common::Error>>
-  deserialize(const std::string &serialized) = 0;
+  virtual std::pair<std::string, std::optional<common::Error>> serialize() const = 0;
+  virtual std::pair<std::shared_ptr<T>, std::optional<common::Error>> deserialize(const std::string &serialized) = 0;
 };
 
 // duck model
@@ -39,16 +37,14 @@ private:
   Monostate &operator=(const Monostate &other) = delete;
 
 public:
-  virtual std::pair<std::string, std::optional<common::Error>>
-  serialize() const override
+  virtual std::pair<std::string, std::optional<common::Error>> serialize() const override
   {
     if (auto serialized = std::string(); value_.SerializeToString(&serialized))
     {
       return {serialized, std::nullopt};
     }
 
-    return std::make_pair(std::string{},
-                          common::Error{"Failed to serialize Monostate"});
+    return std::make_pair(std::string{}, common::Error{"Failed to serialize Monostate"});
   }
 
   virtual std::pair<std::shared_ptr<T>, std::optional<common::Error>>

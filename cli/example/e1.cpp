@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-03-12 21:41:05
+ * @LastEditTime: 2022-07-22 09:47:11
  */
 
 /* Standard include files. stdio.h is required. */
@@ -37,9 +37,11 @@ static void sighandler(int sig) { sigwinch_received = 1; }
 /* Callback function called for each line when accept-line executed, EOF
    seen, or EOF character read.  This sets a flag and returns; it could
    also call exit(3). */
-static void cb_linehandler(char *line) {
+static void cb_linehandler(char *line)
+{
   /* Can use ^D (stty eof) or `exit' to exit. */
-  if (line == NULL || strcmp(line, "exit") == 0) {
+  if (line == NULL || strcmp(line, "exit") == 0)
+  {
     if (line == 0)
       printf("\n");
     printf("exit\n");
@@ -49,7 +51,9 @@ static void cb_linehandler(char *line) {
     rl_callback_handler_remove();
 
     running = 0;
-  } else {
+  }
+  else
+  {
     if (*line)
       add_history(line);
     printf("input line: %s\n", line);
@@ -57,7 +61,8 @@ static void cb_linehandler(char *line) {
   }
 }
 
-int main(int c, char **v) {
+int main(int c, char **v)
+{
   fd_set fds;
   int r;
 
@@ -77,17 +82,20 @@ int main(int c, char **v) {
      calls the builtin character read callback to read it.  It does not
      have to modify the user's terminal settings. */
   running = 1;
-  while (running) {
+  while (running)
+  {
     FD_ZERO(&fds);
     FD_SET(fileno(rl_instream), &fds);
 
     r = select(FD_SETSIZE, &fds, NULL, NULL, NULL);
-    if (r < 0 && errno != EINTR) {
+    if (r < 0 && errno != EINTR)
+    {
       perror("rltest: select");
       rl_callback_handler_remove();
       break;
     }
-    if (sigwinch_received) {
+    if (sigwinch_received)
+    {
       rl_resize_terminal();
       sigwinch_received = 0;
     }

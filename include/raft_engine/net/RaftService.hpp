@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 20:04:04
- * @LastEditTime: 2022-07-21 08:48:05
+ * @LastEditTime: 2022-07-22 09:50:32
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -17,7 +17,8 @@
 #include <spdlog/spdlog.h>
 #include <store/PersistenceStore.h>
 #include <unordered_map>
-extern "C" {
+extern "C"
+{
 #include <raft.h>
 #include <raft_log.h>
 #include <raft_private.h>
@@ -27,50 +28,40 @@ struct peer_connection_t;
 
 #include <condition_variable>
 #include <mutex>
-namespace yuzhi::raft_engine::net {
+namespace yuzhi::raft_engine::net
+{
 
-class RaftService : public yuzhi::IConfigurable {
+class RaftService : public yuzhi::IConfigurable
+{
 
   friend int __deserialize_and_handle_msg(void *img, size_t sz, void *data);
   friend peer_connection_t *__new_connection();
   friend void __connect_to_peer(peer_connection_t *peer);
-  friend void __connect_to_peer_at_host(peer_connection_t *conn, char *host,
-                                        int port);
+  friend void __connect_to_peer_at_host(peer_connection_t *conn, char *host, int port);
 
   friend void __send_handshake(peer_connection_t *conn);
-  friend void
-  __on_connection_accepted_by_peer(peer_connection_t *data,
-                                   const muduo::net::TcpConnectionPtr &conn);
+  friend void __on_connection_accepted_by_peer(peer_connection_t *data, const muduo::net::TcpConnectionPtr &conn);
 
-  friend int __append_cfg_change(RaftService *sv, raft_logtype_e change_type,
-                                 char *host, int raft_port, int http_port,
+  friend int __append_cfg_change(RaftService *sv, raft_logtype_e change_type, char *host, int raft_port, int http_port,
                                  int node_id);
-  friend int __raft_applylog(raft_server_t *raft, void *udata,
-                             raft_entry_t *ety, raft_index_t entry_idx);
-  friend peer_connection_t *
-  __find_connection(const muduo::net::InetAddress &addr);
+  friend int __raft_applylog(raft_server_t *raft, void *udata, raft_entry_t *ety, raft_index_t entry_idx);
+  friend peer_connection_t *__find_connection(const muduo::net::InetAddress &addr);
   friend void __delete_connection(peer_connection_t *conn);
-  friend int __offer_cfg_change(raft_server_t *raft, const unsigned char *data,
-                                raft_logtype_e change_type);
+  friend int __offer_cfg_change(raft_server_t *raft, const unsigned char *data, raft_logtype_e change_type);
 
-  friend int __raft_persist_vote(raft_server_t *raft, void *udata,
-                                 const int voted_for);
-  friend int __raft_persist_term(raft_server_t *raft, void *udata,
-                                 raft_term_t current_term, raft_node_id_t vote);
-  friend int __raft_persist_term(raft_server_t *raft, void *udata,
-                                 raft_term_t current_term, raft_node_id_t vote);
-  friend int __raft_persist_vote(raft_server_t *raft, void *udata,
-                                 const int voted_for);
-  friend int __raft_logentry_offer(raft_server_t *raft, void *udata,
-                                   raft_entry_t *ety, raft_index_t ety_idx);
-  friend int __raft_logget_node_id(raft_server_t *raft, void *udata,
-                                   raft_entry_t *ety, raft_index_t ety_idx);
+  friend int __raft_persist_vote(raft_server_t *raft, void *udata, const int voted_for);
+  friend int __raft_persist_term(raft_server_t *raft, void *udata, raft_term_t current_term, raft_node_id_t vote);
+  friend int __raft_persist_term(raft_server_t *raft, void *udata, raft_term_t current_term, raft_node_id_t vote);
+  friend int __raft_persist_vote(raft_server_t *raft, void *udata, const int voted_for);
+  friend int __raft_logentry_offer(raft_server_t *raft, void *udata, raft_entry_t *ety, raft_index_t ety_idx);
+  friend int __raft_logget_node_id(raft_server_t *raft, void *udata, raft_entry_t *ety, raft_index_t ety_idx);
 
 public:
   std::optional<common::Error> Save(const std::string &key, const std::string &value);
 
 public:
-  static RaftService &Instance() {
+  static RaftService &Instance()
+  {
     static RaftService instance;
     return instance;
   }
@@ -83,8 +74,7 @@ public:
 public:
 public:
   void onConnection(const muduo::net::TcpConnectionPtr &conn);
-  void onMessage(const muduo::net::TcpConnectionPtr &conn,
-                 muduo::net::Buffer *buf, muduo::Timestamp receiveTime);
+  void onMessage(const muduo::net::TcpConnectionPtr &conn, muduo::net::Buffer *buf, muduo::Timestamp receiveTime);
 
 public:
   int32_t getNodeId() const { return node_id; }

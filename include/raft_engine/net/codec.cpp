@@ -19,8 +19,8 @@
 using namespace muduo;
 using namespace muduo::net;
 
-void ProtobufCodec::fillEmptyBuffer(Buffer *buf,
-                                    const google::protobuf::Message &message) {
+void ProtobufCodec::fillEmptyBuffer(Buffer *buf, const google::protobuf::Message &message)
+{
   // buf->retrieveAll();
   assert(buf->readableBytes() == 0);
 
@@ -31,8 +31,7 @@ void ProtobufCodec::fillEmptyBuffer(Buffer *buf,
 
   // code copied from MessageLite::SerializeToArray() and
   // MessageLite::SerializePartialToArray().
-  GOOGLE_DCHECK(message.IsInitialized())
-      << InitializationErrorMessage("serialize", message);
+  GOOGLE_DCHECK(message.IsInitialized()) << InitializationErrorMessage("serialize", message);
 
   /**
    * 'ByteSize()' of message is deprecated in Protocol Buffers v3.4.0 firstly.
@@ -56,27 +55,22 @@ void ProtobufCodec::fillEmptyBuffer(Buffer *buf,
 
   uint8_t *start = reinterpret_cast<uint8_t *>(buf->beginWrite());
   uint8_t *end = message.SerializeWithCachedSizesToArray(start);
-  if (end - start != byte_size) {
+  if (end - start != byte_size)
+  {
 #if GOOGLE_PROTOBUF_VERSION > 3009002
-    ByteSizeConsistencyError(
-        byte_size,
-        google::protobuf::internal::ToIntSize(message.ByteSizeLong()),
-        static_cast<int>(end - start));
-#else
-    ByteSizeConsistencyError(byte_size, message.ByteSize(),
+    ByteSizeConsistencyError(byte_size, google::protobuf::internal::ToIntSize(message.ByteSizeLong()),
                              static_cast<int>(end - start));
+#else
+    ByteSizeConsistencyError(byte_size, message.ByteSize(), static_cast<int>(end - start));
 #endif
   }
   buf->hasWritten(byte_size);
 
   int32_t checkSum = static_cast<int32_t>(
-      ::adler32(1, reinterpret_cast<const Bytef *>(buf->peek()),
-                static_cast<int>(buf->readableBytes())));
+      ::adler32(1, reinterpret_cast<const Bytef *>(buf->peek()), static_cast<int>(buf->readableBytes())));
   buf->appendInt32(checkSum);
-  assert(buf->readableBytes() ==
-         sizeof nameLen + nameLen + byte_size + sizeof checkSum);
-  int32_t len =
-      sockets::hostToNetwork32(static_cast<int32_t>(buf->readableBytes()));
+  assert(buf->readableBytes() == sizeof nameLen + nameLen + byte_size + sizeof checkSum);
+  int32_t len = sockets::hostToNetwork32(static_cast<int32_t>(buf->readableBytes()));
   buf->prepend(&len, sizeof len);
 }
 
@@ -88,7 +82,8 @@ void ProtobufCodec::fillEmptyBuffer(Buffer *buf,
 // FIXME: merge with RpcCodec
 //
 
-namespace {
+namespace
+{
 const string kNoErrorStr = "NoError";
 const string kInvalidLengthStr = "InvalidLength";
 const string kCheckSumErrorStr = "CheckSumError";
@@ -98,8 +93,10 @@ const string kParseErrorStr = "ParseError";
 const string kUnknownErrorStr = "UnknownError";
 } // namespace
 
-const string &ProtobufCodec::errorCodeToString(ErrorCode errorCode) {
-  switch (errorCode) {
+const string &ProtobufCodec::errorCodeToString(ErrorCode errorCode)
+{
+  switch (errorCode)
+  {
   case kNoError:
     return kNoErrorStr;
   case kInvalidLength:
@@ -117,94 +114,115 @@ const string &ProtobufCodec::errorCodeToString(ErrorCode errorCode) {
   }
 }
 
-void ProtobufCodec::defaultErrorCallback(
-    const muduo::net::TcpConnectionPtr &conn, muduo::net::Buffer *buf,
-    muduo::Timestamp, ErrorCode errorCode) {
-  LOG_ERROR << "ProtobufCodec::defaultErrorCallback - "
-            << errorCodeToString(errorCode);
-  if (conn && conn->connected()) {
+void ProtobufCodec::defaultErrorCallback(const muduo::net::TcpConnectionPtr &conn, muduo::net::Buffer *buf,
+                                         muduo::Timestamp, ErrorCode errorCode)
+{
+  LOG_ERROR << "ProtobufCodec::defaultErrorCallback - " << errorCodeToString(errorCode);
+  if (conn && conn->connected())
+  {
     conn->shutdown();
   }
 }
 
-int32_t asInt32(const char *buf) {
+int32_t asInt32(const char *buf)
+{
   int32_t be32 = 0;
   ::memcpy(&be32, buf, sizeof(be32));
   return sockets::networkToHost32(be32);
 }
 
-void ProtobufCodec::onMessage(const TcpConnectionPtr &conn, Buffer *buf,
-                              Timestamp receiveTime) {
-  while (buf->readableBytes() >= kMinMessageLen + kHeaderLen) {
+void ProtobufCodec::onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
+{
+  while (buf->readableBytes() >= kMinMessageLen + kHeaderLen)
+  {
     const int32_t len = buf->peekInt32();
-    if (len > kMaxMessageLen || len < kMinMessageLen) {
+    if (len > kMaxMessageLen || len < kMinMessageLen)
+    {
       errorCallback_(conn, buf, receiveTime, kInvalidLength);
       break;
-    } else if (buf->readableBytes() >=
-               implicit_cast<size_t>(len + kHeaderLen)) {
+    }
+    else if (buf->readableBytes() >= implicit_cast<size_t>(len + kHeaderLen))
+    {
       ErrorCode errorCode = kNoError;
       MessagePtr message = parse(buf->peek() + kHeaderLen, len, &errorCode);
-      if (errorCode == kNoError && message) {
+      if (errorCode == kNoError && message)
+      {
         messageCallback_(conn, message, receiveTime);
         buf->retrieve(kHeaderLen + len);
-      } else {
+      }
+      else
+      {
         errorCallback_(conn, buf, receiveTime, errorCode);
         break;
       }
-    } else {
+    }
+    else
+    {
       break;
     }
   }
 }
 
-google::protobuf::Message *
-ProtobufCodec::createMessage(const std::string &typeName) {
+google::protobuf::Message *ProtobufCodec::createMessage(const std::string &typeName)
+{
   google::protobuf::Message *message = NULL;
   const google::protobuf::Descriptor *descriptor =
-      google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(
-          typeName);
-  if (descriptor) {
+      google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(typeName);
+  if (descriptor)
+  {
     const google::protobuf::Message *prototype =
-        google::protobuf::MessageFactory::generated_factory()->GetPrototype(
-            descriptor);
-    if (prototype) {
+        google::protobuf::MessageFactory::generated_factory()->GetPrototype(descriptor);
+    if (prototype)
+    {
       message = prototype->New();
     }
   }
   return message;
 }
 
-MessagePtr ProtobufCodec::parse(const char *buf, int len, ErrorCode *error) {
+MessagePtr ProtobufCodec::parse(const char *buf, int len, ErrorCode *error)
+{
   MessagePtr message;
 
   // check sum
   int32_t expectedCheckSum = asInt32(buf + len - kHeaderLen);
   int32_t checkSum =
-      static_cast<int32_t>(::adler32(1, reinterpret_cast<const Bytef *>(buf),
-                                     static_cast<int>(len - kHeaderLen)));
-  if (checkSum == expectedCheckSum) {
+      static_cast<int32_t>(::adler32(1, reinterpret_cast<const Bytef *>(buf), static_cast<int>(len - kHeaderLen)));
+  if (checkSum == expectedCheckSum)
+  {
     // get message type name
     int32_t nameLen = asInt32(buf);
-    if (nameLen >= 2 && nameLen <= len - 2 * kHeaderLen) {
+    if (nameLen >= 2 && nameLen <= len - 2 * kHeaderLen)
+    {
       std::string typeName(buf + kHeaderLen, buf + kHeaderLen + nameLen - 1);
       // create message object
       message.reset(createMessage(typeName));
-      if (message) {
+      if (message)
+      {
         // parse from buffer
         const char *data = buf + kHeaderLen + nameLen;
         int32_t dataLen = len - nameLen - 2 * kHeaderLen;
-        if (message->ParseFromArray(data, dataLen)) {
+        if (message->ParseFromArray(data, dataLen))
+        {
           *error = kNoError;
-        } else {
+        }
+        else
+        {
           *error = kParseError;
         }
-      } else {
+      }
+      else
+      {
         *error = kUnknownMessageType;
       }
-    } else {
+    }
+    else
+    {
       *error = kInvalidNameLen;
     }
-  } else {
+  }
+  else
+  {
     *error = kCheckSumError;
   }
 

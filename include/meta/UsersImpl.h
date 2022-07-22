@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-20 12:21:39
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:16:51
+ * @LastEditTime: 2022-07-22 09:49:37
  */
 #pragma once
 
@@ -30,12 +30,10 @@ public:
 
 public:
   // create user object
-  std::optional<common::Error> createUser(const std::string &user_name,
-                                          const std::string &ledger_name) const;
+  std::optional<common::Error> createUser(const std::string &user_name, const std::string &ledger_name) const;
 
   // delete user object
-  std::optional<common::Error> deleteUser(const std::string &ledger_name,
-                                          const std::string &user_name) const;
+  std::optional<common::Error> deleteUser(const std::string &ledger_name, const std::string &user_name) const;
 
   void dispose() override;
 

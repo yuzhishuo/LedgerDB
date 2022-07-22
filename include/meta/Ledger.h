@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:16:02
+ * @LastEditTime: 2022-07-22 09:49:00
  */
 #pragma once
 
@@ -55,10 +55,7 @@ public: // meta
 
   // std::shared_ptr<User> owner() const;
 
-  virtual const std::string &GetUnique() const override
-  {
-    return ledger_->name();
-  }
+  virtual const std::string &GetUnique() const override { return ledger_->name(); }
 
   LEDGER_ROLE getRoleByUserName(const std::string &name) const;
 
@@ -87,15 +84,13 @@ public: // engine
   std::shared_ptr<yuzhi::LedgerEngine> engine();
 
 public:
-  virtual std::pair<std::string, std::optional<common::Error>>
-  serialize() const override
+  virtual std::pair<std::string, std::optional<common::Error>> serialize() const override
   {
 
     return ledger_.serialize();
   }
 
-  virtual std::pair<std::shared_ptr<ledger_engine::Ledger>,
-                    std::optional<common::Error>>
+  virtual std::pair<std::shared_ptr<ledger_engine::Ledger>, std::optional<common::Error>>
   deserialize(const std::string &serialized) override
   {
     return ledger_.deserialize(serialized);

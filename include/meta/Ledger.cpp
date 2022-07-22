@@ -11,10 +11,7 @@
 namespace yuzhi
 {
 
-std::shared_ptr<LedgerEngine> Ledger::engine()
-{
-  return std::make_shared<LedgerEngine>(shared_from_this());
-}
+std::shared_ptr<LedgerEngine> Ledger::engine() { return std::make_shared<LedgerEngine>(shared_from_this()); }
 
 Ledger::Ledger(const std::string &name, const std::string &owner) : ledger_{}
 {
@@ -23,10 +20,7 @@ Ledger::Ledger(const std::string &name, const std::string &owner) : ledger_{}
   ledger_->set_id(Ledger::generatorId());
 }
 
-Ledger::Ledger(ledger_engine::Ledger &&ledger_inner)
-    : ledger_(std::move(ledger_inner))
-{
-}
+Ledger::Ledger(ledger_engine::Ledger &&ledger_inner) : ledger_(std::move(ledger_inner)) {}
 
 // void Ledger::setOwner(std::shared_ptr<User> &owner)
 // {
@@ -53,8 +47,7 @@ void Ledger::dispose()
   auto is_remove = Ledgers::getInstance().removeLedger(shared_from_this());
   assert(is_remove);
 }
-std::optional<common::Error> Ledger::addUser(const std::string &name,
-                                             USER_ROLE role)
+std::optional<common::Error> Ledger::addUser(const std::string &name, USER_ROLE role)
 {
   auto &users = Users::getInstance();
   auto new_user = users.createUser(name, this->name(), role);
@@ -65,10 +58,7 @@ std::optional<common::Error> Ledger::addRegulator(const std::string &name)
   return addUser(name, USER_ROLE::REGULATOR);
 }
 
-std::optional<common::Error> Ledger::addCommon(const std::string &name)
-{
-  return addUser(name, USER_ROLE::COMMON);
-}
+std::optional<common::Error> Ledger::addCommon(const std::string &name) { return addUser(name, USER_ROLE::COMMON); }
 std::optional<common::Error> Ledger::addReadOnly(const std::string &name)
 {
   return addUser(name, USER_ROLE::READ_ONLY);

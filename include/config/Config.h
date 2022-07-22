@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 19:06:00
- * @LastEditTime: 2022-07-22 09:14:34
+ * @LastEditTime: 2022-07-22 09:48:13
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -36,12 +36,10 @@ public:
     }
   }
 
-  template <typename T>
-  T get(const IConfigurable &configurable, const std::string &key)
+  template <typename T> T get(const IConfigurable &configurable, const std::string &key)
   {
     bool expected = false;
-    while (!loaded.compare_exchange_weak(
-        expected, true, std::memory_order_acquire, std::memory_order_release))
+    while (!loaded.compare_exchange_weak(expected, true, std::memory_order_acquire, std::memory_order_release))
       std::this_thread::yield();
 
     config_.setSection(configurable.Field(), false);
@@ -50,12 +48,10 @@ public:
     return res;
   }
 
-  template <typename T>
-  T get(const IConfigurable *configurable, const std::string &key)
+  template <typename T> T get(const IConfigurable *configurable, const std::string &key)
   {
     bool expected = false;
-    while (!loaded.compare_exchange_weak(
-        expected, true, std::memory_order_acquire, std::memory_order_release))
+    while (!loaded.compare_exchange_weak(expected, true, std::memory_order_acquire, std::memory_order_release))
       std::this_thread::yield();
 
     config_.setSection(configurable->Field(), false);
@@ -66,10 +62,7 @@ public:
   }
 
 private:
-  template <typename T> inline T _get(const std::string &key)
-  {
-    throw std::runtime_error("not implemented");
-  }
+  template <typename T> inline T _get(const std::string &key) { throw std::runtime_error("not implemented"); }
 
 public:
   static Config &Instance()
@@ -83,20 +76,11 @@ private:
   rude::Config config_;
 };
 
-template <> inline int Config::_get<int>(const std::string &key)
-{
-  return config_.getIntValue(key.data());
-}
+template <> inline int Config::_get<int>(const std::string &key) { return config_.getIntValue(key.data()); }
 
-template <> inline double Config::_get<double>(const std::string &key)
-{
-  return config_.getDoubleValue(key.data());
-}
+template <> inline double Config::_get<double>(const std::string &key) { return config_.getDoubleValue(key.data()); }
 
-template <> inline bool Config::_get<bool>(const std::string &key)
-{
-  return config_.getBoolValue(key.data());
-}
+template <> inline bool Config::_get<bool>(const std::string &key) { return config_.getBoolValue(key.data()); }
 
 template <> inline std::string Config::_get<std::string>(const std::string &key)
 {

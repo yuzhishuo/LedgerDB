@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-07-22 09:10:05
+ * @LastEditTime: 2022-07-22 09:46:31
  * @LastEditors: Leo
  * @FilePath: /LedgerDB/main.cpp
  */
@@ -54,8 +54,7 @@ public:
 
     int selected_port = 0;
     // TODO: repeat listen port, need to fix
-    builder.AddListeningPort(service_address, InsecureServerCredentials(),
-                             &selected_port);
+    builder.AddListeningPort(service_address, InsecureServerCredentials(), &selected_port);
     // builder.set_health_check_service(new HealthCheckServiceImpl());
     builder.RegisterService(&ledgerService);
     auto server = builder.BuildAndStart();

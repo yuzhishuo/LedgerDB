@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-21 16:46:09
- * @LastEditTime: 2022-07-22 09:15:25
+ * @LastEditTime: 2022-07-22 09:48:41
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -18,8 +18,7 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
-MerkleEngine::MerkleEngine(std::shared_ptr<Ledger> ledger)
-    : tree_store_path_(kMerkleRoot), ledger_(ledger)
+MerkleEngine::MerkleEngine(std::shared_ptr<Ledger> ledger) : tree_store_path_(kMerkleRoot), ledger_(ledger)
 {
   merkle_ = std::move(std::make_unique<merkle::Tree>());
   if (!fs::exists(tree_store_path_))
@@ -27,8 +26,7 @@ MerkleEngine::MerkleEngine(std::shared_ptr<Ledger> ledger)
     fs::create_directories(tree_store_path_);
   }
 
-  const std::string tree_file_path =
-      tree_store_path_ + "Merkle" + to_string(ledger_->id());
+  const std::string tree_file_path = tree_store_path_ + "Merkle" + to_string(ledger_->id());
 
   if (fs::exists(tree_file_path))
   {
@@ -36,8 +34,7 @@ MerkleEngine::MerkleEngine(std::shared_ptr<Ledger> ledger)
     std::ifstream ifs(tree_file_path);
     std::string tree_str;
     ifs >> tree_str;
-    merkle_->deserialise(
-        std::vector<uint8_t>(tree_str.begin(), tree_str.end()));
+    merkle_->deserialise(std::vector<uint8_t>(tree_str.begin(), tree_str.end()));
   }
   else
   {
@@ -67,8 +64,7 @@ MerkleEngine::~MerkleEngine()
     std::vector<uint8_t> tree_data;
     merkle_->serialise(tree_data);
 
-    std::string tree_file_path =
-        tree_store_path_ + "Merkle" + to_string(ledger_->id());
+    std::string tree_file_path = tree_store_path_ + "Merkle" + to_string(ledger_->id());
 
     std::ofstream ofs(tree_file_path, std::ios::binary | std::ios::ate);
     ofs << std::string(tree_data.begin(), tree_data.end());

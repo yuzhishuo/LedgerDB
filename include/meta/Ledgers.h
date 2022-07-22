@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:16:21
+ * @LastEditTime: 2022-07-22 09:49:08
  */
 #pragma once
 
@@ -31,8 +31,7 @@ class Ledgers : public store::IStorable<Ledger>
 public:
   using Raw = Ledger;
   using Element = std::shared_ptr<Ledger>;
-  using UniqueType =
-      std::common_type_t<decltype(((Ledger *)nullptr)->GetUnique())>;
+  using UniqueType = std::common_type_t<decltype(((Ledger *)nullptr)->GetUnique())>;
 
 public:
   Ledgers();
@@ -47,8 +46,7 @@ public:
 
 public: //  Engine
 public: // IStorable
-  virtual std::optional<common::Error>
-  store(const Element &element) const override
+  virtual std::optional<common::Error> store(const Element &element) const override
   {
     if (auto err = store_creator_->store(element); err)
     {
@@ -58,15 +56,13 @@ public: // IStorable
     return std::nullopt;
   }
 
-  virtual Element
-  load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
+  virtual Element load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
   {
     return store_creator_->load(element);
   }
 
 public:
-  std::shared_ptr<Ledger> createLedger(const std::string &name,
-                                       const std::string &owner);
+  std::shared_ptr<Ledger> createLedger(const std::string &name, const std::string &owner);
   bool removeLedger(const std::string &ledger_name);
   bool removeLedger(const std::shared_ptr<Ledger> &ledger);
   /**

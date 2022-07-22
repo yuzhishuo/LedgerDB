@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
- * @LastEditTime: 2022-07-22 09:12:06
+ * @LastEditTime: 2022-07-22 09:48:04
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -39,8 +39,7 @@ public:
   std::optional<common::Error> Add(const Value &value)
   {
 
-    auto is_inserted =
-        dictionary_.insert(std::make_pair(value.GetUnique(), value));
+    auto is_inserted = dictionary_.insert(std::make_pair(value.GetUnique(), value));
     if (!is_inserted.second)
     {
       return common::Error("Duplicate key");
@@ -104,8 +103,7 @@ public:
   std::optional<common::Error> Add(SmartValue &value)
   {
 
-    auto is_inserted =
-        dictionary_.insert(std::make_pair(value->GetUnique(), value));
+    auto is_inserted = dictionary_.insert(std::make_pair(value->GetUnique(), value));
     if (!is_inserted.second)
     {
       return common::Error::RepeatKey();

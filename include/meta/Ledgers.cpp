@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:16:17
+ * @LastEditTime: 2022-07-22 09:49:06
  */
 #include <algorithm>
 #include <cassert>
@@ -15,15 +15,12 @@
 using namespace yuzhi;
 
 Ledgers::Ledgers()
-    : ledgers_(), store_creator_{dynamic_cast<store::IStorable<Ledger> *>(
-                      new LedgerStoreCreator{"Ledger"})},
-      impl_(kLedgerStoreName), store::IStorable<Ledger>(),
-      users_{impl_.getRawDBPtr()}
+    : ledgers_(), store_creator_{dynamic_cast<store::IStorable<Ledger> *>(new LedgerStoreCreator{"Ledger"})},
+      impl_(kLedgerStoreName), store::IStorable<Ledger>(), users_{impl_.getRawDBPtr()}
 {
 }
 
-std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name,
-                                              const std::string &owner)
+std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std::string &owner)
 {
   if (hasLedger(name)
 #ifdef DEBUG
@@ -45,10 +42,7 @@ std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name,
 
 Ledgers::~Ledgers() { users_.dispose(); }
 
-bool Ledgers::removeLedger(const std::shared_ptr<Ledger> &ledger)
-{
-  return removeLedger(ledger->name());
-}
+bool Ledgers::removeLedger(const std::shared_ptr<Ledger> &ledger) { return removeLedger(ledger->name()); }
 
 bool Ledgers::removeLedger(const std::string &ledger_name)
 {
@@ -64,10 +58,7 @@ bool Ledgers::removeLedger(const std::string &ledger_name)
   return true;
 }
 
-bool Ledgers::hasLedger(const std::string &name) const
-{
-  return ledgers_.count(name) && impl_.hasLedger(name);
-}
+bool Ledgers::hasLedger(const std::string &name) const { return ledgers_.count(name) && impl_.hasLedger(name); }
 
 bool Ledgers::removeLedgerByUser(const std::shared_ptr<User> &user)
 {

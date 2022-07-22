@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 00:23:49
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:12:56
+ * @LastEditTime: 2022-07-22 05:41:55
  */
 #pragma once
 
@@ -20,7 +20,7 @@
 using USER_ROLE = user_engine::Role;
 namespace yuzhi {
 class User final : public std::enable_shared_from_this<User>,
-                   public IDisposable,
+                   public interface::IDisposable,
                    public StringUnique,
                    public IMonostate<user_engine::User> {
 public:

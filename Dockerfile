@@ -15,7 +15,7 @@ RUN apt update -y \
     build-essential autoconf libtool pkg-config \
     libgflags-dev \
     && apt-get update -y \
-    && apt-get install -y gdb \
+    && apt-get install -y gdb clang-format \
     wget tar
 
 RUN cd /

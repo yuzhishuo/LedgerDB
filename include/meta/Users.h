@@ -2,11 +2,12 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:38:28
+ * @LastEditTime: 2022-07-22 06:07:02
  */
 #pragma once
 
 #include <initializer_list>
+#include <interfaces/IDisposable.h>
 #include <map>
 #include <memory>
 #include <rocksdb/db.h>
@@ -18,7 +19,7 @@
 
 // #define PREDEF_USER "admin"
 namespace yuzhi {
-class Users : public store::IStorable<User> {
+class Users : public store::IStorable<User>, interface::IDisposable {
 public:
   using Raw = User;
   using Element = std::shared_ptr<User>;
@@ -27,14 +28,13 @@ public:
 
 public:
   static Users &getInstance() {
-    static Users instance{
-        // std::make_pair("admin", std::make_shared<User>("admin",
-        // USER_ROLE::DBA))
-    };
+    static Users instance{};
     return instance;
   }
 
-private:
+  void dispose() override { usersImpl_.dispose(); }
+
+public:
   Users(
       std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init)
       : users_{}, store_creator_{dynamic_cast<IStorable<User> *>(

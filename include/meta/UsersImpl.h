@@ -2,37 +2,39 @@
  * @Author: Leo
  * @Date: 2022-07-20 12:21:39
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:06:40
+ * @LastEditTime: 2022-07-22 05:48:25
  */
 #pragma once
 
 #include <common/Error.h>
-
+#include <interfaces/IDisposable.h>
+#include <memory>
 #include <optional>
 #include <string>
 
 namespace rocksdb {
-  class DB;
-  class ColumnFamilyHandle;
-}
+class DB;
+class ColumnFamilyHandle;
+} // namespace rocksdb
 
 namespace yuzhi::meta {
 
-class UsersImpl final {
+class UsersImpl final : public interface::IDisposable {
 public:
   UsersImpl(std::weak_ptr<rocksdb::DB> db);
 
-  ~UsersImpl();
+  ~UsersImpl() override;
 
 public:
-  void IDistory();
-
   // create user object
   std::optional<common::Error> createUser(const std::string &user_name,
-                                  const std::string &ledger_name);
+                                          const std::string &ledger_name) const;
 
   // delete user object
-  std::optional<common::Error> deleteUser(const std::string &user_name);
+  std::optional<common::Error> deleteUser(const std::string &ledger_name,
+                                          const std::string &user_name) const;
+
+  void dispose() override;
 
 private:
   std::weak_ptr<rocksdb::DB> db_;

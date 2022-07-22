@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:43:54
+ * @LastEditTime: 2022-07-22 06:04:42
  */
 #pragma once
 
@@ -17,7 +17,9 @@
 #include "ledger_engine.pb.h"
 #include "meta/Ledger.h"
 #include "meta/LedgersImpl.h"
+#include "meta/Users.h"
 #include "store/PersistenceStore.h"
+
 namespace yuzhi {
 class User;
 
@@ -34,7 +36,8 @@ public:
   Ledgers()
       : ledgers_(), store_creator_{dynamic_cast<store::IStorable<Ledger> *>(
                         new LedgerStoreCreator{"Ledger"})},
-        impl_(kLedgerStoreName), store::IStorable<Ledger>() {}
+        impl_(kLedgerStoreName), store::IStorable<Ledger>(),
+        users_{impl_.getRawDBPtr()} {}
 
   virtual ~Ledgers() = default;
 
@@ -81,6 +84,7 @@ private:
   std::map<std::string, Element> ledgers_;
   std::unique_ptr<IStorable<Ledger>> store_creator_;
 
-  yuzhi::LedgersImpl impl_;
+  LedgersImpl impl_;
+  Users users_;
 };
 } // namespace yuzhi

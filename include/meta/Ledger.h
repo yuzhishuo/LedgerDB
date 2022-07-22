@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:03:55
+ * @LastEditTime: 2022-07-22 05:41:44
  */
 #pragma once
 
@@ -40,7 +40,7 @@ namespace yuzhi
 class LedgerEngine;
 
 
-class Ledger final : public IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
+class Ledger final : public interface::IDisposable, public StringUnique, public std::enable_shared_from_this<Ledger>, public IMonostate<ledger_engine::Ledger>
 {
 public:
     using MonoType = ledger_engine::Ledger;

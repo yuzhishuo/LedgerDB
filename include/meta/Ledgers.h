@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 06:51:55
+ * @LastEditTime: 2022-07-22 09:16:21
  */
 #pragma once
 
@@ -20,12 +20,14 @@
 #include "meta/Users.h"
 #include "store/PersistenceStore.h"
 
-namespace yuzhi {
+namespace yuzhi
+{
 class User;
 
 constexpr auto kLedgerStoreName = "ledgerdb";
 
-class Ledgers : public store::IStorable<Ledger> {
+class Ledgers : public store::IStorable<Ledger>
+{
 public:
   using Raw = Ledger;
   using Element = std::shared_ptr<Ledger>;
@@ -37,7 +39,8 @@ public:
   ~Ledgers() override;
 
 public:
-  static Ledgers &getInstance() {
+  static Ledgers &getInstance()
+  {
     static Ledgers instance;
     return instance;
   }
@@ -45,8 +48,10 @@ public:
 public: //  Engine
 public: // IStorable
   virtual std::optional<common::Error>
-  store(const Element &element) const override {
-    if (auto err = store_creator_->store(element); err) {
+  store(const Element &element) const override
+  {
+    if (auto err = store_creator_->store(element); err)
+    {
       return err;
     }
 
@@ -54,7 +59,8 @@ public: // IStorable
   }
 
   virtual Element
-  load(const std::shared_ptr<IUnique<UniqueType>> &element) const override {
+  load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
+  {
     return store_creator_->load(element);
   }
 

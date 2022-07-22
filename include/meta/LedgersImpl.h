@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 06:27:26
+ * @LastEditTime: 2022-07-22 09:16:27
  */
 #pragma once
 #include "meta/Constant.h"
@@ -17,8 +17,10 @@
 #include <ledger_engine.pb.h>
 #include <user_engine.pb.h>
 
-namespace yuzhi {
-class LedgersImpl {
+namespace yuzhi
+{
+class LedgersImpl
+{
 public:
   LedgersImpl(const std::string &db_name);
   ~LedgersImpl() = default;

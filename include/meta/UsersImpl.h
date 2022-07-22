@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-20 12:21:39
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 05:48:25
+ * @LastEditTime: 2022-07-22 09:16:51
  */
 #pragma once
 
@@ -12,14 +12,17 @@
 #include <optional>
 #include <string>
 
-namespace rocksdb {
+namespace rocksdb
+{
 class DB;
 class ColumnFamilyHandle;
 } // namespace rocksdb
 
-namespace yuzhi::meta {
+namespace yuzhi::meta
+{
 
-class UsersImpl final : public interface::IDisposable {
+class UsersImpl final : public interface::IDisposable
+{
 public:
   UsersImpl(std::weak_ptr<rocksdb::DB> db);
 

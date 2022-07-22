@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-21 07:36:48
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 06:35:51
+ * @LastEditTime: 2022-07-22 09:16:49
  */
 #include "meta/UsersImpl.h"
 #include "meta/Constant.h"
@@ -14,21 +14,25 @@
 #include <spdlog/spdlog.h>
 #include <user_engine.pb.h>
 
-namespace yuzhi::meta {
+namespace yuzhi::meta
+{
 using namespace rocksdb;
 
-UsersImpl::UsersImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db)) {
+UsersImpl::UsersImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db))
+{
   using namespace rocksdb;
 
   if (auto db = std::dynamic_pointer_cast<rocksdb::OptimisticTransactionDB>(
           db_.lock());
-      db) {
+      db)
+  {
 
     SPDLOG_INFO("Create column family {}", genUserColumnFamilyName());
     rocksdb::ColumnFamilyOptions options;
     if (auto status = db->CreateColumnFamily(options, genUserColumnFamilyName(),
                                              &cf_handle_);
-        !status.ok()) {
+        !status.ok())
+    {
       assert(CreateThreadStatusUpdater);
       SPDLOG_ERROR("Error create name {} column family handle",
                    genUserColumnFamilyName());
@@ -38,10 +42,12 @@ UsersImpl::UsersImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db)) {
     std::string val;
     if (auto status =
             db->Get(ReadOptions(), cf_handle_, genCurrentUserIdOfKey(), &val);
-        status == status.NotFound()) {
+        status == status.NotFound())
+    {
       SPDLOG_INFO("Create current user id key {}", genCurrentUserIdOfKey());
       if (auto status = db->Put(WriteOptions(), genCurrentUserIdOfKey(), "0");
-          !status.ok()) {
+          !status.ok())
+      {
         assert(true);
         SPDLOG_ERROR("Error create current user id key {}",
                      genCurrentUserIdOfKey());
@@ -56,12 +62,14 @@ end:
 
 UsersImpl::~UsersImpl() { assert(!db_.lock() && !cf_handle_); }
 
-void UsersImpl::dispose() {
+void UsersImpl::dispose()
+{
 
   if (auto db =
           std::dynamic_pointer_cast<ROCKSDB_NAMESPACE::OptimisticTransactionDB>(
               db_.lock());
-      db) {
+      db)
+  {
 
     db->DestroyColumnFamilyHandle(cf_handle_);
     cf_handle_ = nullptr;
@@ -74,14 +82,16 @@ void UsersImpl::dispose() {
 // create user object
 std::optional<common::Error>
 UsersImpl::createUser(const std::string &user_name,
-                      const std::string &ledger_name) const {
+                      const std::string &ledger_name) const
+{
 
   using namespace rocksdb;
 
   if (auto db =
           std::dynamic_pointer_cast<ROCKSDB_NAMESPACE::OptimisticTransactionDB>(
               db_.lock());
-      db) {
+      db)
+  {
 
     user_engine::User user;
     user.set_name(user_name);
@@ -93,7 +103,8 @@ UsersImpl::createUser(const std::string &user_name,
     if (auto status =
             txn_db->GetForUpdate(ROCKSDB_NAMESPACE::ReadOptions{}, cf_handle_,
                                  genCurrentUserIdOfKey(), &val);
-        status.ok()) {
+        status.ok())
+    {
 
       auto current_user_id = std::stoi(val);
 
@@ -102,7 +113,8 @@ UsersImpl::createUser(const std::string &user_name,
       if (auto status =
               txn_db->Put(cf_handle_, genUserStoreOfKey(ledger_name, user_name),
                           user.SerializeAsString());
-          !status.ok()) {
+          !status.ok())
+      {
         assert(false);
         SPDLOG_ERROR("Error create user {}", user_name);
         return common::Error::InternalError("Error create user " + user_name);
@@ -110,7 +122,8 @@ UsersImpl::createUser(const std::string &user_name,
 
       if (auto status = txn_db->Put(cf_handle_, genCurrentUserIdOfKey(),
                                     std::to_string(current_user_id + 1));
-          !status.ok()) {
+          !status.ok())
+      {
         assert(false);
         SPDLOG_ERROR("Error create current user id key {}",
                      genCurrentUserIdOfKey());
@@ -127,13 +140,15 @@ UsersImpl::createUser(const std::string &user_name,
 // delete user object
 std::optional<common::Error>
 UsersImpl::deleteUser(const std::string &ledger_name,
-                      const std::string &user_name) const {
+                      const std::string &user_name) const
+{
 
   using namespace rocksdb;
   if (auto db =
           std::dynamic_pointer_cast<ROCKSDB_NAMESPACE::OptimisticTransactionDB>(
               db_.lock());
-      db) {
+      db)
+  {
 
     auto txn_db = db->BeginTransaction(ROCKSDB_NAMESPACE::WriteOptions{});
     std::string val;

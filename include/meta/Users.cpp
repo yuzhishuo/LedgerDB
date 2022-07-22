@@ -2,16 +2,19 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:44:57
+ * @LastEditTime: 2022-07-22 09:16:44
  */
-#include "User.h"
 #include "Users.h"
+#include "User.h"
 
-namespace yuzhi {
+namespace yuzhi
+{
 std::shared_ptr<User> Users::createUser(const std::string &user_name,
                                         const std::string &ledger_name,
-                                        USER_ROLE role) {
-  if (auto itr = users_.find(user_name); itr != users_.end()) {
+                                        USER_ROLE role)
+{
+  if (auto itr = users_.find(user_name); itr != users_.end())
+  {
     return nullptr;
   }
 
@@ -20,9 +23,11 @@ std::shared_ptr<User> Users::createUser(const std::string &user_name,
   return user;
 }
 
-bool Users::removeUser(const std::shared_ptr<User> &user) {
+bool Users::removeUser(const std::shared_ptr<User> &user)
+{
   auto itr = users_.find(user->name());
-  if (itr == users_.end()) {
+  if (itr == users_.end())
+  {
     return false;
   }
 
@@ -31,15 +36,19 @@ bool Users::removeUser(const std::shared_ptr<User> &user) {
   return true;
 }
 
-const std::shared_ptr<User> Users::getUser(const std::string &name) const {
-  if (auto itr = users_.find(name); itr != users_.end()) {
+const std::shared_ptr<User> Users::getUser(const std::string &name) const
+{
+  if (auto itr = users_.find(name); itr != users_.end())
+  {
     return itr->second;
   }
   return nullptr;
 }
 
-std::shared_ptr<User> Users::getUser(const std::string &name) {
-  if (auto itr = users_.find(name); itr != users_.end()) {
+std::shared_ptr<User> Users::getUser(const std::string &name)
+{
+  if (auto itr = users_.find(name); itr != users_.end())
+  {
     return itr->second;
   }
   return nullptr;

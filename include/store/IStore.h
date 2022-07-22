@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-01 21:47:19
- * @LastEditTime: 2022-07-21 08:27:02
+ * @LastEditTime: 2022-07-22 09:21:08
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -14,15 +14,18 @@
 #include <string>
 #include <vector>
 
-namespace yuzhi::store {
-class IOnlyReadStore {
+namespace yuzhi::store
+{
+class IOnlyReadStore
+{
 public:
   virtual ~IOnlyReadStore() = default;
   virtual std::pair<std::string, std::optional<common::Error>>
   load(const std::string &key) = 0;
 };
 
-class IStorage : public IOnlyReadStore {
+class IStorage : public IOnlyReadStore
+{
 
 public:
   virtual ~IStorage() = default;
@@ -36,12 +39,14 @@ public:
   update_key(const std::string &key, const std::string &value) = 0;
 };
 
-class ISoftStorage : public IStorage {
+class ISoftStorage : public IStorage
+{
 
 public:
   virtual ~ISoftStorage() = default;
   virtual std::optional<yuzhi::common::Error>
-      delete_key[[noreturn]](const std::string &key) override final {
+      delete_key[[noreturn]](const std::string &key) override final
+  {
     throw std::runtime_error("not support");
   }
 };

@@ -8,20 +8,25 @@
 
 #include <LedgerEngine.h>
 
-namespace yuzhi {
+namespace yuzhi
+{
 
-std::shared_ptr<LedgerEngine> Ledger::engine() {
+std::shared_ptr<LedgerEngine> Ledger::engine()
+{
   return std::make_shared<LedgerEngine>(shared_from_this());
 }
 
-Ledger::Ledger(const std::string &name, const std::string &owner) : ledger_{} {
+Ledger::Ledger(const std::string &name, const std::string &owner) : ledger_{}
+{
   ledger_->set_owner(owner);
   ledger_->set_name(name);
   ledger_->set_id(Ledger::generatorId());
 }
 
 Ledger::Ledger(ledger_engine::Ledger &&ledger_inner)
-    : ledger_(std::move(ledger_inner)) {}
+    : ledger_(std::move(ledger_inner))
+{
+}
 
 // void Ledger::setOwner(std::shared_ptr<User> &owner)
 // {
@@ -43,28 +48,34 @@ Ledger::Ledger(ledger_engine::Ledger &&ledger_inner)
 //     return owner_.lock();
 // }
 
-void Ledger::dispose() {
+void Ledger::dispose()
+{
   auto is_remove = Ledgers::getInstance().removeLedger(shared_from_this());
   assert(is_remove);
 }
 std::optional<common::Error> Ledger::addUser(const std::string &name,
-                                             USER_ROLE role) {
+                                             USER_ROLE role)
+{
   auto &users = Users::getInstance();
   auto new_user = users.createUser(name, this->name(), role);
   return std::nullopt;
 }
-std::optional<common::Error> Ledger::addRegulator(const std::string &name) {
+std::optional<common::Error> Ledger::addRegulator(const std::string &name)
+{
   return addUser(name, USER_ROLE::REGULATOR);
 }
 
-std::optional<common::Error> Ledger::addCommon(const std::string &name) {
+std::optional<common::Error> Ledger::addCommon(const std::string &name)
+{
   return addUser(name, USER_ROLE::COMMON);
 }
-std::optional<common::Error> Ledger::addReadOnly(const std::string &name) {
+std::optional<common::Error> Ledger::addReadOnly(const std::string &name)
+{
   return addUser(name, USER_ROLE::READ_ONLY);
 }
 
-std::optional<common::Error> Ledger::removeCommon(const std::string &name) {
+std::optional<common::Error> Ledger::removeCommon(const std::string &name)
+{
   // auto commons = ledger_->mutable_commons();
   // auto &commons_ref = *commons;
   // auto it = std::find(commons_ref.begin(), commons_ref.end(), name);
@@ -76,7 +87,8 @@ std::optional<common::Error> Ledger::removeCommon(const std::string &name) {
   return std::nullopt;
 }
 
-std::optional<common::Error> Ledger::removeRegulator(const std::string &name) {
+std::optional<common::Error> Ledger::removeRegulator(const std::string &name)
+{
   // auto regulators = ledger_->mutable_regulator();
   // auto &regulators_ref = *regulators;
   // if (regulators_ref != name)
@@ -87,7 +99,8 @@ std::optional<common::Error> Ledger::removeRegulator(const std::string &name) {
   return std::nullopt;
 }
 
-std::optional<common::Error> Ledger::removeReadOnly(const std::string &name) {
+std::optional<common::Error> Ledger::removeReadOnly(const std::string &name)
+{
   // auto read_onlys = ledger_->mutable_readonlys();
   // auto &read_onlys_ref = *read_onlys;
   // auto it = std::find(read_onlys_ref.begin(), read_onlys_ref.end(), name);
@@ -99,21 +112,32 @@ std::optional<common::Error> Ledger::removeReadOnly(const std::string &name) {
   return std::nullopt;
 }
 
-LEDGER_ROLE Ledger::getRoleByUserName(const std::string &name) const {
-  if (isOwner(name)) {
+LEDGER_ROLE Ledger::getRoleByUserName(const std::string &name) const
+{
+  if (isOwner(name))
+  {
     return LEDGER_ROLE::OWNER;
-  } else if (isRegulator(name)) {
+  }
+  else if (isRegulator(name))
+  {
     return LEDGER_ROLE::REGULATOR;
-  } else if (isReadOnly(name)) {
+  }
+  else if (isReadOnly(name))
+  {
     return LEDGER_ROLE::READONLY;
-  } else if (isCommon(name)) {
+  }
+  else if (isCommon(name))
+  {
     return LEDGER_ROLE::COMMON;
-  } else {
+  }
+  else
+  {
     return LEDGER_ROLE::UNKION;
   }
 }
 
-bool Ledger::isOwner(const std::string &name) const {
+bool Ledger::isOwner(const std::string &name) const
+{
   return true;
   // if (owner_.expired())
   // {
@@ -123,7 +147,8 @@ bool Ledger::isOwner(const std::string &name) const {
   // return owner_.lock()->name() == name;
 }
 
-std::shared_ptr<User> Ledger::Onwer() const {
+std::shared_ptr<User> Ledger::Onwer() const
+{
   // if (owner_.expired())
   // {
   //     const auto &onwer_name =
@@ -137,7 +162,8 @@ std::shared_ptr<User> Ledger::Onwer() const {
   return nullptr;
 }
 
-bool Ledger::isCommon(const std::string &name) const {
+bool Ledger::isCommon(const std::string &name) const
+{
   return true;
   // const auto &commons = ledger_->commons();
   // return std::find_if(commons.begin(), commons.end(), [&name](const auto
@@ -145,13 +171,15 @@ bool Ledger::isCommon(const std::string &name) const {
   //                     { return common == name; }) != commons.end();
 }
 
-bool Ledger::isRegulator(const std::string &name) const {
+bool Ledger::isRegulator(const std::string &name) const
+{
   return true;
   // const auto &regulator = ledger_->regulator();
   // return regulator == name;
 }
 
-bool Ledger::isReadOnly(const std::string &name) const {
+bool Ledger::isReadOnly(const std::string &name) const
+{
   return true;
   // const auto &read_onlys = ledger_->readonlys();
   // return std::find_if(read_onlys.begin(), read_onlys.end(), [&name](const

@@ -1,8 +1,10 @@
 
 #include "meta/LedgersImpl.h"
-namespace yuzhi {
+namespace yuzhi
+{
 
-LedgersImpl::LedgersImpl(const std::string &db_name) {
+LedgersImpl::LedgersImpl(const std::string &db_name)
+{
 
   using namespace rocksdb;
   Options options;
@@ -24,18 +26,21 @@ LedgersImpl::LedgersImpl(const std::string &db_name) {
   std::string val;
   if (auto status = txn_db->Get(rocksdb::ReadOptions{}, handles[1],
                                 "current_ledger_id", &val);
-      !status.ok()) {
+      !status.ok())
+  {
     txn_db->Put(rocksdb::WriteOptions{}, handles[1], "current_ledger_id", "0");
   }
 }
 
-std::weak_ptr<ROCKSDB_NAMESPACE::DB> LedgersImpl::getRawDBPtr() const {
+std::weak_ptr<ROCKSDB_NAMESPACE::DB> LedgersImpl::getRawDBPtr() const
+{
   return txn_db;
 }
 
 // createLedger
 std::optional<common::Error>
-LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger) {
+LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger)
+{
   using namespace rocksdb;
   WriteOptions write_options;
   ReadOptions read_options;
@@ -45,14 +50,15 @@ LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger) {
   std::string val;
   Slice key{"ledger_db_" + mono_ledger.name()};
 
-  if (auto status = txn->Get(read_options, handles[1], key, &val);
-      status.ok()) {
+  if (auto status = txn->Get(read_options, handles[1], key, &val); status.ok())
+  {
     return common::Error::RepeatKey();
   }
 
   if (auto status = txn->GetForUpdate(read_options, handles[1],
                                       "current_ledger_id", &val);
-      !status.ok()) {
+      !status.ok())
+  {
     return common::Error::InternalError("get current_ledger_id failed: " +
                                         status.ToString());
   }
@@ -61,7 +67,8 @@ LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger) {
   mono_ledger.set_id(current_ledger_id);
   if (auto status = txn->Put(handles[1], "current_ledger_id",
                              std::to_string(current_ledger_id + 1));
-      !status.ok()) {
+      !status.ok())
+  {
 
     return common::Error::InternalError("put current_ledger_id failed: " +
                                         status.ToString());
@@ -70,7 +77,8 @@ LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger) {
   mono_ledger.SerializeToString(&val);
   if (auto status =
           txn->Put(handles[1], "ledger_db_" + mono_ledger.name(), val);
-      !status.ok()) {
+      !status.ok())
+  {
 
     return common::Error::InternalError("put ledger_name failed: " +
                                         status.ToString());
@@ -79,14 +87,16 @@ LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger) {
   if (auto status =
           txn->Put(handles[2], "ledger_db_user_" + mono_ledger.name() + "__id",
                    std::to_string(0));
-      !status.ok()) {
+      !status.ok())
+  {
 
     return common::Error::InternalError("put ledger_db_user_" +
                                         mono_ledger.name() + "__id" +
                                         " failed: " + status.ToString());
   }
 
-  if (auto status = txn->Commit(); !status.ok()) {
+  if (auto status = txn->Commit(); !status.ok())
+  {
 
     return common::Error::InternalError("commit failed: " + status.ToString());
   }
@@ -94,13 +104,15 @@ LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger) {
   return std::nullopt;
 }
 
-bool LedgersImpl::hasLedger(const std::string &ledger_name) const {
+bool LedgersImpl::hasLedger(const std::string &ledger_name) const
+{
   using namespace rocksdb;
   ReadOptions read_options;
   Slice key{"ledger_db_" + ledger_name};
   std::string val;
   if (auto status = txn_db->Get(read_options, handles[1], key, &val);
-      status.ok()) {
+      status.ok())
+  {
     return true;
   }
   return false;
@@ -108,7 +120,8 @@ bool LedgersImpl::hasLedger(const std::string &ledger_name) const {
 
 // deleteLedger
 std::optional<common::Error>
-LedgersImpl::deleteLedger(const std::string &ledger_name) {
+LedgersImpl::deleteLedger(const std::string &ledger_name)
+{
   using namespace rocksdb;
   WriteOptions write_options;
   ReadOptions read_options;
@@ -119,7 +132,8 @@ LedgersImpl::deleteLedger(const std::string &ledger_name) {
   std::string val;
   if (auto status = txn->GetForUpdate(read_options, handles[1],
                                       "ledger_db_" + ledger_name, &val);
-      !status.ok()) {
+      !status.ok())
+  {
 
     return common::Error::InternalError("get ledger_db_" + ledger_name +
                                         " failed: " + status.ToString());

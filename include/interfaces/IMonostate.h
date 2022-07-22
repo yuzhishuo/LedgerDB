@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:12:11
+ * @LastEditTime: 2022-07-22 09:15:03
  */
 #pragma once
 
@@ -12,8 +12,10 @@
 #include "IUnique.h"
 #include "common/Error.h"
 
-namespace yuzhi {
-template <typename T> class IMonostate {
+namespace yuzhi
+{
+template <typename T> class IMonostate
+{
 public:
   virtual ~IMonostate() = default;
   virtual std::pair<std::string, std::optional<common::Error>>
@@ -23,7 +25,8 @@ public:
 };
 
 // duck model
-template <typename T> class Monostate : public IMonostate<T> {
+template <typename T> class Monostate : public IMonostate<T>
+{
 public:
   Monostate() = default;
   ~Monostate() = default;
@@ -37,9 +40,10 @@ private:
 
 public:
   virtual std::pair<std::string, std::optional<common::Error>>
-  serialize() const override {
-    if (auto serialized = std::string();
-        value_.SerializeToString(&serialized)) {
+  serialize() const override
+  {
+    if (auto serialized = std::string(); value_.SerializeToString(&serialized))
+    {
       return {serialized, std::nullopt};
     }
 
@@ -48,10 +52,14 @@ public:
   }
 
   virtual std::pair<std::shared_ptr<T>, std::optional<common::Error>>
-  deserialize(const std::string &serialized) override {
-    if (value_.ParseFromString(serialized)) {
+  deserialize(const std::string &serialized) override
+  {
+    if (value_.ParseFromString(serialized))
+    {
       return {std::make_shared<T>(value_), std::nullopt};
-    } else {
+    }
+    else
+    {
       return {nullptr, common::Error{"Failed to deserialize Monostate"}};
     }
   }

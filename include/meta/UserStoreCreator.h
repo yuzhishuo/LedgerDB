@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-21 08:40:53
+ * @LastEditTime: 2022-07-22 09:16:42
  */
 #pragma once
 
@@ -10,13 +10,16 @@
 #include "store/PersistenceStore.h"
 #include "store/StoreCreator.h"
 
-namespace yuzhi {
-class UserStoreCreator : public store::StoreCreator<User> {
+namespace yuzhi
+{
+class UserStoreCreator : public store::StoreCreator<User>
+{
 public:
   using StoreCreator<User>::StoreCreator;
 
 public:
-  virtual store::IStorage *create() const override {
+  virtual store::IStorage *create() const override
+  {
     static auto persistenceStore = store::PersistenceStore("User", "db1");
     return &persistenceStore;
   }

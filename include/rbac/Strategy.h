@@ -1,12 +1,18 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-07-17 14:09:42
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-07-22 09:20:33
+ */
 #pragma once
 
-#include <string>
-#include <map>
-#include <set>
-#include <memory>
-#include <vector>
 #include <algorithm>
 #include <iostream>
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
 
 #include <any>
 #include <utility>
@@ -15,40 +21,37 @@ class IStrategy
 {
 
 public:
-    IStrategy(const std::string &name, std::vector<std::any> &&r)
-        : name_(name), roles_(std::move(r))
-    {
-    }
-    virtual ~IStrategy() {}
+  IStrategy(const std::string &name, std::vector<std::any> &&r)
+      : name_(name), roles_(std::move(r))
+  {
+  }
+  virtual ~IStrategy() {}
 
-    IStrategy & operator=(const IStrategy &) = delete;
+  IStrategy &operator=(const IStrategy &) = delete;
 
 public:
-    bool Pass(std::any role) const
+  bool Pass(std::any role) const
+  {
+    for (const auto &r : roles_)
     {
-        for (const auto &r : roles_)
-        {
-            if (!role.has_value())
-            {
-                return false;
-            }
-            if (r.type() == role.type() && eq(r, role))
-            {
-                return true;
-            }
-        }
-
+      if (!role.has_value())
+      {
         return false;
+      }
+      if (r.type() == role.type() && eq(r, role))
+      {
+        return true;
+      }
     }
 
-    virtual bool eq(const std::any &le, const std::any &ri) const = 0;
+    return false;
+  }
 
-    const std::string &name() const
-    {
-        return name_;
-    }
+  virtual bool eq(const std::any &le, const std::any &ri) const = 0;
+
+  const std::string &name() const { return name_; }
 
 private:
-    std::vector<std::any> roles_;
-    const std::string name_;
+  std::vector<std::any> roles_;
+  const std::string name_;
 };

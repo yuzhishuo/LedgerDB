@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 06:53:16
+ * @LastEditTime: 2022-07-22 09:16:17
  */
 #include <algorithm>
 #include <cassert>
@@ -18,15 +18,19 @@ Ledgers::Ledgers()
     : ledgers_(), store_creator_{dynamic_cast<store::IStorable<Ledger> *>(
                       new LedgerStoreCreator{"Ledger"})},
       impl_(kLedgerStoreName), store::IStorable<Ledger>(),
-      users_{impl_.getRawDBPtr()} {}
+      users_{impl_.getRawDBPtr()}
+{
+}
 
 std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name,
-                                              const std::string &owner) {
+                                              const std::string &owner)
+{
   if (hasLedger(name)
 #ifdef DEBUG
       && !Users::getInstance().getUser(owner)
 #endif // DEBUG
-  ) {
+  )
+  {
     return nullptr;
   }
 
@@ -41,13 +45,16 @@ std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name,
 
 Ledgers::~Ledgers() { users_.dispose(); }
 
-bool Ledgers::removeLedger(const std::shared_ptr<Ledger> &ledger) {
+bool Ledgers::removeLedger(const std::shared_ptr<Ledger> &ledger)
+{
   return removeLedger(ledger->name());
 }
 
-bool Ledgers::removeLedger(const std::string &ledger_name) {
+bool Ledgers::removeLedger(const std::string &ledger_name)
+{
   auto it = ledgers_.find(ledger_name);
-  if (it == ledgers_.end()) {
+  if (it == ledgers_.end())
+  {
     return false;
   }
 
@@ -57,29 +64,38 @@ bool Ledgers::removeLedger(const std::string &ledger_name) {
   return true;
 }
 
-bool Ledgers::hasLedger(const std::string &name) const {
+bool Ledgers::hasLedger(const std::string &name) const
+{
   return ledgers_.count(name) && impl_.hasLedger(name);
 }
 
-bool Ledgers::removeLedgerByUser(const std::shared_ptr<User> &user) {
+bool Ledgers::removeLedgerByUser(const std::shared_ptr<User> &user)
+{
   std::vector<std::string> remove_ledger_names;
-  for (auto it = ledgers_.begin(); it != ledgers_.end();) {
-    if (it->second->Onwer() == user) {
+  for (auto it = ledgers_.begin(); it != ledgers_.end();)
+  {
+    if (it->second->Onwer() == user)
+    {
 
       remove_ledger_names.push_back(it->first);
-    } else {
+    }
+    else
+    {
       ++it;
     }
   }
 
-  for (auto &name : remove_ledger_names) {
+  for (auto &name : remove_ledger_names)
+  {
     ledgers_.erase(name);
   }
   return remove_ledger_names.empty();
 }
 
-std::shared_ptr<Ledger> Ledgers::getLedger(const std::string &name) const {
-  if (auto it = ledgers_.find(name); it != ledgers_.end()) {
+std::shared_ptr<Ledger> Ledgers::getLedger(const std::string &name) const
+{
+  if (auto it = ledgers_.find(name); it != ledgers_.end())
+  {
     return it->second;
   }
   return nullptr;

@@ -2,13 +2,15 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 05:40:33
+ * @LastEditTime: 2022-07-22 09:15:00
  */
 #pragma once
 
-namespace yuzhi::interface {
+namespace yuzhi::interface
+{
 
-class IDisposable {
+class IDisposable
+{
 public:
   virtual void dispose() = 0;
   virtual ~IDisposable() = default;

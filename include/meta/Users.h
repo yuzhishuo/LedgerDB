@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 06:07:02
+ * @LastEditTime: 2022-07-22 09:16:47
  */
 #pragma once
 
@@ -18,8 +18,10 @@
 #include "meta/UsersImpl.h"
 
 // #define PREDEF_USER "admin"
-namespace yuzhi {
-class Users : public store::IStorable<User>, interface::IDisposable {
+namespace yuzhi
+{
+class Users : public store::IStorable<User>, interface::IDisposable
+{
 public:
   using Raw = User;
   using Element = std::shared_ptr<User>;
@@ -27,7 +29,8 @@ public:
       std::common_type_t<decltype(((User *)nullptr)->GetUnique())>;
 
 public:
-  static Users &getInstance() {
+  static Users &getInstance()
+  {
     static Users instance{};
     return instance;
   }
@@ -39,11 +42,16 @@ public:
       std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init)
       : users_{}, store_creator_{dynamic_cast<IStorable<User> *>(
                       new UserStoreCreator{"User"})},
-        usersImpl_(std::weak_ptr<ROCKSDB_NAMESPACE::DB>()) {
-    for (auto &[name, user] : init) {
-      if (auto erro = store(user); !erro) {
+        usersImpl_(std::weak_ptr<ROCKSDB_NAMESPACE::DB>())
+  {
+    for (auto &[name, user] : init)
+    {
+      if (auto erro = store(user); !erro)
+      {
         users_.insert(std::make_pair(name, user));
-      } else {
+      }
+      else
+      {
       }
     }
   }
@@ -51,16 +59,20 @@ public:
   Users(std::weak_ptr<ROCKSDB_NAMESPACE::DB> db)
       : users_{}, store_creator_{dynamic_cast<IStorable<User> *>(
                       new UserStoreCreator{"User"})},
-        usersImpl_(db) {}
+        usersImpl_(db)
+  {
+  }
 
 public: // IStorable
   virtual std::optional<common::Error>
-  store(const Element &element) const override {
+  store(const Element &element) const override
+  {
     return store_creator_->store(element);
   }
 
   virtual Element
-  load(const std::shared_ptr<IUnique<UniqueType>> &element) const override {
+  load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
+  {
     return store_creator_->load(element);
   }
 

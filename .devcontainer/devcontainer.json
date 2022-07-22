@@ -30,7 +30,10 @@
 				"xaver.clang-format",
 				"OBKoro1.korofileheader",
 				"maixiaojie.git-emoji",
-				"wayou.vscode-todo-highlight"
+				"wayou.vscode-todo-highlight",
+				"esbenp.prettier-vscode",
+				"nondanee.vsc-netease-music",
+				"alefragnani.Bookmarks"
 			]
 		}
 	}

@@ -47,7 +47,8 @@ void Ledger::dispose() {
   auto is_remove = Ledgers::getInstance().removeLedger(shared_from_this());
   assert(is_remove);
 }
-std::optional<common::Error> Ledger::addUser(const std::string &name, USER_ROLE role) {
+std::optional<common::Error> Ledger::addUser(const std::string &name,
+                                             USER_ROLE role) {
   auto &users = Users::getInstance();
   auto new_user = users.createUser(name, this->name(), role);
   return std::nullopt;

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 06:04:42
+ * @LastEditTime: 2022-07-22 06:51:55
  */
 #pragma once
 
@@ -33,13 +33,8 @@ public:
       std::common_type_t<decltype(((Ledger *)nullptr)->GetUnique())>;
 
 public:
-  Ledgers()
-      : ledgers_(), store_creator_{dynamic_cast<store::IStorable<Ledger> *>(
-                        new LedgerStoreCreator{"Ledger"})},
-        impl_(kLedgerStoreName), store::IStorable<Ledger>(),
-        users_{impl_.getRawDBPtr()} {}
-
-  virtual ~Ledgers() = default;
+  Ledgers();
+  ~Ledgers() override;
 
 public:
   static Ledgers &getInstance() {

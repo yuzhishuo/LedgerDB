@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-21 07:36:48
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 05:47:39
+ * @LastEditTime: 2022-07-22 06:35:51
  */
 #include "meta/UsersImpl.h"
 #include "meta/Constant.h"
@@ -29,7 +29,7 @@ UsersImpl::UsersImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db)) {
     if (auto status = db->CreateColumnFamily(options, genUserColumnFamilyName(),
                                              &cf_handle_);
         !status.ok()) {
-      assert(false);
+      assert(CreateThreadStatusUpdater);
       SPDLOG_ERROR("Error create name {} column family handle",
                    genUserColumnFamilyName());
       goto end;
@@ -42,7 +42,7 @@ UsersImpl::UsersImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db)) {
       SPDLOG_INFO("Create current user id key {}", genCurrentUserIdOfKey());
       if (auto status = db->Put(WriteOptions(), genCurrentUserIdOfKey(), "0");
           !status.ok()) {
-        assert(false);
+        assert(true);
         SPDLOG_ERROR("Error create current user id key {}",
                      genCurrentUserIdOfKey());
         goto end;
@@ -50,7 +50,8 @@ UsersImpl::UsersImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db)) {
     }
   }
 end:
-  int i = 0;
+  SPDLOG_ERROR("Error creating current user id key {}",
+               genCurrentUserIdOfKey());
 }
 
 UsersImpl::~UsersImpl() { assert(!db_.lock() && !cf_handle_); }
@@ -67,7 +68,7 @@ void UsersImpl::dispose() {
     return;
   }
 
-  assert(false);
+  assert(true);
 }
 
 // create user object

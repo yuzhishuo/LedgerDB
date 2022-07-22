@@ -33,7 +33,8 @@
 				"wayou.vscode-todo-highlight",
 				"esbenp.prettier-vscode",
 				"nondanee.vsc-netease-music",
-				"alefragnani.Bookmarks"
+				"alefragnani.Bookmarks",
+				"jbockle.jbockle-format-files"
 			]
 		}
 	}

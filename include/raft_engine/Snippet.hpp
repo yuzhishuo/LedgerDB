@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 13:11:29
- * @LastEditTime: 2022-02-01 20:44:40
+ * @LastEditTime: 2022-07-22 09:09:43
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -19,7 +19,8 @@
 
 #include <muduo/net/EventLoop.h>
 
-extern "C" {
+extern "C"
+{
 #include <raft.h>
 }
 
@@ -27,12 +28,15 @@ extern "C" {
 
 #include <config/Config.h>
 
-namespace yuzhi::raft_engine {
+namespace yuzhi::raft_engine
+{
 
-class RaftEngine : private raft::Raft::Service, public IConfigurable {
+class RaftEngine : private raft::Raft::Service, public IConfigurable
+{
 
 public:
-  RaftEngine() {
+  RaftEngine()
+  {
     auto raft = raft_new();
 
     void *connection_user_data = NULL;
@@ -60,7 +64,8 @@ public:
 
   virtual const char *Field() const override { return "raft"; }
 
-  void Listen() {
+  void Listen()
+  {
     // spdlog::info("Raft engine server listening on {}", server_address);
     server->Wait();
   }

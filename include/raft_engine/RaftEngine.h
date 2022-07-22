@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 13:11:29
- * @LastEditTime: 2022-02-07 14:39:06
+ * @LastEditTime: 2022-07-22 09:09:38
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -26,7 +26,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
-extern "C" {
+extern "C"
+{
 #include <raft.h>
 }
 
@@ -38,16 +39,19 @@ using namespace muduo::net;
 
 typedef std::shared_ptr<muduo::Query> QueryPtr;
 typedef std::shared_ptr<muduo::Answer> AnswerPtr;
-namespace yuzhi::raft_engine {
+namespace yuzhi::raft_engine
+{
 
-class RaftEngine : private raft::Raft::Service, public IConfigurable {
+class RaftEngine : private raft::Raft::Service, public IConfigurable
+{
 
 public:
   RaftEngine(EventLoop *loop, const InetAddress &listenAddr)
       : server_(loop, listenAddr, "RaftEngine"),
         dispatcher_(std::bind(&RaftEngine::onUnknownMessage, this, _1, _2, _3)),
         codec_(std::bind(&ProtobufDispatcher::onProtobufMessage, &dispatcher_,
-                         _1, _2, _3)) {
+                         _1, _2, _3))
+  {
     dispatcher_.registerMessageCallback<muduo::Query>(
         std::bind(&RaftEngine::onQuery, this, _1, _2, _3));
     dispatcher_.registerMessageCallback<muduo::Answer>(
@@ -67,20 +71,23 @@ public:
   virtual ~RaftEngine() = default;
 
 private:
-  void onConnection(const TcpConnectionPtr &conn) {
+  void onConnection(const TcpConnectionPtr &conn)
+  {
     LOG_INFO << conn->localAddress().toIpPort() << " -> "
              << conn->peerAddress().toIpPort() << " is "
              << (conn->connected() ? "UP" : "DOWN");
   }
 
   void onUnknownMessage(const TcpConnectionPtr &conn, const MessagePtr &message,
-                        Timestamp) {
+                        Timestamp)
+  {
     LOG_INFO << "onUnknownMessage: " << message->GetTypeName();
     conn->shutdown();
   }
 
   void onQuery(const muduo::net::TcpConnectionPtr &conn,
-               const QueryPtr &message, muduo::Timestamp) {
+               const QueryPtr &message, muduo::Timestamp)
+  {
     LOG_INFO << "onQuery:\n"
              << message->GetTypeName() << message->DebugString();
     Answer answer;
@@ -95,7 +102,8 @@ private:
   }
 
   void onAnswer(const muduo::net::TcpConnectionPtr &conn,
-                const AnswerPtr &message, muduo::Timestamp) {
+                const AnswerPtr &message, muduo::Timestamp)
+  {
     LOG_INFO << "onAnswer: " << message->GetTypeName();
     conn->shutdown();
   }

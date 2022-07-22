@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-07-21 08:51:39
+ * @LastEditTime: 2022-07-22 09:10:05
  * @LastEditors: Leo
  * @FilePath: /LedgerDB/main.cpp
  */
@@ -33,35 +33,37 @@
 namespace spd = spdlog;
 using namespace std;
 using namespace grpc;
-namespace yuzhi {
-  class LedgerDB final : public IConfigurable {
+namespace yuzhi
+{
+class LedgerDB final : public IConfigurable
+{
 
 public:
-    LedgerDB() = default;
-    ~LedgerDB() override = default;
-    const char *Field() const override { return "ledger"; }
+  LedgerDB() = default;
+  ~LedgerDB() override = default;
+  const char *Field() const override { return "ledger"; }
 
-    void start() const
-    {
-      auto &config = yuzhi::Config::Instance();
-      auto prot = config.get<int>(this, "server_port");
-      // grpc::reflection::InitProtoReflectionServerBuilderPlugin();
-      ServerBuilder builder;
-      yuzhi::service::LedgerService ledgerService;
-      const auto service_address = "[::]:" + to_string(prot);
+  void start() const
+  {
+    auto &config = yuzhi::Config::Instance();
+    auto prot = config.get<int>(this, "server_port");
+    // grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+    ServerBuilder builder;
+    yuzhi::service::LedgerService ledgerService;
+    const auto service_address = "[::]:" + to_string(prot);
 
-      int selected_port = 0;
-      // TODO: repeat listen port, need to fix
-      builder.AddListeningPort(service_address, InsecureServerCredentials(),
-                               &selected_port);
-      // builder.set_health_check_service(new HealthCheckServiceImpl());
-      builder.RegisterService(&ledgerService);
-      auto server = builder.BuildAndStart();
-      SPDLOG_INFO("start ledger service at {}", service_address);
-      server->Wait();
-    }
-  };
-}// namespace yuzhi
+    int selected_port = 0;
+    // TODO: repeat listen port, need to fix
+    builder.AddListeningPort(service_address, InsecureServerCredentials(),
+                             &selected_port);
+    // builder.set_health_check_service(new HealthCheckServiceImpl());
+    builder.RegisterService(&ledgerService);
+    auto server = builder.BuildAndStart();
+    SPDLOG_INFO("start ledger service at {}", service_address);
+    server->Wait();
+  }
+};
+} // namespace yuzhi
 
 int main(int argc, char **argv)
 {

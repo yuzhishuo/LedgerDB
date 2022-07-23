@@ -2,17 +2,17 @@
  * @Author: Leo
  * @Date: 2022-07-20 12:21:39
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 14:41:06
+ * @LastEditTime: 2022-07-23 16:34:03
  */
 #pragma once
 
+#include "meta/AccountAtrribute.h"
 #include <common/Error.h>
 #include <interfaces/IDisposable.h>
 #include <memory>
 #include <optional>
 #include <string>
-#include "meta/AccountAtrribute.h"
-#include<user_engine.pb.h>
+#include <user_engine.pb.h>
 
 namespace rocksdb
 {
@@ -23,7 +23,7 @@ class OptimisticTransactionDB;
 
 namespace yuzhi
 {
-  class User;
+class User;
 }
 namespace yuzhi::meta
 {
@@ -44,26 +44,25 @@ public:
   void dispose() override;
 
 public:
+  bool isOwner(const std::string &ledger_name, const std::string &name) const override;
+  bool isCommon(const std::string &ledger_name, const std::string &name) const override;
+  bool isRegulator(const std::string &ledger_name, const std::string &name) const override;
+  bool isReadOnly(const std::string &ledger_name, const std::string &name) const override;
 
-  bool isOwner(const std::string& ledger_name, const std::string &name) const override;
-  bool isCommon(const std::string& ledger_name, const std::string &name) const override;
-  bool isRegulator(const std::string& ledger_name, const std::string &name) const override;
-  bool isReadOnly(const std::string& ledger_name, const std::string &name) const override;
+  std::shared_ptr<User> Onwer(const std::string &ledger_name) const override;
 
-  std::shared_ptr<User> Onwer(const std::string& ledger_name) const override;
+  std::optional<common::Error> addCommon(const std::string &ledger_name, const std::string &name) override;
+  std::optional<common::Error> addRegulator(const std::string &ledger_name, const std::string &name) override;
+  std::optional<common::Error> addReadOnly(const std::string &ledger_name, const std::string &name) override;
 
-  std::optional<common::Error> addCommon(const std::string& ledger_name, const std::string &name) override;
-  std::optional<common::Error> addRegulator(const std::string& ledger_name, const std::string &name) override;
-  std::optional<common::Error> addReadOnly(const std::string& ledger_name, const std::string &name) override;
-
-  std::optional<common::Error> removeCommon(const std::string& ledger_name, const std::string &name) override;
-  std::optional<common::Error> removeRegulator(const std::string& ledger_name, const std::string &name) override;
-  std::optional<common::Error> removeReadOnly(const std::string& ledger_name, const std::string &name) override;
+  std::optional<common::Error> removeCommon(const std::string &ledger_name, const std::string &name) override;
+  std::optional<common::Error> removeRegulator(const std::string &ledger_name, const std::string &name) override;
+  std::optional<common::Error> removeReadOnly(const std::string &ledger_name, const std::string &name) override;
 
 private:
-
   std::shared_ptr<rocksdb::OptimisticTransactionDB> captureOptimisticTransactionDB() const;
   std::optional<user_engine::User> captureUser(const std::string &ledger_name, const std::string &user_name) const;
+
 private:
   std::weak_ptr<rocksdb::DB> db_;
   rocksdb::ColumnFamilyHandle *cf_handle_;

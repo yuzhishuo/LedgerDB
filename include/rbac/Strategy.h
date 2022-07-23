@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:20:33
+ * @LastEditTime: 2022-07-23 16:42:19
  */
 #pragma once
 
@@ -21,10 +21,7 @@ class IStrategy
 {
 
 public:
-  IStrategy(const std::string &name, std::vector<std::any> &&r)
-      : name_(name), roles_(std::move(r))
-  {
-  }
+  IStrategy(const std::string &name, std::vector<std::any> &&r) : name_(name), roles_(std::move(r)) {}
   virtual ~IStrategy() {}
 
   IStrategy &operator=(const IStrategy &) = delete;

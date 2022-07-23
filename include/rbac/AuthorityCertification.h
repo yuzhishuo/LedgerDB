@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:20:26
+ * @LastEditTime: 2022-07-23 16:42:06
  */
 #pragma once
 
@@ -20,11 +20,9 @@ class AuthorityCertification
 public:
   AuthorityCertification() {}
 
-  bool UserPass(const std::string &command_name,
-                const std::string &user_name) const;
+  bool UserPass(const std::string &command_name, const std::string &user_name) const;
 
-  bool LedgerPass(const std::string &command_name, const std::string &user_name,
-                  const std::string &ledger_name) const;
+  bool LedgerPass(const std::string &command_name, const std::string &user_name, const std::string &ledger_name) const;
 
   bool RegisterStrategy(std::unique_ptr<IStrategy> &&strategy);
 

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:20:23
+ * @LastEditTime: 2022-07-23 16:42:01
  */
 #include "rbac/AuthorityCertification.h"
 #include "meta/Ledgers.h"
@@ -10,8 +10,7 @@
 #include "meta/Users.h"
 
 using namespace yuzhi;
-bool AuthorityCertification::UserPass(const std::string &command_name,
-                                      const std::string &user_name) const
+bool AuthorityCertification::UserPass(const std::string &command_name, const std::string &user_name) const
 {
   if (auto command = strategys_.find(command_name); command != strategys_.end())
   {
@@ -24,8 +23,7 @@ bool AuthorityCertification::UserPass(const std::string &command_name,
   return false;
 }
 
-bool AuthorityCertification::LedgerPass(const std::string &command_name,
-                                        const std::string &user_name,
+bool AuthorityCertification::LedgerPass(const std::string &command_name, const std::string &user_name,
                                         const std::string &ledger_name) const
 {
 
@@ -41,8 +39,7 @@ bool AuthorityCertification::LedgerPass(const std::string &command_name,
   return false;
 }
 
-bool AuthorityCertification::RegisterStrategy(
-    std::unique_ptr<IStrategy> &&strategy)
+bool AuthorityCertification::RegisterStrategy(std::unique_ptr<IStrategy> &&strategy)
 {
   if (strategys_.find(strategy->name()) != strategys_.end())
   {

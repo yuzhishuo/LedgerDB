@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-21 07:36:48
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 14:17:12
+ * @LastEditTime: 2022-07-23 16:33:59
  */
 #include "meta/UsersImpl.h"
 #include "meta/Constant.h"
@@ -11,9 +11,9 @@
 #include <rocksdb/utilities/transaction.h>
 
 #include <assert.h>
+#include <meta/User.h>
 #include <spdlog/spdlog.h>
 #include <user_engine.pb.h>
-#include <meta/User.h>
 
 namespace yuzhi::meta
 {
@@ -134,7 +134,6 @@ std::optional<common::Error> UsersImpl::deleteUser(const std::string &ledger_nam
   return std::nullopt;
 }
 
-
 std::shared_ptr<rocksdb::OptimisticTransactionDB> UsersImpl::captureOptimisticTransactionDB() const
 {
   using namespace rocksdb;
@@ -146,35 +145,37 @@ std::shared_ptr<rocksdb::OptimisticTransactionDB> UsersImpl::captureOptimisticTr
   assert(true);
 }
 
-std::optional<user_engine::User> UsersImpl::captureUser(const std::string &ledger_name, const std::string &user_name) const
+std::optional<user_engine::User> UsersImpl::captureUser(const std::string &ledger_name,
+                                                        const std::string &user_name) const
 {
-    auto db = captureOptimisticTransactionDB();
+  auto db = captureOptimisticTransactionDB();
 
-    std::string val;
-    if (auto status = db->Get(ROCKSDB_NAMESPACE::ReadOptions{}, cf_handle_, genUserStoreOfKey(ledger_name, user_name), &val);
-        status.ok())
-    {
-      auto user = user_engine::User{};
-      user.ParseFromString(val);
-      return user;
-    }
+  std::string val;
+  if (auto status =
+          db->Get(ROCKSDB_NAMESPACE::ReadOptions{}, cf_handle_, genUserStoreOfKey(ledger_name, user_name), &val);
+      status.ok())
+  {
+    auto user = user_engine::User{};
+    user.ParseFromString(val);
+    return user;
+  }
 
-    return std::nullopt;
+  return std::nullopt;
 }
 
-bool UsersImpl::isOwner(const std::string& ledger_name, const std::string &name) const
+bool UsersImpl::isOwner(const std::string &ledger_name, const std::string &name) const
 {
-  if( auto user_opt = captureUser(ledger_name, name); user_opt )
+  if (auto user_opt = captureUser(ledger_name, name); user_opt)
   {
     return user_opt->role() == user_engine::OWNER;
   }
 
   return false;
 }
-bool UsersImpl::isCommon(const std::string& ledger_name, const std::string &name) const
+bool UsersImpl::isCommon(const std::string &ledger_name, const std::string &name) const
 {
 
-  if( auto user_opt = captureUser(ledger_name, name); user_opt )
+  if (auto user_opt = captureUser(ledger_name, name); user_opt)
   {
     return user_opt->role() == user_engine::COMMON;
   }
@@ -182,9 +183,9 @@ bool UsersImpl::isCommon(const std::string& ledger_name, const std::string &name
   return false;
 }
 
-bool UsersImpl::UsersImpl::isRegulator(const std::string& ledger_name, const std::string &name) const
+bool UsersImpl::UsersImpl::isRegulator(const std::string &ledger_name, const std::string &name) const
 {
-  if( auto user_opt = captureUser(ledger_name, name); user_opt )
+  if (auto user_opt = captureUser(ledger_name, name); user_opt)
   {
     return user_opt->role() == user_engine::REGULATOR;
   }
@@ -192,10 +193,10 @@ bool UsersImpl::UsersImpl::isRegulator(const std::string& ledger_name, const std
   return false;
 }
 
-bool UsersImpl::isReadOnly(const std::string& ledger_name, const std::string &name) const
+bool UsersImpl::isReadOnly(const std::string &ledger_name, const std::string &name) const
 {
 
-  if(auto user_opt = captureUser(ledger_name, name); user_opt )
+  if (auto user_opt = captureUser(ledger_name, name); user_opt)
   {
     return user_opt->role() == user_engine::READ_ONLY;
   }
@@ -203,48 +204,49 @@ bool UsersImpl::isReadOnly(const std::string& ledger_name, const std::string &na
   return false;
 }
 
-std::shared_ptr<User> UsersImpl::Onwer(const std::string& ledger_name) const
+std::shared_ptr<User> UsersImpl::Onwer(const std::string &ledger_name) const
 {
-    auto db = captureOptimisticTransactionDB();
+  auto db = captureOptimisticTransactionDB();
 
-    std::string val;
-    if (auto status = db->Get(ROCKSDB_NAMESPACE::ReadOptions{}, cf_handle_, genLedgerOwnerUserStoreKey(ledger_name), &val);
-        status.ok())
-    {
-      auto user = user_engine::User{};
-      user.ParseFromString(val);
-      return std::make_shared<User>(std::move(user));
-    }
+  std::string val;
+  if (auto status =
+          db->Get(ROCKSDB_NAMESPACE::ReadOptions{}, cf_handle_, genLedgerOwnerUserStoreKey(ledger_name), &val);
+      status.ok())
+  {
+    auto user = user_engine::User{};
+    user.ParseFromString(val);
+    return std::make_shared<User>(std::move(user));
+  }
 
-    return nullptr;
+  return nullptr;
 }
 
-std::optional<common::Error> UsersImpl::addCommon(const std::string& ledger_name, const std::string &name)
+std::optional<common::Error> UsersImpl::addCommon(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }
 
-std::optional<common::Error> UsersImpl::addRegulator(const std::string& ledger_name, const std::string &name)
+std::optional<common::Error> UsersImpl::addRegulator(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }
 
-std::optional<common::Error> UsersImpl::addReadOnly(const std::string& ledger_name, const std::string &name)
+std::optional<common::Error> UsersImpl::addReadOnly(const std::string &ledger_name, const std::string &name)
 {
-   return std::nullopt;
+  return std::nullopt;
 }
 
-std::optional<common::Error> UsersImpl::removeCommon(const std::string& ledger_name, const std::string &name)
+std::optional<common::Error> UsersImpl::removeCommon(const std::string &ledger_name, const std::string &name)
 {
- return std::nullopt;
+  return std::nullopt;
 }
-std::optional<common::Error> UsersImpl::removeRegulator(const std::string& ledger_name, const std::string &name)
+std::optional<common::Error> UsersImpl::removeRegulator(const std::string &ledger_name, const std::string &name)
 {
-   return std::nullopt;
+  return std::nullopt;
 }
-std::optional<common::Error> UsersImpl::removeReadOnly(const std::string& ledger_name, const std::string &name) 
+std::optional<common::Error> UsersImpl::removeReadOnly(const std::string &ledger_name, const std::string &name)
 {
- return std::nullopt;
+  return std::nullopt;
 }
 
 } // namespace yuzhi::meta

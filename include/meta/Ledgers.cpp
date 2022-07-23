@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 14:51:14
+ * @LastEditTime: 2022-07-23 16:35:32
  */
 #include <algorithm>
 #include <cassert>
@@ -34,7 +34,7 @@ std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std
   ledger_engine::Ledger mono_ledger;
   mono_ledger.set_name(name);
   impl_.createLedger(mono_ledger);
-  auto ledger = std::make_shared<Ledger>(dynamic_cast<meta::IAccountAtrribute*>( &users_), std::move(mono_ledger));
+  auto ledger = std::make_shared<Ledger>(dynamic_cast<meta::IAccountAtrribute *>(&users_), std::move(mono_ledger));
   ledgers_.insert(std::make_pair(name, ledger));
 
   return ledger;

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 00:23:49
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:49:22
+ * @LastEditTime: 2022-07-23 03:46:58
  */
 #pragma once
 
@@ -67,10 +67,9 @@ public:
   void update_public_key(const std::string &public_key) { user_->set_public_key(public_key); }
 
 public:
-  virtual std::pair<std::string, std::optional<common::Error>> serialize() const override { return user_.serialize(); }
+  std::pair<std::string, std::optional<common::Error>> serialize() const override { return user_.serialize(); }
 
-  virtual std::pair<std::shared_ptr<MonoType>, std::optional<common::Error>>
-  deserialize(const std::string &serialized) override
+  std::pair<std::shared_ptr<MonoType>, std::optional<common::Error>> deserialize(const std::string &serialized) override
   {
     return user_.deserialize(serialized);
   }

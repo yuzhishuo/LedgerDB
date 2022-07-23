@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-07-22 09:46:31
+ * @LastEditTime: 2022-07-22 15:09:25
  * @LastEditors: Leo
  * @FilePath: /LedgerDB/main.cpp
  */
@@ -13,7 +13,7 @@
 
 #include "Spd.h"
 #include "meta/User.h"
-#include "rbac/AuthorityCertification.h"
+// #include "rbac/AuthorityCertification.h"
 #include "store/PersistenceStore.h"
 
 // tmp

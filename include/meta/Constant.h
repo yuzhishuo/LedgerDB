@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-20 08:29:41
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:48:54
+ * @LastEditTime: 2022-07-23 13:43:53
  */
 #pragma once
 #include <filesystem>
@@ -26,6 +26,8 @@ static constexpr auto KLedgerStoreKeyCurrentLedgerId = "current_ledger_id";
 static constexpr auto KLedgerStoreKeyCurrentUserId = "current_user_id";
 
 static constexpr auto KLedgerUserStoreKey = "ledger_db_user_{}_{}";
+
+static constexpr auto KLedgerOwnerUserStoreKey = "ledger_{}_owner_user";
 
 inline std::string genLedgerDBStoreRootPath() noexcept
 {
@@ -55,5 +57,10 @@ inline std::string genCurrentUserIdOfKey() noexcept { return KLedgerStoreKeyCurr
 inline std::string genLedgerColumnFamilyName() noexcept { return KLedgerColumnFamilyName; }
 
 inline std::string genUserColumnFamilyName() noexcept { return KUserColumnFamilyName; }
+
+inline std::string genLedgerOwnerUserStoreKey(const std::string &ledger_name)
+{
+  return fmt::format(KLedgerOwnerUserStoreKey, ledger_name);
+}
 
 } // namespace yuzhi::meta

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:49:32
+ * @LastEditTime: 2022-07-23 14:53:45
  */
 #pragma once
 
@@ -16,11 +16,12 @@
 #include "UserStoreCreator.h"
 #include "meta/User.h"
 #include "meta/UsersImpl.h"
+#include "meta/AccountAtrribute.h"
 
 // #define PREDEF_USER "admin"
 namespace yuzhi
 {
-class Users : public store::IStorable<User>, interface::IDisposable
+class Users : public store::IStorable<User>,public interface::IDisposable, public meta::IAccountAtrribute
 {
 public:
   using Raw = User;
@@ -36,27 +37,58 @@ public:
 
   void dispose() override { usersImpl_.dispose(); }
 
-public:
-  Users(std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init)
-      : users_{}, store_creator_{dynamic_cast<IStorable<User> *>(new UserStoreCreator{"User"})},
-        usersImpl_(std::weak_ptr<ROCKSDB_NAMESPACE::DB>())
+public: // IAccountAtrribute
+  bool isOwner(const std::string& ledger_name, const std::string &name) const override 
   {
-    for (auto &[name, user] : init)
-    {
-      if (auto erro = store(user); !erro)
-      {
-        users_.insert(std::make_pair(name, user));
-      }
-      else
-      {
-      }
-    }
+    return usersImpl_.isOwner(ledger_name, name);
+  }
+  bool isCommon(const std::string& ledger_name, const std::string &name) const override
+  {
+    return usersImpl_.isCommon(ledger_name, name);
+  }
+  bool isRegulator(const std::string& ledger_name, const std::string &name) const override
+  {
+    return usersImpl_.isRegulator(ledger_name, name);
+  }
+  bool isReadOnly(const std::string& ledger_name, const std::string &name) const override
+  {
+    return usersImpl_.isReadOnly(ledger_name, name);
   }
 
-  Users(std::weak_ptr<ROCKSDB_NAMESPACE::DB> db)
-      : users_{}, store_creator_{dynamic_cast<IStorable<User> *>(new UserStoreCreator{"User"})}, usersImpl_(db)
+  std::shared_ptr<User> Onwer(const std::string& ledger_name) const override
   {
+    return usersImpl_.Onwer(ledger_name);
   }
+
+  std::optional<common::Error> addCommon(const std::string& ledger_name, const std::string &name) override
+  {
+    return usersImpl_.addCommon(ledger_name, name);
+  }
+  std::optional<common::Error> addRegulator(const std::string& ledger_name, const std::string &name) override
+  {
+    return usersImpl_.addRegulator(ledger_name, name);
+  }
+  std::optional<common::Error> addReadOnly(const std::string& ledger_name, const std::string &name) override
+  {
+    return usersImpl_.addReadOnly(ledger_name, name);
+  }
+
+  std::optional<common::Error> removeCommon(const std::string& ledger_name, const std::string &name) override
+  {
+    return usersImpl_.removeCommon(ledger_name, name);
+  }
+  std::optional<common::Error> removeRegulator(const std::string& ledger_name, const std::string &name) override
+  {
+    return usersImpl_.removeRegulator(ledger_name, name);
+  }
+  std::optional<common::Error> removeReadOnly(const std::string& ledger_name, const std::string &name) override
+  {
+    return usersImpl_.removeReadOnly(ledger_name, name);
+  }
+public:
+  Users(std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init);
+
+  Users(std::weak_ptr<rocksdb::DB> db);
 
 public: // IStorable
   virtual std::optional<common::Error> store(const Element &element) const override

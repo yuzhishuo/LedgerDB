@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:16:27
+ * @LastEditTime: 2022-07-23 03:14:32
  */
 #pragma once
 #include "meta/Constant.h"
@@ -26,7 +26,7 @@ public:
   ~LedgersImpl() = default;
 
 public:
-  std::weak_ptr<ROCKSDB_NAMESPACE::DB> getRawDBPtr() const;
+  std::weak_ptr<rocksdb::DB> getRawDBPtr() const;
 
 public:
   // createLedger

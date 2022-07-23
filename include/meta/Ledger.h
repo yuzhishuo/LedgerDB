@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:49:00
+ * @LastEditTime: 2022-07-23 14:31:12
  */
 #pragma once
 
@@ -33,6 +33,10 @@ enum class LEDGER_ROLE : uint8_t
 namespace yuzhi
 {
 
+namespace meta 
+{
+  class IAccountAtrribute;
+}
 class LedgerEngine;
 
 class Ledger final : public interface::IDisposable,
@@ -44,8 +48,8 @@ public:
   using MonoType = ledger_engine::Ledger;
 
 public: // meta
-  Ledger(const std::string &name, const std::string &owner);
-  Ledger(ledger_engine::Ledger &&ledger_inner);
+  Ledger(meta::IAccountAtrribute* attribute, const std::string &name, const std::string &owner);
+  Ledger(meta::IAccountAtrribute* attribute, ledger_engine::Ledger &&ledger_inner);
 
   virtual ~Ledger() = default;
 
@@ -77,20 +81,16 @@ public: // meta
   const std::string &name() const;
   uint64_t id() const;
 
-private:
-  std::optional<common::Error> addUser(const std::string &name, USER_ROLE role);
-
 public: // engine
   std::shared_ptr<yuzhi::LedgerEngine> engine();
 
 public:
-  virtual std::pair<std::string, std::optional<common::Error>> serialize() const override
+  std::pair<std::string, std::optional<common::Error>> serialize() const override
   {
-
     return ledger_.serialize();
   }
 
-  virtual std::pair<std::shared_ptr<ledger_engine::Ledger>, std::optional<common::Error>>
+  std::pair<std::shared_ptr<ledger_engine::Ledger>, std::optional<common::Error>>
   deserialize(const std::string &serialized) override
   {
     return ledger_.deserialize(serialized);
@@ -105,5 +105,6 @@ public:
 
 private:
   Monostate<MonoType> ledger_;
+  meta::IAccountAtrribute* attribute_;
 };
 } // namespace yuzhi

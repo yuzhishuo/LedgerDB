@@ -110,7 +110,6 @@ std::optional<common::Error> LedgersImpl::deleteLedger(const std::string &ledger
   std::string val;
   if (auto status = txn->GetForUpdate(read_options, handles[1], "ledger_db_" + ledger_name, &val); !status.ok())
   {
-
     return common::Error::InternalError("get ledger_db_" + ledger_name + " failed: " + status.ToString());
   }
   ledger_engine::Ledger mono_ledger;

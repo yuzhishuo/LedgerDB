@@ -92,7 +92,7 @@ target_link_libraries(Ledger
 target_link_libraries(Ledger
   merkle
   meta
-  rbac
+  # rbac
   gen
   utility
   raft_engine

@@ -8,6 +8,7 @@ enum Role
     READONLY = 2;
     DBA = 3;
     READ_ONLY = 4;
+    OWNER =5;
 }
 
 /* 

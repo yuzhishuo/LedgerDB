@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:49:08
+ * @LastEditTime: 2022-07-23 12:25:21
  */
 #pragma once
 
@@ -46,7 +46,7 @@ public:
 
 public: //  Engine
 public: // IStorable
-  virtual std::optional<common::Error> store(const Element &element) const override
+  std::optional<common::Error> store(const Element &element) const override
   {
     if (auto err = store_creator_->store(element); err)
     {
@@ -56,7 +56,7 @@ public: // IStorable
     return std::nullopt;
   }
 
-  virtual Element load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
+  Element load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
   {
     return store_creator_->load(element);
   }

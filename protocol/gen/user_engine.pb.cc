@@ -67,13 +67,13 @@ const char descriptor_table_protodef_user_5fengine_2eproto[] PROTOBUF_SECTION_VA
   "r\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\020\n\010password\030"
   "\003 \001(\t\022\022\n\npublic_key\030\004 \001(\t\022\031\n\021attachment_"
   "ledger\030\005 \001(\t\022\037\n\004role\030\006 \001(\0162\021.user_engine"
-  ".Role*G\n\004Role\022\r\n\tREGULATOR\020\000\022\n\n\006COMMON\020\001"
-  "\022\014\n\010READONLY\020\002\022\007\n\003DBA\020\003\022\r\n\tREAD_ONLY\020\004b\006"
-  "proto3"
+  ".Role*R\n\004Role\022\r\n\tREGULATOR\020\000\022\n\n\006COMMON\020\001"
+  "\022\014\n\010READONLY\020\002\022\007\n\003DBA\020\003\022\r\n\tREAD_ONLY\020\004\022\t"
+  "\n\005OWNER\020\005b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_user_5fengine_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_user_5fengine_2eproto = {
-  false, false, 246, descriptor_table_protodef_user_5fengine_2eproto, "user_engine.proto", 
+  false, false, 257, descriptor_table_protodef_user_5fengine_2eproto, "user_engine.proto", 
   &descriptor_table_user_5fengine_2eproto_once, nullptr, 0, 1,
   schemas, file_default_instances, TableStruct_user_5fengine_2eproto::offsets,
   file_level_metadata_user_5fengine_2eproto, file_level_enum_descriptors_user_5fengine_2eproto, file_level_service_descriptors_user_5fengine_2eproto,
@@ -96,6 +96,7 @@ bool Role_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;

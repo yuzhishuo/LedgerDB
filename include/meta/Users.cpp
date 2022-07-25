@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 15:17:24
+ * @LastEditTime: 2022-07-24 01:40:54
  */
 #include "Users.h"
 #include "User.h"
@@ -10,26 +10,13 @@
 namespace yuzhi
 {
 
+// TODO: will delete
 Users::Users(std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init)
-    : users_{}, store_creator_{dynamic_cast<IStorable<User> *>(new UserStoreCreator{"User"})},
-      usersImpl_(std::weak_ptr<ROCKSDB_NAMESPACE::DB>())
+    : users_{}, usersImpl_(std::weak_ptr<ROCKSDB_NAMESPACE::DB>())
 {
-  for (auto &[name, user] : init)
-  {
-    if (auto erro = store(user); !erro)
-    {
-      users_.insert(std::make_pair(name, user));
-    }
-    else
-    {
-    }
-  }
 }
 
-Users::Users(std::weak_ptr<ROCKSDB_NAMESPACE::DB> db)
-    : users_{}, store_creator_{dynamic_cast<IStorable<User> *>(new UserStoreCreator{"User"})}, usersImpl_(db)
-{
-}
+Users::Users(std::weak_ptr<ROCKSDB_NAMESPACE::DB> db) : users_{}, usersImpl_(db) {}
 
 std::shared_ptr<User> Users::createUser(const std::string &user_name, const std::string &ledger_name, USER_ROLE role)
 {
@@ -52,7 +39,6 @@ bool Users::removeUser(const std::shared_ptr<User> &user)
   }
 
   users_.erase(itr);
-  // assert(itr->second.unique());
   return true;
 }
 

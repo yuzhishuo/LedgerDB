@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 00:23:49
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 03:46:58
+ * @LastEditTime: 2022-07-24 01:49:16
  */
 #pragma once
 
@@ -41,21 +41,15 @@ public:
   virtual ~User() = default;
 
 public:
-  virtual const std::string &GetUnique() const { return user_->name(); }
+  const std::string &GetUnique() const override { return user_->name(); }
 
-  virtual void dispose() override;
+  void dispose() override;
 
   const std::string &name() const { return user_->name(); }
 
   const std::string &id() const { return name(); }
 
   USER_ROLE role() const { return user_->role(); }
-
-  static uint64_t generatorId()
-  {
-    static uint64_t id = 0;
-    return ++id;
-  }
 
   bool operator<(const User &rhs) const { return user_->id() < rhs.user_->id(); }
 

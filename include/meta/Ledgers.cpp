@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 16:35:32
+ * @LastEditTime: 2022-07-24 01:36:32
  */
 #include <algorithm>
 #include <cassert>
@@ -14,11 +14,7 @@
 #include "Users.h"
 using namespace yuzhi;
 
-Ledgers::Ledgers()
-    : ledgers_(), store_creator_{dynamic_cast<store::IStorable<Ledger> *>(new LedgerStoreCreator{"Ledger"})},
-      impl_(kLedgerStoreName), store::IStorable<Ledger>(), users_{impl_.getRawDBPtr()}
-{
-}
+Ledgers::Ledgers() : ledgers_(), impl_(kLedgerStoreName), users_{impl_.getRawDBPtr()} {}
 
 std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std::string &owner)
 {

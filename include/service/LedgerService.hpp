@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-07 15:44:35
- * @LastEditTime: 2022-07-22 09:32:07
+ * @LastEditTime: 2022-07-24 01:51:13
  * @LastEditors: Leo
  */
 
@@ -26,7 +26,7 @@ public:
   {
     // grpc debug string contian the '\n'
     SPDLOG_INFO("create leadger request: {}", request->DebugString());
-    auto &ledgers = Ledgers::getInstance();
+    auto &ledgers = Ledgers::Instance();
     auto &raft = raft_engine::net::RaftService::Instance();
 
     if (auto e = raft.Save("create_ledger", request->ledgername()); !e)

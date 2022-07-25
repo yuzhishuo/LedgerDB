@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 16:35:37
+ * @LastEditTime: 2022-07-24 01:18:28
  */
 #pragma once
 
@@ -55,10 +55,6 @@ public: // meta
 
   virtual void dispose() override;
 
-  // void setOwner(std::shared_ptr<User> &owner);
-
-  // std::shared_ptr<User> owner() const;
-
   virtual const std::string &GetUnique() const override { return ledger_->name(); }
 
   LEDGER_ROLE getRoleByUserName(const std::string &name) const;
@@ -91,13 +87,6 @@ public:
   deserialize(const std::string &serialized) override
   {
     return ledger_.deserialize(serialized);
-  }
-
-public:
-  static uint64_t generatorId()
-  {
-    static uint64_t id = 0;
-    return ++id;
   }
 
 private:

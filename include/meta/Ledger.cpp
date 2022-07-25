@@ -19,33 +19,12 @@ Ledger::Ledger(meta::IAccountAtrribute *attribute, const std::string &name, cons
 {
   ledger_->set_owner(owner);
   ledger_->set_name(name);
-  ledger_->set_id(Ledger::generatorId());
 }
 
 Ledger::Ledger(meta::IAccountAtrribute *attribute, ledger_engine::Ledger &&ledger_inner)
     : ledger_(std::move(ledger_inner)), attribute_(attribute)
 {
 }
-
-// void Ledger::setOwner(std::shared_ptr<User> &owner)
-// {
-//     owner_ = owner;
-// }
-
-// std::shared_ptr<User> Ledger::owner() const
-// {
-//     if (owner_.expired())
-//     {
-//         const auto &onwer_name =
-//         std::get<ledger_engine::Ledger>(ledger_).onwer();
-//         // TODO: User Manager should package a class to manage users.
-//         auto users = Users::getInstance();
-//         auto onwer = users.getUser(onwer_name);
-//         assert(onwer != nullptr);
-//         return onwer;
-//     }
-//     return owner_.lock();
-// }
 
 void Ledger::dispose()
 {

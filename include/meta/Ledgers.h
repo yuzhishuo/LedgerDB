@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 12:25:21
+ * @LastEditTime: 2022-07-24 01:33:08
  */
 #pragma once
 
@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <vector>
 
-#include "LedgerStoreCreator.h"
 #include "interfaces/IStorable.h"
 #include "ledger_engine.pb.h"
 #include "meta/Ledger.h"
@@ -26,7 +25,7 @@ class User;
 
 constexpr auto kLedgerStoreName = "ledgerdb";
 
-class Ledgers : public store::IStorable<Ledger>
+class Ledgers
 {
 public:
   using Raw = Ledger;
@@ -35,32 +34,16 @@ public:
 
 public:
   Ledgers();
-  ~Ledgers() override;
+  ~Ledgers();
 
 public:
-  static Ledgers &getInstance()
+  static Ledgers &Instance()
   {
     static Ledgers instance;
     return instance;
   }
 
 public: //  Engine
-public: // IStorable
-  std::optional<common::Error> store(const Element &element) const override
-  {
-    if (auto err = store_creator_->store(element); err)
-    {
-      return err;
-    }
-
-    return std::nullopt;
-  }
-
-  Element load(const std::shared_ptr<IUnique<UniqueType>> &element) const override
-  {
-    return store_creator_->load(element);
-  }
-
 public:
   std::shared_ptr<Ledger> createLedger(const std::string &name, const std::string &owner);
   bool removeLedger(const std::string &ledger_name);
@@ -79,8 +62,6 @@ public:
 
 private:
   std::map<std::string, Element> ledgers_;
-  std::unique_ptr<IStorable<Ledger>> store_creator_;
-
   LedgersImpl impl_;
   Users users_;
 };

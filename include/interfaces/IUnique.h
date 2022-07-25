@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 16:36:55
- * @LastEditTime: 2022-07-22 09:48:31
+ * @LastEditTime: 2022-07-24 01:46:30
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -71,12 +71,12 @@ template <typename U> bool operator<(const IUnique<U> &lhs, const IUnique<U> &rh
   return lhs.GetUnique() < rhs.GetUnique();
 }
 
-// static_assert(is_comparable_v<IUnique<std::string>>); // true
+// static_assert(is_comparable_v<IUnique<std::string>>);       // true
 // static_assert(is_comparable_v<IUnique<std::vector<char>>>); // true
-// static_assert(is_comparable_v<IUnique<int>>); // true
+// static_assert(is_comparable_v<IUnique<int>>);               // true
 // static_assert(is_comparable_v<IUnique<std::string &>>);     // false
-// static_assert(std::is_base_of_v<less_than_comparable<IUnique<int>>,
-// IUnique<int>>); static_assert(std::is_pod_v<uint64_t>); // true
+// static_assert(std::is_base_of_v<less_than_comparable<IUnique<int>>, IUnique<int>>);
+// static_assert(std::is_pod_v<uint64_t>); // true
 
 using StringUnique = IUnique<std::string>;
 using IntUnique = IUnique<int>;

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-25 05:56:39
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-26 05:56:21
+ * @LastEditTime: 2022-07-26 14:05:54
  */
 #ifndef YUZHI_COMMON_SKIP_LIST
 #define YUZHI_COMMON_SKIP_LIST
@@ -88,7 +88,7 @@ public:
     }
 
     auto node = update[1]->next;
-    if (node->store->first == key)
+    if (node && node->store->first == key)
     {
       for (auto i = 2; i <= level_; i++)
       {
@@ -111,6 +111,7 @@ public:
         auto delete_list_layer = tail_;
         tail_ = static_cast<ListLayer *>(tail_->down);
         delete delete_list_layer;
+        level_++;
       }
 
       return true;

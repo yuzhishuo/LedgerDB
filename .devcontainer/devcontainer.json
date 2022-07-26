@@ -29,7 +29,12 @@
 				"peterj.proto",
 				"xaver.clang-format",
 				"OBKoro1.korofileheader",
-				"maixiaojie.git-emoji"
+				"maixiaojie.git-emoji",
+				"yzhang.markdown-all-in-one",
+				"alefragnani.Bookmarks",
+				"cschlosser.doxdocgen",
+				"eamodio.gitlens",
+				"SonarSource.sonarlint-vscode"
 			]
 		}
 	}

@@ -28,7 +28,7 @@ Ledger::Ledger(meta::IAccountAtrribute *attribute, ledger_engine::Ledger &&ledge
 
 void Ledger::dispose()
 {
-  auto is_remove = Ledgers::getInstance().removeLedger(shared_from_this());
+  auto is_remove = Ledgers::Instance().removeLedger(shared_from_this());
   assert(is_remove);
 }
 

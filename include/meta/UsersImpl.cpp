@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-21 07:36:48
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 16:33:59
+ * @LastEditTime: 2022-07-26 01:53:32
  */
 #include "meta/UsersImpl.h"
 #include "meta/Constant.h"
@@ -143,6 +143,7 @@ std::shared_ptr<rocksdb::OptimisticTransactionDB> UsersImpl::captureOptimisticTr
   }
 
   assert(true);
+  return nullptr;
 }
 
 std::optional<user_engine::User> UsersImpl::captureUser(const std::string &ledger_name,

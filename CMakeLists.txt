@@ -98,8 +98,7 @@ target_link_libraries(Ledger
   raft_engine
 )
 
-option(ENABLE_TEST "Enable test" ON)
-if(${ENABLE_TEST})
-    # add_subdirectory(test)
-endif()
+enable_testing()
+add_subdirectory(test)
 
+add_test(NAME moontest COMMAND moontest) 

@@ -35,4 +35,5 @@ add_executable(Parser example/main.cpp )
 target_link_libraries(
         Parser
         parser
+        fmt::fmt
 )

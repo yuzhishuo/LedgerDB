@@ -1,11 +1,8 @@
 /*
  * @Author: Leo
- * @Date: 2022-02-01 23:35:03
- * @LastEditTime: 2022-02-02 00:13:58
+ * @Date: 2022-07-22 09:08:07
  * @LastEditors: Leo
- * @Description: 打开koroFileHeader查看配置 进行设置:
- * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /example-authority-cpp/test/Mixin.test.cpp
+ * @LastEditTime: 2022-07-26 02:18:44
  */
 
 #include <exception>
@@ -13,7 +10,8 @@
 #include <utility/Mixin.h>
 using namespace yuzhi::tool;
 
-class Point {
+class Point
+{
 public:
   Point(int x, int y) : x_(x), y_(y) {}
   int x() const { return x_; }
@@ -27,7 +25,8 @@ private:
   int y_;
 };
 
-class Drawable {
+class Drawable
+{
 
 public:
   Drawable(Point *p) : p_(p) {}
@@ -37,7 +36,8 @@ private:
   Point *p_;
 };
 
-class Moveable {
+class Moveable
+{
 public:
   Moveable(Drawable *p) : p_(p) {}
   void move() { std::cout << "Moveable::move()" << std::endl; }
@@ -47,7 +47,8 @@ private:
 };
 
 using DrawableMixin = Mixin<Point, Drawable, Moveable>;
-TEST(MixinTEST, Mixin_Point_Test) {
+TEST(MixinTEST, Mixin_Point_Test)
+{
   DrawableMixin d(1, 2);
   d.draw();
   d.x();

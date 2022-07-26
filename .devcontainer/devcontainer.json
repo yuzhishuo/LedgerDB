@@ -35,6 +35,10 @@
 				"cschlosser.doxdocgen",
 				"eamodio.gitlens",
 				"SonarSource.sonarlint-vscode"
+				"wayou.vscode-todo-highlight",
+				"esbenp.prettier-vscode",
+				"nondanee.vsc-netease-music",
+				"jbockle.jbockle-format-files"
 			]
 		}
 	}

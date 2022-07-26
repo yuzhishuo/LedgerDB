@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 23:02:01
- * @LastEditTime: 2022-03-12 13:56:20
+ * @LastEditTime: 2022-07-22 09:51:30
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -11,12 +11,15 @@
 #pragma once
 
 #include <atomic>
-namespace yuzhi::utility {
-struct SpinLock {
-  void lock() {
+namespace yuzhi::utility
+{
+struct SpinLock
+{
+  void lock()
+  {
     bool expected = false;
-    while (!state.compare_exchange_weak(
-        expected, true, std::memory_order_acquire, std::memory_order_relaxed)) {
+    while (!state.compare_exchange_weak(expected, true, std::memory_order_acquire, std::memory_order_relaxed))
+    {
       expected = false;
     }
   }

@@ -8,14 +8,17 @@
 #include <string>
 #include <utility>
 
-namespace yuzhi::cli {
+namespace yuzhi::cli
+{
 
-class IHelper {
+class IHelper
+{
 
-  public:
-    virtual std::pair<std::string, std::string> explain() const = 0;;
+public:
+  virtual std::pair<std::string, std::string> explain() const = 0;
+  ;
 };
 
-} // namespace yuzi::cli
+} // namespace yuzhi::cli
 
-#endif//LEDGERDB_IHELPER_H
+#endif // LEDGERDB_IHELPER_H

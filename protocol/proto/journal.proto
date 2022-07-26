@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package journal_engine;
+
+message JournalRequest {
+
+    string ledger_name = 1;
+    uint64 journal_id =2;
+    string payload_name = 3;
+    uint64 payload_size = 4;
+    string payload_type = 5;
+    uint64 nonce =6;
+    uint64 timestamp =7;
+    repeated string sender = 8;
+    repeated string clue = 9;
+
+    bytes hash = 10;
+}
+
+message Payload {
+    bytes data = 1;
+}
+
+message JournalProxying  {
+
+    string request_hash =1;
+
+    uint64 stream_id =2;
+    uint64 offset =3;
+    uint64 journal_size = 4;
+
+    uint64 server_id = 5;
+    uint64 server_timestamp = 6;
+    uint64 execute_status = 7;
+    uint64 execute_result = 8;
+
+    uint64 root_hash_status = 9;
+
+    bytes hash = 10;
+};
+
+
+message JournalReceipt {
+
+    bytes request_hash = 1;
+    bytes proxying_hash = 2;
+    bytes block_hash = 3;
+
+    uint64 server_id = 4;
+    uint64 server_timestamp =5;
+    uint64 execute_status = 6;
+    uint64 execute_result = 7;
+}
+
+message JournalRequestByte {
+    oneof stream {
+        JournalRequest journal_request = 1;
+        Payload payload = 2;
+    }
+}
+
+// client -> server
+service JournalService {
+    
+    // Payload + JournalRequest
+    rpc AppendTx(stream JournalRequestByte) returns (JournalReceipt);
+}
+

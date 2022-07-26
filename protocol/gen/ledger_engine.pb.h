@@ -195,61 +195,12 @@ class Ledger final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kCommonsFieldNumber = 5,
-    kReadonlysFieldNumber = 6,
     kNameFieldNumber = 1,
-    kOnwerFieldNumber = 3,
-    kRegulatorFieldNumber = 4,
+    kOwnerFieldNumber = 3,
     kIdFieldNumber = 2,
+    kIsDeletedFieldNumber = 5,
+    kCreateTimeFieldNumber = 4,
   };
-  // repeated string Commons = 5;
-  int commons_size() const;
-  private:
-  int _internal_commons_size() const;
-  public:
-  void clear_commons();
-  const std::string& commons(int index) const;
-  std::string* mutable_commons(int index);
-  void set_commons(int index, const std::string& value);
-  void set_commons(int index, std::string&& value);
-  void set_commons(int index, const char* value);
-  void set_commons(int index, const char* value, size_t size);
-  std::string* add_commons();
-  void add_commons(const std::string& value);
-  void add_commons(std::string&& value);
-  void add_commons(const char* value);
-  void add_commons(const char* value, size_t size);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& commons() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_commons();
-  private:
-  const std::string& _internal_commons(int index) const;
-  std::string* _internal_add_commons();
-  public:
-
-  // repeated string Readonlys = 6;
-  int readonlys_size() const;
-  private:
-  int _internal_readonlys_size() const;
-  public:
-  void clear_readonlys();
-  const std::string& readonlys(int index) const;
-  std::string* mutable_readonlys(int index);
-  void set_readonlys(int index, const std::string& value);
-  void set_readonlys(int index, std::string&& value);
-  void set_readonlys(int index, const char* value);
-  void set_readonlys(int index, const char* value, size_t size);
-  std::string* add_readonlys();
-  void add_readonlys(const std::string& value);
-  void add_readonlys(std::string&& value);
-  void add_readonlys(const char* value);
-  void add_readonlys(const char* value, size_t size);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& readonlys() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_readonlys();
-  private:
-  const std::string& _internal_readonlys(int index) const;
-  std::string* _internal_add_readonlys();
-  public:
-
   // string name = 1;
   void clear_name();
   const std::string& name() const;
@@ -264,32 +215,18 @@ class Ledger final :
   std::string* _internal_mutable_name();
   public:
 
-  // string Onwer = 3;
-  void clear_onwer();
-  const std::string& onwer() const;
+  // string owner = 3;
+  void clear_owner();
+  const std::string& owner() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_onwer(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_onwer();
-  PROTOBUF_NODISCARD std::string* release_onwer();
-  void set_allocated_onwer(std::string* onwer);
+  void set_owner(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_owner();
+  PROTOBUF_NODISCARD std::string* release_owner();
+  void set_allocated_owner(std::string* owner);
   private:
-  const std::string& _internal_onwer() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_onwer(const std::string& value);
-  std::string* _internal_mutable_onwer();
-  public:
-
-  // string Regulator = 4;
-  void clear_regulator();
-  const std::string& regulator() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_regulator(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_regulator();
-  PROTOBUF_NODISCARD std::string* release_regulator();
-  void set_allocated_regulator(std::string* regulator);
-  private:
-  const std::string& _internal_regulator() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_regulator(const std::string& value);
-  std::string* _internal_mutable_regulator();
+  const std::string& _internal_owner() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_owner(const std::string& value);
+  std::string* _internal_mutable_owner();
   public:
 
   // uint32 id = 2;
@@ -301,6 +238,24 @@ class Ledger final :
   void _internal_set_id(uint32_t value);
   public:
 
+  // bool is_deleted = 5;
+  void clear_is_deleted();
+  bool is_deleted() const;
+  void set_is_deleted(bool value);
+  private:
+  bool _internal_is_deleted() const;
+  void _internal_set_is_deleted(bool value);
+  public:
+
+  // uint64 create_time = 4;
+  void clear_create_time();
+  uint64_t create_time() const;
+  void set_create_time(uint64_t value);
+  private:
+  uint64_t _internal_create_time() const;
+  void _internal_set_create_time(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:ledger_engine.Ledger)
  private:
   class _Internal;
@@ -308,12 +263,11 @@ class Ledger final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> commons_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> readonlys_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr onwer_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr regulator_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr owner_;
   uint32_t id_;
+  bool is_deleted_;
+  uint64_t create_time_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_ledger_5fengine_2eproto;
 };
@@ -712,256 +666,95 @@ inline void Ledger::set_id(uint32_t value) {
   // @@protoc_insertion_point(field_set:ledger_engine.Ledger.id)
 }
 
-// string Onwer = 3;
-inline void Ledger::clear_onwer() {
-  onwer_.ClearToEmpty();
+// string owner = 3;
+inline void Ledger::clear_owner() {
+  owner_.ClearToEmpty();
 }
-inline const std::string& Ledger::onwer() const {
-  // @@protoc_insertion_point(field_get:ledger_engine.Ledger.Onwer)
-  return _internal_onwer();
+inline const std::string& Ledger::owner() const {
+  // @@protoc_insertion_point(field_get:ledger_engine.Ledger.owner)
+  return _internal_owner();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void Ledger::set_onwer(ArgT0&& arg0, ArgT... args) {
+void Ledger::set_owner(ArgT0&& arg0, ArgT... args) {
  
- onwer_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.Onwer)
+ owner_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.owner)
 }
-inline std::string* Ledger::mutable_onwer() {
-  std::string* _s = _internal_mutable_onwer();
-  // @@protoc_insertion_point(field_mutable:ledger_engine.Ledger.Onwer)
+inline std::string* Ledger::mutable_owner() {
+  std::string* _s = _internal_mutable_owner();
+  // @@protoc_insertion_point(field_mutable:ledger_engine.Ledger.owner)
   return _s;
 }
-inline const std::string& Ledger::_internal_onwer() const {
-  return onwer_.Get();
+inline const std::string& Ledger::_internal_owner() const {
+  return owner_.Get();
 }
-inline void Ledger::_internal_set_onwer(const std::string& value) {
+inline void Ledger::_internal_set_owner(const std::string& value) {
   
-  onwer_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  owner_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* Ledger::_internal_mutable_onwer() {
+inline std::string* Ledger::_internal_mutable_owner() {
   
-  return onwer_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  return owner_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* Ledger::release_onwer() {
-  // @@protoc_insertion_point(field_release:ledger_engine.Ledger.Onwer)
-  return onwer_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+inline std::string* Ledger::release_owner() {
+  // @@protoc_insertion_point(field_release:ledger_engine.Ledger.owner)
+  return owner_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void Ledger::set_allocated_onwer(std::string* onwer) {
-  if (onwer != nullptr) {
+inline void Ledger::set_allocated_owner(std::string* owner) {
+  if (owner != nullptr) {
     
   } else {
     
   }
-  onwer_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), onwer,
+  owner_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), owner,
       GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (onwer_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    onwer_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  if (owner_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    owner_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:ledger_engine.Ledger.Onwer)
+  // @@protoc_insertion_point(field_set_allocated:ledger_engine.Ledger.owner)
 }
 
-// string Regulator = 4;
-inline void Ledger::clear_regulator() {
-  regulator_.ClearToEmpty();
+// uint64 create_time = 4;
+inline void Ledger::clear_create_time() {
+  create_time_ = uint64_t{0u};
 }
-inline const std::string& Ledger::regulator() const {
-  // @@protoc_insertion_point(field_get:ledger_engine.Ledger.Regulator)
-  return _internal_regulator();
+inline uint64_t Ledger::_internal_create_time() const {
+  return create_time_;
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Ledger::set_regulator(ArgT0&& arg0, ArgT... args) {
- 
- regulator_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.Regulator)
+inline uint64_t Ledger::create_time() const {
+  // @@protoc_insertion_point(field_get:ledger_engine.Ledger.create_time)
+  return _internal_create_time();
 }
-inline std::string* Ledger::mutable_regulator() {
-  std::string* _s = _internal_mutable_regulator();
-  // @@protoc_insertion_point(field_mutable:ledger_engine.Ledger.Regulator)
-  return _s;
-}
-inline const std::string& Ledger::_internal_regulator() const {
-  return regulator_.Get();
-}
-inline void Ledger::_internal_set_regulator(const std::string& value) {
+inline void Ledger::_internal_set_create_time(uint64_t value) {
   
-  regulator_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  create_time_ = value;
 }
-inline std::string* Ledger::_internal_mutable_regulator() {
+inline void Ledger::set_create_time(uint64_t value) {
+  _internal_set_create_time(value);
+  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.create_time)
+}
+
+// bool is_deleted = 5;
+inline void Ledger::clear_is_deleted() {
+  is_deleted_ = false;
+}
+inline bool Ledger::_internal_is_deleted() const {
+  return is_deleted_;
+}
+inline bool Ledger::is_deleted() const {
+  // @@protoc_insertion_point(field_get:ledger_engine.Ledger.is_deleted)
+  return _internal_is_deleted();
+}
+inline void Ledger::_internal_set_is_deleted(bool value) {
   
-  return regulator_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  is_deleted_ = value;
 }
-inline std::string* Ledger::release_regulator() {
-  // @@protoc_insertion_point(field_release:ledger_engine.Ledger.Regulator)
-  return regulator_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void Ledger::set_allocated_regulator(std::string* regulator) {
-  if (regulator != nullptr) {
-    
-  } else {
-    
-  }
-  regulator_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), regulator,
-      GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (regulator_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    regulator_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:ledger_engine.Ledger.Regulator)
-}
-
-// repeated string Commons = 5;
-inline int Ledger::_internal_commons_size() const {
-  return commons_.size();
-}
-inline int Ledger::commons_size() const {
-  return _internal_commons_size();
-}
-inline void Ledger::clear_commons() {
-  commons_.Clear();
-}
-inline std::string* Ledger::add_commons() {
-  std::string* _s = _internal_add_commons();
-  // @@protoc_insertion_point(field_add_mutable:ledger_engine.Ledger.Commons)
-  return _s;
-}
-inline const std::string& Ledger::_internal_commons(int index) const {
-  return commons_.Get(index);
-}
-inline const std::string& Ledger::commons(int index) const {
-  // @@protoc_insertion_point(field_get:ledger_engine.Ledger.Commons)
-  return _internal_commons(index);
-}
-inline std::string* Ledger::mutable_commons(int index) {
-  // @@protoc_insertion_point(field_mutable:ledger_engine.Ledger.Commons)
-  return commons_.Mutable(index);
-}
-inline void Ledger::set_commons(int index, const std::string& value) {
-  commons_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.Commons)
-}
-inline void Ledger::set_commons(int index, std::string&& value) {
-  commons_.Mutable(index)->assign(std::move(value));
-  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.Commons)
-}
-inline void Ledger::set_commons(int index, const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  commons_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:ledger_engine.Ledger.Commons)
-}
-inline void Ledger::set_commons(int index, const char* value, size_t size) {
-  commons_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:ledger_engine.Ledger.Commons)
-}
-inline std::string* Ledger::_internal_add_commons() {
-  return commons_.Add();
-}
-inline void Ledger::add_commons(const std::string& value) {
-  commons_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:ledger_engine.Ledger.Commons)
-}
-inline void Ledger::add_commons(std::string&& value) {
-  commons_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:ledger_engine.Ledger.Commons)
-}
-inline void Ledger::add_commons(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  commons_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:ledger_engine.Ledger.Commons)
-}
-inline void Ledger::add_commons(const char* value, size_t size) {
-  commons_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:ledger_engine.Ledger.Commons)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-Ledger::commons() const {
-  // @@protoc_insertion_point(field_list:ledger_engine.Ledger.Commons)
-  return commons_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
-Ledger::mutable_commons() {
-  // @@protoc_insertion_point(field_mutable_list:ledger_engine.Ledger.Commons)
-  return &commons_;
-}
-
-// repeated string Readonlys = 6;
-inline int Ledger::_internal_readonlys_size() const {
-  return readonlys_.size();
-}
-inline int Ledger::readonlys_size() const {
-  return _internal_readonlys_size();
-}
-inline void Ledger::clear_readonlys() {
-  readonlys_.Clear();
-}
-inline std::string* Ledger::add_readonlys() {
-  std::string* _s = _internal_add_readonlys();
-  // @@protoc_insertion_point(field_add_mutable:ledger_engine.Ledger.Readonlys)
-  return _s;
-}
-inline const std::string& Ledger::_internal_readonlys(int index) const {
-  return readonlys_.Get(index);
-}
-inline const std::string& Ledger::readonlys(int index) const {
-  // @@protoc_insertion_point(field_get:ledger_engine.Ledger.Readonlys)
-  return _internal_readonlys(index);
-}
-inline std::string* Ledger::mutable_readonlys(int index) {
-  // @@protoc_insertion_point(field_mutable:ledger_engine.Ledger.Readonlys)
-  return readonlys_.Mutable(index);
-}
-inline void Ledger::set_readonlys(int index, const std::string& value) {
-  readonlys_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.Readonlys)
-}
-inline void Ledger::set_readonlys(int index, std::string&& value) {
-  readonlys_.Mutable(index)->assign(std::move(value));
-  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.Readonlys)
-}
-inline void Ledger::set_readonlys(int index, const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  readonlys_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:ledger_engine.Ledger.Readonlys)
-}
-inline void Ledger::set_readonlys(int index, const char* value, size_t size) {
-  readonlys_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:ledger_engine.Ledger.Readonlys)
-}
-inline std::string* Ledger::_internal_add_readonlys() {
-  return readonlys_.Add();
-}
-inline void Ledger::add_readonlys(const std::string& value) {
-  readonlys_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:ledger_engine.Ledger.Readonlys)
-}
-inline void Ledger::add_readonlys(std::string&& value) {
-  readonlys_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:ledger_engine.Ledger.Readonlys)
-}
-inline void Ledger::add_readonlys(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  readonlys_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:ledger_engine.Ledger.Readonlys)
-}
-inline void Ledger::add_readonlys(const char* value, size_t size) {
-  readonlys_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:ledger_engine.Ledger.Readonlys)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-Ledger::readonlys() const {
-  // @@protoc_insertion_point(field_list:ledger_engine.Ledger.Readonlys)
-  return readonlys_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
-Ledger::mutable_readonlys() {
-  // @@protoc_insertion_point(field_mutable_list:ledger_engine.Ledger.Readonlys)
-  return &readonlys_;
+inline void Ledger::set_is_deleted(bool value) {
+  _internal_set_is_deleted(value);
+  // @@protoc_insertion_point(field_set:ledger_engine.Ledger.is_deleted)
 }
 
 // -------------------------------------------------------------------

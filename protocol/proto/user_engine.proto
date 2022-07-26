@@ -1,5 +1,4 @@
 syntax = "proto3";
-
 package user_engine;
 
 enum Role
@@ -8,7 +7,14 @@ enum Role
     COMMON = 1;
     READONLY = 2;
     DBA = 3;
+    READ_ONLY = 4;
+    OWNER =5;
 }
+
+/* 
+* key :ledger_linlinSuperMark_user_name 
+* value : User
+*/
 
 message User
 {
@@ -16,5 +22,6 @@ message User
     string name = 2;
     string password = 3;
     string public_key = 4;
-    Role role = 5;
+    string attachment_ledger =5;
+    Role role = 6;
 }

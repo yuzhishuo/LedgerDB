@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 19:06:00
- * @LastEditTime: 2022-02-28 17:00:49
+ * @LastEditTime: 2022-07-22 09:48:13
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -21,22 +21,25 @@
 
 #include <config/IConfigurable.hpp>
 
-namespace yuzhi {
+namespace yuzhi
+{
 
-class Config {
- public:
-  Config(std::string config_file_path) {
-    if (!config_.load(config_file_path.data())) {
+class Config
+{
+public:
+  Config(std::string config_file_path)
+  {
+    if (!config_.load(config_file_path.data()))
+    {
       spdlog::error("load config file failed");
       exit(1);
     }
   }
 
-  template <typename T>
-  T get(const IConfigurable &configurable, const std::string &key) {
+  template <typename T> T get(const IConfigurable &configurable, const std::string &key)
+  {
     bool expected = false;
-    while (!loaded.compare_exchange_weak(
-        expected, true, std::memory_order_acquire, std::memory_order_release))
+    while (!loaded.compare_exchange_weak(expected, true, std::memory_order_acquire, std::memory_order_release))
       std::this_thread::yield();
 
     config_.setSection(configurable.Field(), false);
@@ -45,11 +48,10 @@ class Config {
     return res;
   }
 
-  template <typename T>
-  T get(const IConfigurable *configurable, const std::string &key) {
+  template <typename T> T get(const IConfigurable *configurable, const std::string &key)
+  {
     bool expected = false;
-    while (!loaded.compare_exchange_weak(
-        expected, true, std::memory_order_acquire, std::memory_order_release))
+    while (!loaded.compare_exchange_weak(expected, true, std::memory_order_acquire, std::memory_order_release))
       std::this_thread::yield();
 
     config_.setSection(configurable->Field(), false);
@@ -59,38 +61,29 @@ class Config {
     return res;
   }
 
- private:
-  template <typename T>
-  inline T _get(const std::string &key) {
-    throw std::runtime_error("not implemented");
-  }
+private:
+  template <typename T> inline T _get(const std::string &key) { throw std::runtime_error("not implemented"); }
 
- public:
-  static Config &Instance() {
+public:
+  static Config &Instance()
+  {
     static Config instance{"config.default.conf"};
     return instance;
   }
 
- private:
+private:
   std::atomic<bool> loaded{false};
   rude::Config config_;
 };
 
-template <>
-inline int Config::_get<int>(const std::string &key) {
-  return config_.getIntValue(key.data());
-}
-template <>
-inline double Config::_get<double>(const std::string &key) {
-  return config_.getDoubleValue(key.data());
-}
+template <> inline int Config::_get<int>(const std::string &key) { return config_.getIntValue(key.data()); }
 
-template <>
-inline bool Config::_get<bool>(const std::string &key) {
-  return config_.getBoolValue(key.data());
-}
-template <>
-inline std::string Config::_get<std::string>(const std::string &key) {
+template <> inline double Config::_get<double>(const std::string &key) { return config_.getDoubleValue(key.data()); }
+
+template <> inline bool Config::_get<bool>(const std::string &key) { return config_.getBoolValue(key.data()); }
+
+template <> inline std::string Config::_get<std::string>(const std::string &key)
+{
   return config_.getStringValue(key.data());
 }
-}  // namespace yuzhi
+} // namespace yuzhi

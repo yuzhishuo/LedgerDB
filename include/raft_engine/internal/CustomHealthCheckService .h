@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 15:01:30
- * @LastEditTime: 2022-01-31 14:23:51
+ * @LastEditTime: 2022-07-22 09:50:20
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -13,23 +13,24 @@
 
 #include <raft_engine/internal/HealthCheckServiceImpl.h>
 
-namespace yuzhi::raft_engine {
+namespace yuzhi::raft_engine
+{
 
-class CustomHealthCheckService : public grpc::HealthCheckServiceInterface {
+class CustomHealthCheckService : public grpc::HealthCheckServiceInterface
+{
 public:
-  explicit CustomHealthCheckService(HealthCheckServiceImpl *impl)
-      : impl_(impl) {
+  explicit CustomHealthCheckService(HealthCheckServiceImpl *impl) : impl_(impl)
+  {
     impl_->SetStatus("", HealthCheckResponse::SERVING);
   }
-  void SetServingStatus(const grpc::string &service_name,
-                        bool serving) override {
-    impl_->SetStatus(service_name, serving ? HealthCheckResponse::SERVING
-                                           : HealthCheckResponse::NOT_SERVING);
+  void SetServingStatus(const grpc::string &service_name, bool serving) override
+  {
+    impl_->SetStatus(service_name, serving ? HealthCheckResponse::SERVING : HealthCheckResponse::NOT_SERVING);
   }
 
-  void SetServingStatus(bool serving) override {
-    impl_->SetAll(serving ? HealthCheckResponse::SERVING
-                          : HealthCheckResponse::NOT_SERVING);
+  void SetServingStatus(bool serving) override
+  {
+    impl_->SetAll(serving ? HealthCheckResponse::SERVING : HealthCheckResponse::NOT_SERVING);
   }
 
   void Shutdown() override { impl_->Shutdown(); }

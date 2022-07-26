@@ -19,12 +19,11 @@ PROTOBUF_PRAGMA_INIT_SEG
 namespace ledger_engine {
 constexpr Ledger::Ledger(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : commons_()
-  , readonlys_()
-  , name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , onwer_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , regulator_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , id_(0u){}
+  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , owner_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , id_(0u)
+  , is_deleted_(false)
+  , create_time_(uint64_t{0u}){}
 struct LedgerDefaultTypeInternal {
   constexpr LedgerDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -73,10 +72,9 @@ const uint32_t TableStruct_ledger_5fengine_2eproto::offsets[] PROTOBUF_SECTION_V
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, name_),
   PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, id_),
-  PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, onwer_),
-  PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, regulator_),
-  PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, commons_),
-  PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, readonlys_),
+  PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, owner_),
+  PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, create_time_),
+  PROTOBUF_FIELD_OFFSET(::ledger_engine::Ledger, is_deleted_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::ledger_engine::Response, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -95,8 +93,8 @@ const uint32_t TableStruct_ledger_5fengine_2eproto::offsets[] PROTOBUF_SECTION_V
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::ledger_engine::Ledger)},
-  { 12, -1, -1, sizeof(::ledger_engine::Response)},
-  { 20, -1, -1, sizeof(::ledger_engine::CreateLedgerRequest)},
+  { 11, -1, -1, sizeof(::ledger_engine::Response)},
+  { 19, -1, -1, sizeof(::ledger_engine::CreateLedgerRequest)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -106,19 +104,18 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_ledger_5fengine_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\023ledger_engine.proto\022\rledger_engine\"h\n\006"
-  "Ledger\022\014\n\004name\030\001 \001(\t\022\n\n\002id\030\002 \001(\r\022\r\n\005Onwe"
-  "r\030\003 \001(\t\022\021\n\tRegulator\030\004 \001(\t\022\017\n\007Commons\030\005 "
-  "\003(\t\022\021\n\tReadonlys\030\006 \003(\t\",\n\010Response\022\017\n\007me"
-  "ssage\030\001 \001(\t\022\017\n\007success\030\002 \001(\010\")\n\023CreateLe"
-  "dgerRequest\022\022\n\nledgerName\030\001 \001(\t2\\\n\rLedge"
-  "rService\022K\n\014CreateLedger\022\".ledger_engine"
-  ".CreateLedgerRequest\032\027.ledger_engine.Res"
-  "ponseb\006proto3"
+  "\n\023ledger_engine.proto\022\rledger_engine\"Z\n\006"
+  "Ledger\022\014\n\004name\030\001 \001(\t\022\n\n\002id\030\002 \001(\r\022\r\n\005owne"
+  "r\030\003 \001(\t\022\023\n\013create_time\030\004 \001(\004\022\022\n\nis_delet"
+  "ed\030\005 \001(\010\",\n\010Response\022\017\n\007message\030\001 \001(\t\022\017\n"
+  "\007success\030\002 \001(\010\")\n\023CreateLedgerRequest\022\022\n"
+  "\nledgerName\030\001 \001(\t2\\\n\rLedgerService\022K\n\014Cr"
+  "eateLedger\022\".ledger_engine.CreateLedgerR"
+  "equest\032\027.ledger_engine.Responseb\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_ledger_5fengine_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ledger_5fengine_2eproto = {
-  false, false, 333, descriptor_table_protodef_ledger_5fengine_2eproto, "ledger_engine.proto", 
+  false, false, 319, descriptor_table_protodef_ledger_5fengine_2eproto, "ledger_engine.proto", 
   &descriptor_table_ledger_5fengine_2eproto_once, nullptr, 0, 3,
   schemas, file_default_instances, TableStruct_ledger_5fengine_2eproto::offsets,
   file_level_metadata_ledger_5fengine_2eproto, file_level_enum_descriptors_ledger_5fengine_2eproto, file_level_service_descriptors_ledger_5fengine_2eproto,
@@ -139,9 +136,7 @@ class Ledger::_Internal {
 
 Ledger::Ledger(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  commons_(arena),
-  readonlys_(arena) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -149,9 +144,7 @@ Ledger::Ledger(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   // @@protoc_insertion_point(arena_constructor:ledger_engine.Ledger)
 }
 Ledger::Ledger(const Ledger& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      commons_(from.commons_),
-      readonlys_(from.readonlys_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -161,23 +154,17 @@ Ledger::Ledger(const Ledger& from)
     name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
       GetArenaForAllocation());
   }
-  onwer_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  owner_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    onwer_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+    owner_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_onwer().empty()) {
-    onwer_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_onwer(), 
+  if (!from._internal_owner().empty()) {
+    owner_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_owner(), 
       GetArenaForAllocation());
   }
-  regulator_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    regulator_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_regulator().empty()) {
-    regulator_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_regulator(), 
-      GetArenaForAllocation());
-  }
-  id_ = from.id_;
+  ::memcpy(&id_, &from.id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&create_time_) -
+    reinterpret_cast<char*>(&id_)) + sizeof(create_time_));
   // @@protoc_insertion_point(copy_constructor:ledger_engine.Ledger)
 }
 
@@ -186,15 +173,14 @@ name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
   name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-onwer_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+owner_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  onwer_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  owner_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-regulator_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  regulator_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-id_ = 0u;
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&id_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&create_time_) -
+    reinterpret_cast<char*>(&id_)) + sizeof(create_time_));
 }
 
 Ledger::~Ledger() {
@@ -207,8 +193,7 @@ Ledger::~Ledger() {
 inline void Ledger::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  onwer_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  regulator_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  owner_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void Ledger::ArenaDtor(void* object) {
@@ -227,12 +212,11 @@ void Ledger::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  commons_.Clear();
-  readonlys_.Clear();
   name_.ClearToEmpty();
-  onwer_.ClearToEmpty();
-  regulator_.ClearToEmpty();
-  id_ = 0u;
+  owner_.ClearToEmpty();
+  ::memset(&id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&create_time_) -
+      reinterpret_cast<char*>(&id_)) + sizeof(create_time_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -260,53 +244,29 @@ const char* Ledger::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::int
         } else
           goto handle_unusual;
         continue;
-      // string Onwer = 3;
+      // string owner = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
-          auto str = _internal_mutable_onwer();
+          auto str = _internal_mutable_owner();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ledger_engine.Ledger.Onwer"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ledger_engine.Ledger.owner"));
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // string Regulator = 4;
+      // uint64 create_time = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
-          auto str = _internal_mutable_regulator();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ledger_engine.Ledger.Regulator"));
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          create_time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // repeated string Commons = 5;
+      // bool is_deleted = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            auto str = _internal_add_commons();
-            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ledger_engine.Ledger.Commons"));
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated string Readonlys = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            auto str = _internal_add_readonlys();
-            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ledger_engine.Ledger.Readonlys"));
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<50>(ptr));
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          is_deleted_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -355,44 +315,26 @@ uint8_t* Ledger::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_id(), target);
   }
 
-  // string Onwer = 3;
-  if (!this->_internal_onwer().empty()) {
+  // string owner = 3;
+  if (!this->_internal_owner().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_onwer().data(), static_cast<int>(this->_internal_onwer().length()),
+      this->_internal_owner().data(), static_cast<int>(this->_internal_owner().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "ledger_engine.Ledger.Onwer");
+      "ledger_engine.Ledger.owner");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_onwer(), target);
+        3, this->_internal_owner(), target);
   }
 
-  // string Regulator = 4;
-  if (!this->_internal_regulator().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_regulator().data(), static_cast<int>(this->_internal_regulator().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "ledger_engine.Ledger.Regulator");
-    target = stream->WriteStringMaybeAliased(
-        4, this->_internal_regulator(), target);
+  // uint64 create_time = 4;
+  if (this->_internal_create_time() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(4, this->_internal_create_time(), target);
   }
 
-  // repeated string Commons = 5;
-  for (int i = 0, n = this->_internal_commons_size(); i < n; i++) {
-    const auto& s = this->_internal_commons(i);
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      s.data(), static_cast<int>(s.length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "ledger_engine.Ledger.Commons");
-    target = stream->WriteString(5, s, target);
-  }
-
-  // repeated string Readonlys = 6;
-  for (int i = 0, n = this->_internal_readonlys_size(); i < n; i++) {
-    const auto& s = this->_internal_readonlys(i);
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      s.data(), static_cast<int>(s.length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "ledger_engine.Ledger.Readonlys");
-    target = stream->WriteString(6, s, target);
+  // bool is_deleted = 5;
+  if (this->_internal_is_deleted() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_is_deleted(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -411,22 +353,6 @@ size_t Ledger::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated string Commons = 5;
-  total_size += 1 *
-      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(commons_.size());
-  for (int i = 0, n = commons_.size(); i < n; i++) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-      commons_.Get(i));
-  }
-
-  // repeated string Readonlys = 6;
-  total_size += 1 *
-      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(readonlys_.size());
-  for (int i = 0, n = readonlys_.size(); i < n; i++) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-      readonlys_.Get(i));
-  }
-
   // string name = 1;
   if (!this->_internal_name().empty()) {
     total_size += 1 +
@@ -434,23 +360,26 @@ size_t Ledger::ByteSizeLong() const {
         this->_internal_name());
   }
 
-  // string Onwer = 3;
-  if (!this->_internal_onwer().empty()) {
+  // string owner = 3;
+  if (!this->_internal_owner().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_onwer());
-  }
-
-  // string Regulator = 4;
-  if (!this->_internal_regulator().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_regulator());
+        this->_internal_owner());
   }
 
   // uint32 id = 2;
   if (this->_internal_id() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32SizePlusOne(this->_internal_id());
+  }
+
+  // bool is_deleted = 5;
+  if (this->_internal_is_deleted() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // uint64 create_time = 4;
+  if (this->_internal_create_time() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_create_time());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -475,19 +404,20 @@ void Ledger::MergeFrom(const Ledger& from) {
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  commons_.MergeFrom(from.commons_);
-  readonlys_.MergeFrom(from.readonlys_);
   if (!from._internal_name().empty()) {
     _internal_set_name(from._internal_name());
   }
-  if (!from._internal_onwer().empty()) {
-    _internal_set_onwer(from._internal_onwer());
-  }
-  if (!from._internal_regulator().empty()) {
-    _internal_set_regulator(from._internal_regulator());
+  if (!from._internal_owner().empty()) {
+    _internal_set_owner(from._internal_owner());
   }
   if (from._internal_id() != 0) {
     _internal_set_id(from._internal_id());
+  }
+  if (from._internal_is_deleted() != 0) {
+    _internal_set_is_deleted(from._internal_is_deleted());
+  }
+  if (from._internal_create_time() != 0) {
+    _internal_set_create_time(from._internal_create_time());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -508,8 +438,6 @@ void Ledger::InternalSwap(Ledger* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  commons_.InternalSwap(&other->commons_);
-  readonlys_.InternalSwap(&other->readonlys_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &name_, lhs_arena,
@@ -517,15 +445,15 @@ void Ledger::InternalSwap(Ledger* other) {
   );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &onwer_, lhs_arena,
-      &other->onwer_, rhs_arena
+      &owner_, lhs_arena,
+      &other->owner_, rhs_arena
   );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &regulator_, lhs_arena,
-      &other->regulator_, rhs_arena
-  );
-  swap(id_, other->id_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(Ledger, create_time_)
+      + sizeof(Ledger::create_time_)
+      - PROTOBUF_FIELD_OFFSET(Ledger, id_)>(
+          reinterpret_cast<char*>(&id_),
+          reinterpret_cast<char*>(&other->id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Ledger::GetMetadata() const {

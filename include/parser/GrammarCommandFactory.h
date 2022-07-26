@@ -1,3 +1,9 @@
+/*
+ * @Author: Leo
+ * @Date: 2022-07-17 14:09:42
+ * @LastEditors: Leo
+ * @LastEditTime: 2022-07-22 09:49:52
+ */
 //
 // Created by yuzhi on 5/29/22.
 //
@@ -11,46 +17,55 @@
 #include <spdlog/spdlog.h>
 #include <utility/Enum.h>
 
-namespace yuzhi::grammar {
+namespace yuzhi::grammar
+{
 
-  class GrammarCommandFactory {
+class GrammarCommandFactory
+{
 
 public:
-    static GrammarCommandFactory &Instance() {
-      static GrammarCommandFactory factory{};
-      return factory;
-    }
+  static GrammarCommandFactory &Instance()
+  {
+    static GrammarCommandFactory factory{};
+    return factory;
+  }
 
-    void add(std::shared_ptr<IGrammarCommand> command) {
-      if (auto err = selfDictionary_.Add(command); err == Error::RepeatKey()) {
-        SPDLOG_ERROR("exist repeat key, program will exit");
-        exit(-1);
-      }
-    }
-
-    IGrammarCommand &get(GrammarType key) {
-      if (auto command = selfDictionary_.Get(key); command) {
-        return *command;
-      }
-      SPDLOG_ERROR("capture not exist key, program will exit");
+  void add(std::shared_ptr<IGrammarCommand> command)
+  {
+    if (auto err = selfDictionary_.Add(command); err == common::Error::RepeatKey())
+    {
+      SPDLOG_ERROR("exist repeat key, program will exit");
       exit(-1);
     }
+  }
 
-    IGrammarCommand &get(const std::string &key) {
-      if (auto opt = magic_enum::enum_cast<GrammarType>(key); opt.has_value()) {
-        return get(opt.value());
-      }
-      SPDLOG_ERROR("capture not exist key, program will exit");
-      exit(-1);
+  IGrammarCommand &get(GrammarType key)
+  {
+    if (auto command = selfDictionary_.Get(key); command)
+    {
+      return *command;
     }
+    SPDLOG_ERROR("capture not exist key, program will exit");
+    exit(-1);
+  }
+
+  IGrammarCommand &get(const std::string &key)
+  {
+    if (auto opt = magic_enum::enum_cast<GrammarType>(key); opt.has_value())
+    {
+      return get(opt.value());
+    }
+    SPDLOG_ERROR("capture not exist key, program will exit");
+    exit(-1);
+  }
 
 private:
-    GrammarCommandFactory() = default;
-    ~GrammarCommandFactory() = default;
+  GrammarCommandFactory() = default;
+  ~GrammarCommandFactory() = default;
 
 private:
-    SelfDictionary<std::shared_ptr<IGrammarCommand>, IGrammarCommand::Key> selfDictionary_;
-  };
-}// namespace yuzhi::grammar
+  SelfDictionary<std::shared_ptr<IGrammarCommand>, IGrammarCommand::Key> selfDictionary_;
+};
+} // namespace yuzhi::grammar
 
-#endif//LEDGERDB_GRAMMARCOMMADFACTORY_H
+#endif // LEDGERDB_GRAMMARCOMMADFACTORY_H

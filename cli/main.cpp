@@ -1,23 +1,24 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h> //注意，readline.h中可能需要调用标准IO库的内容，所以stdio.h必须在readline.h之前被包含
-#include <stdlib.h>  // for
+#include <stdlib.h> // for
 
-#include <parser/Parser.h>
-#include <parser/GrammarCommandFactory.h>
 #include <CreateLedger.h>
+#include <parser/GrammarCommandFactory.h>
+#include <parser/Parser.h>
 
 // delete  ${ledger_name}
 // create leadger ${ledger_name} [if not exists] [with type ${type} ${user}]
-int com_view(char *para) {
+int com_view(char *para)
+{
   printf("do com_view:%s\n", para);
   return 0;
 }
 
 int com_stat(char *para)
 {
-    auto parser = yuzhi::grammar::Parser::Instance();
-    return parser->handle(std::string(para));
+  auto parser = yuzhi::grammar::Parser::Instance();
+  return parser->handle(std::string(para));
 }
 
 int com_help(char *para)
@@ -32,21 +33,21 @@ int com_quit(char *para)
   exit(0);
 }
 
-typedef struct {
-  const char *name;         /* User printable name of the function. */
+typedef struct
+{
+  const char *name;   /* User printable name of the function. */
   rl_icpfunc_t *func; /* Function to call to do the job. */
-  const char *doc;          /* Documentation for this function. */
+  const char *doc;    /* Documentation for this function. */
 } COMMAND;
 
-COMMAND commands[] = {
-      {"help", com_help, "Display this text"},
-      {"?", com_help, "Synonym for `help'"},
-      {"stat", com_stat, "Print out statistics on FILE"},
-      {"view", com_view, "View the contents of FILE"},
-      {"quit", com_quit, "quit programs"}
-};
+COMMAND commands[] = {{"help", com_help, "Display this text"},
+                      {"?", com_help, "Synonym for `help'"},
+                      {"stat", com_stat, "Print out statistics on FILE"},
+                      {"view", com_view, "View the contents of FILE"},
+                      {"quit", com_quit, "quit programs"}};
 
-char *dupstr(const char *s) {
+char *dupstr(const char *s)
+{
   char *r;
 
   r = (char *)malloc(strlen(s) + 1);
@@ -55,7 +56,8 @@ char *dupstr(const char *s) {
 }
 
 // clear up white spaces
-char *stripwhite(char *string) {
+char *stripwhite(char *string)
+{
   char *s, *t;
 
   for (s = string; whitespace(*s); s++)
@@ -77,7 +79,8 @@ char *stripwhite(char *string) {
  * Look up NAME as the name of a command, and return a pointer to that
  * command. Return a NULL pointer if NAME isn't a command name.
  */
-COMMAND *find_command(const std::string& word) {
+COMMAND *find_command(const std::string &word)
+{
 
   for (auto i = 0; commands[i].name; i++)
     if (strcmp(word.c_str(), commands[i].name) == 0)
@@ -87,7 +90,8 @@ COMMAND *find_command(const std::string& word) {
 }
 
 /* Execute a command line. */
-int execute_line(char *line) {
+int execute_line(char *line)
+{
   int i;
   COMMAND *command;
   char *ptr;
@@ -96,16 +100,16 @@ int execute_line(char *line) {
   i = 0;
   while (line[i] && whitespace(line[i]))
     i++;
-    ptr = line + i;
-    while (line[i] && !whitespace(line[i]))
-      i++;
-
+  ptr = line + i;
+  while (line[i] && !whitespace(line[i]))
+    i++;
 
   std::string word = std::string(ptr, i);
   command = find_command(word);
 
-  if (!command) {
-      return com_stat(line);
+  if (!command)
+  {
+    return com_stat(line);
   }
 
   while (whitespace(line[i]))
@@ -122,7 +126,8 @@ int execute_line(char *line) {
  * to start from scratch; without any state (i.e. STATE == 0), then we
  * start at the top of the list.
  */
-char *command_generator(const char *text, int state) {
+char *command_generator(const char *text, int state)
+{
   static int list_index, len;
   const char *name;
 
@@ -131,13 +136,15 @@ char *command_generator(const char *text, int state) {
    * saving the length of TEXT for efficiency, and initializing the index
    * variable to 0.
    */
-  if (!state) {
+  if (!state)
+  {
     list_index = 0;
     len = strlen(text);
   }
 
   /* Return the next name which partially matches from the command list. */
-  while (name = commands[list_index].name) {
+  while (name = commands[list_index].name)
+  {
     list_index++;
 
     if (strncmp(name, text, len) == 0)
@@ -155,7 +162,8 @@ char *command_generator(const char *text, int state) {
  * in case we want to do some simple parsing. Return the array of matches,
  * or NULL if there aren't any.
  */
-char **fileman_completion(const char *text, int start, int end) {
+char **fileman_completion(const char *text, int start, int end)
+{
   char **matches;
 
   matches = (char **)NULL;
@@ -176,7 +184,8 @@ char **fileman_completion(const char *text, int start, int end) {
  * on command names if this is the first word in the line, or on filenames
  * if not.
  */
-void initialize_readline() {
+void initialize_readline()
+{
   /* Allow conditional parsing of the ~/.inputrc file. */
   rl_readline_name = ">";
 
@@ -184,11 +193,11 @@ void initialize_readline() {
   rl_attempted_completion_function = fileman_completion;
 }
 
-void parse_int ()
+void parse_int()
 {
   using yuzhi::grammar::GrammarCommandFactory;
 
-  auto& factory = GrammarCommandFactory::Instance();
+  auto &factory = GrammarCommandFactory::Instance();
 
   factory.add(std::make_shared<yuzhi::grammar::cli::CreateLedger>());
 }

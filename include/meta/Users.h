@@ -2,62 +2,100 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-03-11 01:56:05
+ * @LastEditTime: 2022-07-24 01:29:31
  */
 #pragma once
 
+#include <initializer_list>
+#include <interfaces/IDisposable.h>
 #include <map>
 #include <memory>
-#include <initializer_list>
+#include <rocksdb/db.h>
+#include <spdlog/spdlog.h>
 
+#include "meta/AccountAtrribute.h"
 #include "meta/User.h"
-#include "UserStoreCreator.h"
-// #define PREDEF_USER "admin"
+#include "meta/UsersImpl.h"
 
-class Users : public IStorable<User>
+// #define PREDEF_USER "admin"
+namespace yuzhi
+{
+class Users : public interface::IDisposable, public meta::IAccountAtrribute
 {
 public:
-    using Raw = User;
-    using Element = std::shared_ptr<User>;
-    using UniqueType = std::common_type_t<decltype(((User *)nullptr)->GetUnique())>;
+  using Raw = User;
+  using Element = std::shared_ptr<User>;
+  using UniqueType = std::common_type_t<decltype(((User *)nullptr)->GetUnique())>;
 
 public:
-    static Users &getInstance()
-    {
-        static Users instance{
-            std::make_pair("admin", std::make_shared<User>("admin", USER_ROLE::DBA))};
-        return instance;
-    }
+  static Users &getInstance()
+  {
+    static Users instance{};
+    return instance;
+  }
 
-private:
-    Users(std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init)
-        : users_{},  store_creator_{dynamic_cast<IStorable<User> *>(new UserStoreCreator{"User"})}
-    {
-        for (auto &[name, user] : init)
-        {
-            users_.insert(std::make_pair(name, user));
-        }
-    }
+  void dispose() override { usersImpl_.dispose(); }
 
+public: // IAccountAtrribute
+  bool isOwner(const std::string &ledger_name, const std::string &name) const override
+  {
+    return usersImpl_.isOwner(ledger_name, name);
+  }
+  bool isCommon(const std::string &ledger_name, const std::string &name) const override
+  {
+    return usersImpl_.isCommon(ledger_name, name);
+  }
+  bool isRegulator(const std::string &ledger_name, const std::string &name) const override
+  {
+    return usersImpl_.isRegulator(ledger_name, name);
+  }
+  bool isReadOnly(const std::string &ledger_name, const std::string &name) const override
+  {
+    return usersImpl_.isReadOnly(ledger_name, name);
+  }
 
-public: // IStorable
-    virtual std::optional<Error> store(const Element &element) const override
-    {
-        return store_creator_->store(element);
-    }
+  std::shared_ptr<User> Onwer(const std::string &ledger_name) const override { return usersImpl_.Onwer(ledger_name); }
 
-    virtual Element load(const std::shared_ptr<IUnique<UniqueType>> &element) override
-    {
-        return store_creator_->load(element);
-    }
+  std::optional<common::Error> addCommon(const std::string &ledger_name, const std::string &name) override
+  {
+    return usersImpl_.addCommon(ledger_name, name);
+  }
+  std::optional<common::Error> addRegulator(const std::string &ledger_name, const std::string &name) override
+  {
+    return usersImpl_.addRegulator(ledger_name, name);
+  }
+
+  std::optional<common::Error> addReadOnly(const std::string &ledger_name, const std::string &name) override
+  {
+    return usersImpl_.addReadOnly(ledger_name, name);
+  }
+
+  std::optional<common::Error> removeCommon(const std::string &ledger_name, const std::string &name) override
+  {
+    return usersImpl_.removeCommon(ledger_name, name);
+  }
+  std::optional<common::Error> removeRegulator(const std::string &ledger_name, const std::string &name) override
+  {
+    return usersImpl_.removeRegulator(ledger_name, name);
+  }
+  std::optional<common::Error> removeReadOnly(const std::string &ledger_name, const std::string &name) override
+  {
+    return usersImpl_.removeReadOnly(ledger_name, name);
+  }
 
 public:
-    std::shared_ptr<User> createUser(const std::string &name);
-    std::shared_ptr<User> getUser(const std::string &name);
-    const std::shared_ptr<User> getUser(const std::string &name) const;
-    bool removeUser(const std::shared_ptr<User> &user);
+  Users(std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init);
+
+  Users(std::weak_ptr<rocksdb::DB> db);
+
+public:
+  std::shared_ptr<User> createUser(const std::string &user_name, const std::string &ledger_name, USER_ROLE role);
+  std::shared_ptr<User> getUser(const std::string &name);
+  const std::shared_ptr<User> getUser(const std::string &name) const;
+  bool removeUser(const std::shared_ptr<User> &user);
 
 private:
-    std::map<std::string, std::shared_ptr<User>> users_;
-    std::unique_ptr<IStorable<User>> store_creator_;
+  std::map<std::string, std::shared_ptr<User>> users_;
+  yuzhi::meta::UsersImpl usersImpl_;
 };
+} // namespace yuzhi

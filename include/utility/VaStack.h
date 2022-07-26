@@ -1,32 +1,25 @@
 
 #pragma once
 
-#include<stdarg.h> // for va_list, va_start, va_end, va_arg
-namespace yuzhi::utility {
+#include <stdarg.h> // for va_list, va_start, va_end, va_arg
+namespace yuzhi::utility
+{
 
-    class VaStack {
+class VaStack
+{
 
-    public:
-        explicit VaStack(va_list& list)
-        {
-            va_copy(list_, list);
-        }
+public:
+  explicit VaStack(va_list &list) { va_copy(list_, list); }
 
-        ~VaStack()
-        {
-            va_end(list_);
-        }
+  ~VaStack() { va_end(list_); }
 
-        VaStack(VaStack&) = delete;
-        VaStack& operator = (VaStack&) = delete;
+  VaStack(VaStack &) = delete;
+  VaStack &operator=(VaStack &) = delete;
 
-        template<typename T>
-        auto pop () -> T
-        {
-            return va_arg(list_,T);
-        }
-    private:
-        va_list list_;
-    };
+  template <typename T> auto pop() -> T { return va_arg(list_, T); }
 
-} // yuzhi::utility
+private:
+  va_list list_;
+};
+
+} // namespace yuzhi::utility

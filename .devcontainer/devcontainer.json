@@ -29,7 +29,12 @@
 				"peterj.proto",
 				"xaver.clang-format",
 				"OBKoro1.korofileheader",
-				"maixiaojie.git-emoji"
+				"maixiaojie.git-emoji",
+				"wayou.vscode-todo-highlight",
+				"esbenp.prettier-vscode",
+				"nondanee.vsc-netease-music",
+				"alefragnani.Bookmarks",
+				"jbockle.jbockle-format-files"
 			]
 		}
 	}

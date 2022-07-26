@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-04 17:46:31
- * @LastEditTime: 2022-03-11 11:01:17
+ * @LastEditTime: 2022-07-22 09:50:46
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -15,20 +15,23 @@
 #include <muduo/net/InetAddress.h>
 #include <optional>
 #include <utility/tpl.h>
-extern "C" {
+extern "C"
+{
 #include <raft.h>
 }
 #define RAFT_BUFLEN 512
 #define IP_STR_LEN strlen("111.111.111.111")
 
-typedef struct {
+typedef struct
+{
   uint16_t raft_port;
   uint16_t http_port;
   uint16_t node_id;
   char host[IP_STR_LEN];
 } entry_cfg_change_t;
 
-typedef enum {
+typedef enum
+{
   /** Handshake is a special non-raft message type
    * We send a handshake so that we can identify ourselves to our peers */
   MSG_HANDSHAKE,
@@ -45,13 +48,15 @@ typedef enum {
   MSG_APPENDENTRIES_RESPONSE,
 } peer_message_type_e;
 
-typedef struct {
+typedef struct
+{
   int raft_port;
   int http_port;
   int node_id;
 } msg_handshake_t;
 
-typedef struct {
+typedef struct
+{
 
   int success;
   int leader_port;
@@ -62,7 +67,8 @@ typedef struct {
   char leader_host[IP_STR_LEN];
 } msg_handshake_response_t;
 
-typedef struct {
+typedef struct
+{
   int type;
   union {
     msg_handshake_t hs;
@@ -75,18 +81,21 @@ typedef struct {
   int padding[100];
 } msg_t; // size 456
 
-typedef enum {
+typedef enum
+{
   DISCONNECTED,
   CONNECTING,
   CONNECTED,
 } conn_status_e;
 
-typedef enum {
+typedef enum
+{
   HANDSHAKE_FAILURE,
   HANDSHAKE_SUCCESS,
 } handshake_state_e;
 
-struct peer_connection_t {
+struct peer_connection_t
+{
 
   /* peer's address */
   muduo::net::InetAddress addr;

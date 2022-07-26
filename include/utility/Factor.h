@@ -5,20 +5,14 @@
 #ifndef LEDGERDB_FACTOR_H
 #define LEDGERDB_FACTOR_H
 
-namespace  yuzhi::utility {
-    template<typename FactorClass>
-    class Factor {
+namespace yuzhi::utility
+{
+template <typename FactorClass> class Factor
+{
 
-    public:
-        template<typename...Arg>
-        static auto getInstance(Arg ...arg)
-        {
-            return FactorClass::instance();
-        }
-    };
-} // ns yuzhi::utility
+public:
+  template <typename... Arg> static auto getInstance(Arg... arg) { return FactorClass::instance(); }
+};
+} // namespace yuzhi::utility
 
-
-
-
-#endif //LEDGERDB_FACTOR_H
+#endif // LEDGERDB_FACTOR_H

@@ -30,10 +30,14 @@
 				"xaver.clang-format",
 				"OBKoro1.korofileheader",
 				"maixiaojie.git-emoji",
+				"yzhang.markdown-all-in-one",
+				"alefragnani.Bookmarks",
+				"cschlosser.doxdocgen",
+				"eamodio.gitlens",
+				"SonarSource.sonarlint-vscode"
 				"wayou.vscode-todo-highlight",
 				"esbenp.prettier-vscode",
 				"nondanee.vsc-netease-music",
-				"alefragnani.Bookmarks",
 				"jbockle.jbockle-format-files"
 			]
 		}

@@ -99,5 +99,6 @@
       "LastEditors": "Leo", 
       "LastEditTime": "Do not edit"
     },
-    "editor.suggest.snippetsPreventQuickSuggestions": false
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json"
   }

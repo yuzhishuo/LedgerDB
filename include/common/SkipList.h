@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-25 05:56:39
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-26 14:05:54
+ * @LastEditTime: 2022-07-27 03:39:23
  */
 #ifndef YUZHI_COMMON_SKIP_LIST
 #define YUZHI_COMMON_SKIP_LIST
@@ -14,54 +14,62 @@ namespace yuzhi::common
 {
 namespace
 {
-struct List
+
+template <typename T, typename U> struct List
 {
   List *next;
-  std::pair<int, int> *store;
+  std::pair<T, U> *store; //  store's ownership owner SkipList
 
   List() : next(nullptr), store(nullptr) {}
-  List(List *next, int key, int val) : next(next), store(new std::pair(key, val)) {}
-  ~List() {}
+  List(List *next, T key, U val) : next(next), store(new std::pair(std::move(key), std::move(val))) {}
 };
 
-struct ListLayer : public List
+template <typename T, typename U> struct ListLayer : public List<T, U>
 {
-  List *down;
+  List<T, U> *down;
 
-  ListLayer() : down(nullptr), List() {}
-  ListLayer(List *d) : down(d), List() {}
+  ListLayer() : down(nullptr), List<T, U>() {}
+  ListLayer(List<T, U> *d) : down(d), List<T, U>() {}
 };
 } // namespace
-class SkipList
+
+template <typename T = int, typename U = int> class SkipList
 {
+
 public:
   SkipList() : head_{nullptr}, tail_{nullptr}
   {
-    auto node = new ListLayer;
+    auto node = new ListLayer<T, U>;
     head_ = node;
     tail_ = node;
   }
   ~SkipList()
   {
     assert(level_ < max_level_);
-    for (auto layer = tail_; layer; layer = static_cast<ListLayer *>(layer->down))
+    for (auto layer = tail_; layer; layer = static_cast<ListLayer<T, U> *>(layer->down))
     {
       while (auto node = layer->next)
       {
         layer->next = node->next;
         if (layer == head_)
+        {
           delete node->store;
-        delete node;
+          delete node;
+          continue;
+        }
+        delete static_cast<ListLayer<T, U> *>(node);
       }
     }
 
-    for (auto layer = tail_; layer != nullptr; layer = static_cast<ListLayer *>(layer->down))
+    for (auto layer = tail_; layer;)
     {
-      delete layer;
+      auto node = layer;
+      layer = static_cast<ListLayer<T, U> *>(layer->down);
+      delete node;
     }
   }
   /**
-   * @brief
+   * @brief remove
    *
    * @param key
    *
@@ -69,26 +77,25 @@ public:
    * @return true if the key is present in the list
    * @return false  no key is present in the list
    */
-  bool remove(int key)
+  bool remove(T key)
   {
-    std::vector<List *> update(max_level_, nullptr);
+    std::vector<List<T, U> *> update(max_level_, nullptr);
     {
 
-      auto node = static_cast<ListLayer *>(tail_);
+      auto node = static_cast<ListLayer<T, U> *>(tail_);
       for (int i = level_; i > 0; i--)
       {
         while (node->next != nullptr && node->next->store->first < key)
         {
-          node = static_cast<ListLayer *>(node->next);
+          node = static_cast<ListLayer<T, U> *>(node->next);
         }
         update[i] = node;
         if (i > 1)
-          node = static_cast<ListLayer *>(node->down);
+          node = static_cast<ListLayer<T, U> *>(node->down);
       }
     }
 
-    auto node = update[1]->next;
-    if (node && node->store->first == key)
+    if (auto node = update[1]->next; node && node->store->first == key)
     {
       for (auto i = 2; i <= level_; i++)
       {
@@ -96,7 +103,7 @@ public:
         {
           auto delete_node = update[i]->next;
           update[i]->next = delete_node->next;
-          delete delete_node;
+          delete static_cast<ListLayer<T,U>*>(delete_node);
           continue;
         }
         break;
@@ -106,12 +113,12 @@ public:
       delete delete_node->store;
       delete delete_node;
 
-      while (level_ > 1 and !tail_->next)
+      while (level_ > 1 && !tail_->next)
       {
         auto delete_list_layer = tail_;
-        tail_ = static_cast<ListLayer *>(tail_->down);
-        delete delete_list_layer;
-        level_++;
+        tail_ = static_cast<ListLayer<T, U> *>(tail_->down);
+        delete  delete_list_layer;
+        level_--;
       }
 
       return true;
@@ -123,21 +130,21 @@ public:
    *
    * @return std::optional<int> find value
    */
-  std::optional<int> find(int key) const
+  std::optional<U> find(T key) const
   {
-    auto node = static_cast<ListLayer *>(tail_);
+    auto node = static_cast<ListLayer<T, U> *>(tail_);
     for (int i = level_; i > 0; i--)
     {
       while (node->next != nullptr && node->next->store->first < key)
       {
-        node = static_cast<ListLayer *>(node->next);
+        node = static_cast<ListLayer<T, U> *>(node->next);
       }
       if (node->next && node->next->store->first == key)
       {
         return node->next->store->second;
       }
       if (i > 1)
-        node = static_cast<ListLayer *>(node->down);
+        node = static_cast<ListLayer<T, U> *>(node->down);
     }
     return std::nullopt;
   }
@@ -147,21 +154,21 @@ public:
    *
    * @return true if the value is inserted, false if the value is already in the list
    */
-  bool insert(int key, int val)
+  void insert(T key, U val) noexcept
   {
-    std::vector<List *> update(max_level_ + 1, nullptr);
+    std::vector<List<T, U> *> update(max_level_ + 1, nullptr);
 
     {
-      auto node = static_cast<ListLayer *>(tail_);
+      auto node = static_cast<ListLayer<T, U> *>(tail_);
       for (int i = level_; i > 0; i--)
       {
         while (node->next != nullptr && node->next->store->first < key)
         {
-          node = static_cast<ListLayer *>(node->next);
+          node = static_cast<ListLayer<T, U> *>(node->next);
         }
         update[i] = node;
         if (i > 1)
-          node = static_cast<ListLayer *>(node->down);
+          node = static_cast<ListLayer<T, U> *>(node->down);
       }
     }
 
@@ -173,8 +180,7 @@ public:
     }
     else
     {
-      auto level = randomLevel();
-      if (level > level_)
+      if (auto level = randomLevel(); level > level_)
       {
         for (auto i = level_ + 1; i <= level; i++)
         {
@@ -183,12 +189,12 @@ public:
         }
         level_ = level;
       }
-      auto new_node = new List(nullptr, key, val);
+      auto new_node = new List<T, U>(nullptr, key, val);
       new_node->next = update[1]->next;
       update[1]->next = new_node;
       for (auto i = 2; i <= level_; i++)
       {
-        auto new_layer = new ListLayer(update[i - 1]->next);
+        auto new_layer = new ListLayer<T, U>(update[i - 1]->next);
         new_layer->store = new_node->store;
         if (update[i]->next)
         {
@@ -197,14 +203,13 @@ public:
         update[i]->next = new_layer;
       }
     }
-    return true;
   }
 
 private:
-  void newLayer() { tail_ = new ListLayer(tail_); }
-  int randomLevel() const
+  void newLayer() { tail_ = new ListLayer<T, U>(tail_); }
+  u_int16_t randomLevel() const
   {
-    int level = 1;
+    u_int16_t level = 1;
     while ((random() & 0xFFFF) < (0.25 * 0xFFFF))
       level++;
 
@@ -212,8 +217,8 @@ private:
   }
 
 private:
-  ListLayer *head_;
-  ListLayer *tail_;
+  ListLayer<T, U> *head_;
+  ListLayer<T, U> *tail_;
   u_int16_t max_level_ = 32;
   u_int16_t level_ = 1;
 }; // namespace yuzhi::common

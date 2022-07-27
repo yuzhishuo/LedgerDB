@@ -2,62 +2,78 @@
  * @Author: Leo
  * @Date: 2022-07-26 06:24:06
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-26 14:20:05
+ * @LastEditTime: 2022-07-27 02:32:48
  */
 #ifndef LEDGER_YUZHI_COMMON_LRUCACHE_H
 #define LEDGER_YUZHI_COMMON_LRUCACHE_H
 
 #pragma onece
+#include <assert.h>
+#include <cstddef>
+#include <optional>
 #include <unordered_map>
+#include <utility>
 
 namespace yuzhi::common
 {
-struct DLinkedNode
+
+template <typename T, typename U> struct DLinkedNode
 {
-  int key, value;
-  DLinkedNode *prev;
-  DLinkedNode *next;
-  DLinkedNode() : key(0), value(0), prev(nullptr), next(nullptr) {}
-  DLinkedNode(int _key, int _value) : key(_key), value(_value), prev(nullptr), next(nullptr) {}
+  T key;
+  U value;
+  DLinkedNode<T, U> *prev;
+  DLinkedNode<T, U> *next;
+  DLinkedNode() : key{}, value{}, prev(nullptr), next(nullptr) {}
+  DLinkedNode(T _key, U _value) : key(std::move(_key)), value(std::move(_value)), prev(nullptr), next(nullptr) {}
 };
 
-class LRUCache
+template <typename T = int, typename U = int> class LRUCache
 {
 private:
-  std::unordered_map<int, DLinkedNode *> cache;
-  DLinkedNode *head;
-  DLinkedNode *tail;
-  int size;
-  int capacity;
+  using Node = DLinkedNode<T, U>;
+
+private:
+  std::unordered_map<T, Node *> cache;
+  Node *head;
+  Node *tail;
+  std::size_t size;
+  std::size_t capacity;
 
 public:
-  LRUCache(int _capacity) : capacity(_capacity), size(0)
+  LRUCache() = delete;
+  LRUCache(std::size_t _capacity) : head{new Node}, tail{new Node}, capacity(_capacity), size(0)
   {
-    // 使用伪头部和伪尾部节点
-    head = new DLinkedNode();
-    tail = new DLinkedNode();
+    assert(_capacity > 0);
     head->next = tail;
     tail->prev = head;
   }
 
-  int get(int key)
+  ~LRUCache()
+  {
+    while (head != nullptr)
+    {
+      auto node = head;
+      head = head->next;
+      delete node;
+    }
+  }
+  std::optional<U> get(T key)
   {
     if (!cache.count(key))
     {
-      return -1;
+      return std::nullopt;
     }
-    // 如果 key 存在，先通过哈希表定位，再移到头部
-    DLinkedNode *node = cache[key];
+    Node *node = cache[key];
     moveToHead(node);
     return node->value;
   }
 
-  void put(int key, int value)
+  void put(T key, U value)
   {
     if (!cache.count(key))
     {
       // 如果 key 不存在，创建一个新的节点
-      DLinkedNode *node = new DLinkedNode(key, value);
+      auto *node = new Node(std::move(key), std::move(value));
       // 添加进哈希表
       cache[key] = node;
       // 添加至双向链表的头部
@@ -66,7 +82,7 @@ public:
       if (size > capacity)
       {
         // 如果超出容量，删除双向链表的尾部节点
-        DLinkedNode *removed = removeTail();
+        Node *removed = removeTail();
         // 删除哈希表中对应的项
         cache.erase(removed->key);
         // 防止内存泄漏
@@ -76,14 +92,13 @@ public:
     }
     else
     {
-      // 如果 key 存在，先通过哈希表定位，再修改 value，并移到头部
-      DLinkedNode *node = cache[key];
+      Node *node = cache[key];
       node->value = value;
       moveToHead(node);
     }
   }
 
-  void addToHead(DLinkedNode *node)
+  void addToHead(Node *node)
   {
     node->prev = head;
     node->next = head->next;
@@ -91,21 +106,21 @@ public:
     head->next = node;
   }
 
-  void removeNode(DLinkedNode *node)
+  void removeNode(Node *node) const
   {
     node->prev->next = node->next;
     node->next->prev = node->prev;
   }
 
-  void moveToHead(DLinkedNode *node)
+  void moveToHead(Node *node)
   {
     removeNode(node);
     addToHead(node);
   }
 
-  DLinkedNode *removeTail()
+  Node *removeTail()
   {
-    DLinkedNode *node = tail->prev;
+    Node *node = tail->prev;
     removeNode(node);
     return node;
   }

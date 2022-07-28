@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-07-22 15:09:25
+ * @LastEditTime: 2022-07-28 01:36:31
  * @LastEditors: Leo
  * @FilePath: /LedgerDB/main.cpp
  */
@@ -23,7 +23,7 @@
 #include <string>
 
 #include <config/Config.h>
-#include <raft_engine/RaftEngine.h>
+// #include <raft_engine/RaftEngine.h>
 #include <service/LedgerService.hpp>
 
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
@@ -66,8 +66,8 @@ public:
 
 int main(int argc, char **argv)
 {
-  using yuzhi::raft_engine::net::RaftService;
-  RaftService::Instance();
+  // using yuzhi::raft_engine::net::RaftService;
+  // RaftService::Instance();
   yuzhi::LedgerDB ledger;
   ledger.start();
 

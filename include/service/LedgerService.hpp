@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-07 15:44:35
- * @LastEditTime: 2022-07-24 01:51:13
+ * @LastEditTime: 2022-07-28 01:35:41
  * @LastEditors: Leo
  */
 
@@ -11,7 +11,7 @@
 
 #include <ledger_engine.grpc.pb.h>
 #include <meta/Ledgers.h>
-#include <raft_engine/net/RaftService.hpp>
+// #include <raft_engine/net/RaftService.hpp>
 #include <spdlog/spdlog.h>
 
 namespace yuzhi::service
@@ -26,26 +26,26 @@ public:
   {
     // grpc debug string contian the '\n'
     SPDLOG_INFO("create leadger request: {}", request->DebugString());
-    auto &ledgers = Ledgers::Instance();
-    auto &raft = raft_engine::net::RaftService::Instance();
+    // auto &ledgers = Ledgers::Instance();
+    // auto &raft = raft_engine::net::RaftService::Instance();
 
-    if (auto e = raft.Save("create_ledger", request->ledgername()); !e)
-    {
-      return ::grpc::Status(::grpc::StatusCode::INTERNAL, "create ledger failed");
-    }
+    // if (auto e = raft.Save("create_ledger", request->ledgername()); !e)
+    // {
+    //   return ::grpc::Status(::grpc::StatusCode::INTERNAL, "create ledger failed");
+    // }
 
-    if (auto new_ledger = ledgers.createLedger(request->ledgername(), ("request->owner()", "admin")); !new_ledger)
-    {
-      response->set_success(false);
-      response->set_message("create ledger failed");
-      SPDLOG_INFO("create {} ledger failed", request->ledgername());
+    // if (auto new_ledger = ledgers.createLedger(request->ledgername(), ("request->owner()", "admin")); !new_ledger)
+    // {
+    //   response->set_success(false);
+    //   response->set_message("create ledger failed");
+    //   SPDLOG_INFO("create {} ledger failed", request->ledgername());
 
-      return ::grpc::Status(::grpc::StatusCode::ALREADY_EXISTS, "");
-    }
+    //   return ::grpc::Status(::grpc::StatusCode::ALREADY_EXISTS, "");
+    // }
 
-    response->set_success(true);
-    response->set_message("create ledger success");
-    SPDLOG_INFO("create {} ledger success", request->ledgername());
+    // response->set_success(true);
+    // response->set_message("create ledger success");
+    // SPDLOG_INFO("create {} ledger success", request->ledgername());
     return ::grpc::Status::OK;
   }
 

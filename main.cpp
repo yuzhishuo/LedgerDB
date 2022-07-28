@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 21:35:46
- * @LastEditTime: 2022-07-28 01:36:31
+ * @LastEditTime: 2022-07-28 02:00:54
  * @LastEditors: Leo
  * @FilePath: /LedgerDB/main.cpp
  */
@@ -11,8 +11,8 @@
 
 #include <rocksdb/db.h>
 
-#include "Spd.h"
 #include "meta/User.h"
+#include <spdlog/spdlog.h>
 // #include "rbac/AuthorityCertification.h"
 #include "store/PersistenceStore.h"
 

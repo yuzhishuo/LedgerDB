@@ -15,7 +15,6 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # memory leak detection
 set(CMAKE_CXX_FLAGS "-fsanitize=address")
 add_definitions(
-  # -DMUDUO_BUILD_EXAMPLES=OFF
   -DSPDLOG_FMT_EXTERNAL=ON
 )
 if(NOT CMAKE_BUILD_TYPE)
@@ -24,7 +23,6 @@ endif()
 
 find_package(RocksDB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
-# find_package(spdlog CONFIG REQUIRED)
 
 find_package(gRPC CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
@@ -57,10 +55,6 @@ include_directories(3rdParty/spdlog/include)
 add_subdirectory(protocol)
 include_directories(protocol/gen)
 
-
-# add_subdirectory(3rdParty/muduo)
-# include_directories(3rdParty/muduo)
-
 include_directories(include)
 add_subdirectory(include)
 
@@ -85,8 +79,6 @@ target_link_libraries(Ledger
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
                     rudeconfig
-                    # muduo_net
-                    # muduo_base
                     pthread rt
                     raft
                     )

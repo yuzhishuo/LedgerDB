@@ -33,8 +33,6 @@ RUN git clone https://github.com/facebook/rocksdb.git && cd rocksdb && mkdir .bu
 RUN git clone --branch v1.9.2 https://github.com/gabime/spdlog.git && cd spdlog && mkdir build && cd build \
     && cmake .. && make -j && make install
 
-RUN git clone https://github.com/google/googletest && cd googletest  && mkdir build && cd build && cmake .. && make -j $(nproc || grep -c ^processor /proc/cpuinfo) && make install
-
 RUN git clone https://github.com/grpc/grpc.git && cd /grpc && git submodule update --init --recursive 
 
 RUN cd /grpc && mkdir .build && cd .build && cmake .. -DgRPC_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release && make install -j $(nproc || grep -c ^processor /proc/cpuinfo) \

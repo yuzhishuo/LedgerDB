@@ -46,6 +46,10 @@ add_dependencies(raft build_raft)
 include_directories(3rdParty/raft/include)
 # raft end
 
+add_subdirectory(3rdParty/googletest)
+include_directories(3rdParty/googletest/googletest/include)
+include_directories(3rdParty/googletest/googlemock/include)
+
 add_subdirectory(3rdParty/fmt)
 include_directories(3rdParty/fmt/include)
 

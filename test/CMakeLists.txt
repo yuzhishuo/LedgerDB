@@ -8,5 +8,8 @@ aux_source_directory(. TEST_DIR_SRCS)
 
 add_executable(moontest ${TEST_DIR_SRCS})
 target_link_libraries(moontest PRIVATE 
-    GTest::gmock GTest::gtest GTest::gtest_main
+    GTest::gmock
+    GTest::gtest
+    GTest::gtest_main
+    utility
 )

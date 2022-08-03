@@ -79,7 +79,7 @@ target_link_libraries(Ledger
 
                     RocksDB::rocksdb
                     gRPC::gpr gRPC::upb gRPC::grpc gRPC::grpc++
-                    # re2::re2 c-ares::cares)
+                    # re2::re2 c-ares::cares
                     Threads::Threads
                     spdlog::spdlog spdlog::spdlog_header_only
                     rudeconfig

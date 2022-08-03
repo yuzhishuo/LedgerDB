@@ -1,31 +1,20 @@
 /*
  * @Author: Leo
- * @Date: 2022-02-01 21:47:19
- * @LastEditTime: 2022-08-01 02:03:57
+ * @Date: 2022-08-01 01:59:11
  * @LastEditors: Leo
- * @Description: 打开koroFileHeader查看配置 进行设置:
- * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /example-authority-cpp/include/LedgerEngine.h
+ * @LastEditTime: 2022-08-01 02:12:43
  */
-#pragma once
-#include <memory>
+#ifndef LEDGERDB_YUZHI_SERVER__INTERFACE_H
+#define LEDGERDB_YUZHI_SERVER__INTERFACE_H
+#include <common/common.h>
 #include <optional>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <common/Error.h>
-#include <merkle/MerkleEngine.h>
-class Ledger;
-
-namespace yuzhi
+namespace yuzhi::server::interface
 {
-class LedgerEngine
+class ILedger
 {
-public:
-  explicit LedgerEngine(std::shared_ptr<Ledger> ledger);
-  ~LedgerEngine() = default;
-
 public:
   // Read, get 你存的东西 ，就要一个参数 jsn
   std::pair<std::vector<uint8_t>, std::optional<common::Error>> Read(const std::string &jsn);
@@ -42,10 +31,8 @@ public:
   std::optional<common::Error> Purge();
   // Hide
   std::optional<common::Error> Hide();
-
-private:
-  std::weak_ptr<Ledger> ledger_;
-  MerkleEngine merkle_engine_;
+  virtual ~ILedger() = default;
 };
+} // namespace yuzhi::server::interface
 
-} // namespace yuzhi
+#endif

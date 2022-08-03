@@ -1,3 +1,3 @@
 
 
-add_library(utility tpl.c)
+add_library(utility tpl.c Snow.cpp)

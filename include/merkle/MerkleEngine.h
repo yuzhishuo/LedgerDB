@@ -1,21 +1,18 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 16:36:55
- * @LastEditTime: 2022-07-22 09:48:46
+ * @LastEditTime: 2022-07-30 08:36:06
  * @LastEditors: Leo
- * @Description: 打开koroFileHeader查看配置 进行设置:
- * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /example-authority-cpp/include/merkle/MerkleEngine.h
  */
 #pragma once
 #include <memory>
 #include <string>
 
-#include <optional>
-
 #include <common/Error.h>
+#include <merkle/Block.h>
 #include <merkle/merklecpp/merklecpp.h>
 #include <merkle_engine.pb.h>
+#include <optional>
 #include <rocksdb/db.h>
 
 namespace yuzhi
@@ -27,7 +24,7 @@ class MerkleEngine final
 {
 
 public:
-  MerkleEngine(std::shared_ptr<Ledger> ledger);
+  explicit MerkleEngine(std::shared_ptr<Ledger> ledger);
   ~MerkleEngine();
 
 public:
@@ -72,13 +69,14 @@ public:
   std::optional<common::Error> Delete(const std::string &jsn);
 
 private:
-  bool is_full() { return merkle_->num_leaves() == kMerkleTreeSize; }
+  bool is_full() const { return merkle_->num_leaves() == kMerkleTreeSize; }
 
 private:
   uint64_t merkle_id = 0;
   std::string tree_store_path_;
   std::shared_ptr<Ledger> ledger_;
-  std::unique_ptr<merkle::Tree> merkle_;
+  std::shared_ptr<::merkle::Tree> merkle_;
+  Block *block_;
   rocksdb::DB *db_;
 };
 } // namespace yuzhi

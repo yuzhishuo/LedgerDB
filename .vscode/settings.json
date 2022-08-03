@@ -5,8 +5,7 @@
     "cmake.configureOnOpen": false,
     "cmake.debugConfig": {
       "args": [
-          "--Create=1",
-          "--name=1",
+
       ]
     },
     "files.associations": {

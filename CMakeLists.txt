@@ -21,7 +21,6 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-find_package(RocksDB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 
 find_package(gRPC CONFIG REQUIRED)
@@ -85,7 +84,7 @@ add_executable(Ledger ${DIR_SRCS} main.cpp )
 
 target_link_libraries(Ledger
 
-                    RocksDB::rocksdb
+                    rocksdb
                     gRPC::gpr gRPC::upb gRPC::grpc gRPC::grpc++
                     # re2::re2 c-ares::cares
                     Threads::Threads

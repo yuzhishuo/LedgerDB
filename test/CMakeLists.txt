@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(moontest)
 
-find_package(GTest CONFIG REQUIRED)
-
 include_directories(../include)
 aux_source_directory(. TEST_DIR_SRCS)
 

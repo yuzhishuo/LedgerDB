@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 16:36:55
- * @LastEditTime: 2022-07-30 08:36:06
+ * @LastEditTime: 2022-08-04 14:28:07
  * @LastEditors: Leo
  */
 #pragma once
@@ -58,7 +58,7 @@ public:
         return {{}, common::Error::MerkleTreeUpdateError()};
       }
       // 清空
-      merkle_.reset(new merkle::Tree());
+      merkle_ = std::make_shared<::merkle::Tree>();
     }
 
     return {leaf_meta, {}};

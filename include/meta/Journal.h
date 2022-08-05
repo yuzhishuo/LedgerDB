@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 06:35:03
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:15:57
+ * @LastEditTime: 2022-08-04 14:26:38
  */
 
 #pragma once
@@ -46,7 +46,6 @@ struct JournalProxying
 
 struct JournalReceipt
 {
-
   std::string request_hash;
   std::string proxying_hash;
   std::string block_hash;

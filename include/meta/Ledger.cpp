@@ -15,14 +15,14 @@ namespace yuzhi
 std::shared_ptr<LedgerEngine> Ledger::engine() { return std::make_shared<LedgerEngine>(shared_from_this()); }
 
 Ledger::Ledger(meta::IAccountAtrribute *attribute, const std::string &name, const std::string &owner)
-    : ledger_{}, attribute_(attribute)
+    : ledger_{}, merkle_engine_{shared_from_this()}, attribute_(attribute)
 {
   ledger_->set_owner(owner);
   ledger_->set_name(name);
 }
 
 Ledger::Ledger(meta::IAccountAtrribute *attribute, ledger_engine::Ledger &&ledger_inner)
-    : ledger_(std::move(ledger_inner)), attribute_(attribute)
+    : ledger_(std::move(ledger_inner)), merkle_engine_{shared_from_this()}, attribute_(attribute)
 {
 }
 

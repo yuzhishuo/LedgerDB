@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-24 01:18:28
+ * @LastEditTime: 2022-08-04 14:45:15
  */
 #pragma once
 
@@ -19,6 +19,7 @@
 #include "interfaces/IDisposable.h"
 #include "interfaces/IMonostate.h"
 #include "interfaces/IUnique.h"
+#include "merkle/MerkleEngine.h"
 #include "meta/User.h"
 
 enum class LEDGER_ROLE : uint8_t
@@ -51,11 +52,11 @@ public: // meta
   Ledger(meta::IAccountAtrribute *attribute, const std::string &name, const std::string &owner);
   Ledger(meta::IAccountAtrribute *attribute, ledger_engine::Ledger &&ledger_inner);
 
-  virtual ~Ledger() = default;
+  ~Ledger() override = default;
 
-  virtual void dispose() override;
+  void dispose() override;
 
-  virtual const std::string &GetUnique() const override { return ledger_->name(); }
+  const std::string &GetUnique() const override { return ledger_->name(); }
 
   LEDGER_ROLE getRoleByUserName(const std::string &name) const;
 
@@ -91,6 +92,7 @@ public:
 
 private:
   Monostate<MonoType> ledger_;
+  MerkleEngine merkle_engine_;
   meta::IAccountAtrribute *attribute_;
 };
 } // namespace yuzhi

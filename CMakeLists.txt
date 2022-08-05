@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14.0)
+cmake_minimum_required(VERSION 3.14)
 project(LedgerDB VERSION 0.1.0)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -30,6 +30,15 @@ set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 set(_REFLECTION gRPC::grpc++_reflection )
 set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
 
+option(WITH_TESTS OFF)
+option(WITH_BENCHMARK_TOOLS OFF)
+
+add_subdirectory(3rdParty/rocksdb)
+include_directories(3rdParty/rocksdb/include)
+
+add_subdirectory(3rdParty/libuv)
+include_directories(3rdParty/libuv/include)
+
 # raft 
 set(RAFT_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft/libraft.a)
 add_custom_target(build_raft ALL
@@ -52,7 +61,6 @@ include_directories(3rdParty/googletest/googlemock/include)
 
 add_subdirectory(3rdParty/fmt)
 include_directories(3rdParty/fmt/include)
-
 add_subdirectory(3rdParty/spdlog)
 include_directories(3rdParty/spdlog/include)
 

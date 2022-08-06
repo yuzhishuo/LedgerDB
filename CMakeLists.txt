@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14.0)
+cmake_minimum_required(VERSION 3.14)
 project(LedgerDB VERSION 0.1.0)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -21,7 +21,6 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-find_package(RocksDB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 
 find_package(gRPC CONFIG REQUIRED)
@@ -29,6 +28,15 @@ find_package(protobuf CONFIG REQUIRED)
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 set(_REFLECTION gRPC::grpc++_reflection )
 set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+
+option(WITH_TESTS OFF)
+option(WITH_BENCHMARK_TOOLS OFF)
+
+add_subdirectory(3rdParty/rocksdb)
+include_directories(3rdParty/rocksdb/include)
+
+add_subdirectory(3rdParty/libuv)
+include_directories(3rdParty/libuv/include)
 
 # raft 
 set(RAFT_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/raft/libraft.a)
@@ -52,7 +60,6 @@ include_directories(3rdParty/googletest/googlemock/include)
 
 add_subdirectory(3rdParty/fmt)
 include_directories(3rdParty/fmt/include)
-
 add_subdirectory(3rdParty/spdlog)
 include_directories(3rdParty/spdlog/include)
 
@@ -77,7 +84,7 @@ add_executable(Ledger ${DIR_SRCS} main.cpp )
 
 target_link_libraries(Ledger
 
-                    RocksDB::rocksdb
+                    rocksdb
                     gRPC::gpr gRPC::upb gRPC::grpc gRPC::grpc++
                     # re2::re2 c-ares::cares
                     Threads::Threads

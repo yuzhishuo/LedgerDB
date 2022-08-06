@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-08-04 14:45:15
+ * @LastEditTime: 2022-08-06 14:08:51
  */
 #pragma once
 
@@ -21,7 +21,7 @@
 #include "interfaces/IUnique.h"
 #include "merkle/MerkleEngine.h"
 #include "meta/User.h"
-
+#include "JournalProxying.hpp"
 enum class LEDGER_ROLE : uint8_t
 {
   UNKION,
@@ -80,6 +80,13 @@ public: // meta
 
 public: // engine
   std::shared_ptr<yuzhi::LedgerEngine> engine();
+
+public:
+  std::optional<common::Error> putJournald(const std::string &hash)
+  {
+    merkle_engine_.Add(hash);
+    return std::nullopt;
+  }
 
 public:
   std::pair<std::string, std::optional<common::Error>> serialize() const override { return ledger_.serialize(); }

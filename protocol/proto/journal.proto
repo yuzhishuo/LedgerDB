@@ -9,12 +9,11 @@ message JournalRequest {
     string payload_name = 3;
     uint64 payload_size = 4;
     string payload_type = 5;
-    uint64 nonce =6;
-    uint64 timestamp =7;
-    repeated string sender = 8;
-    repeated string clue = 9;
-
-    bytes hash = 10;
+    string payload_hash =6;
+    uint64 nonce =7;
+    uint64 timestamp =8;
+    repeated string sender = 9;
+    repeated string clue = 10;
 }
 
 message Payload {

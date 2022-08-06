@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 06:35:03
  * @LastEditors: Leo
- * @LastEditTime: 2022-08-04 14:26:38
+ * @LastEditTime: 2022-08-05 06:32:36
  */
 
 #pragma once
@@ -11,14 +11,12 @@
 
 struct Payload
 {
-
   char *payload;
   uint64_t length;
 };
 
 struct JournalRequest
 {
-
   std::string ledger_name;
   std::string journal_id;
   Payload payload;

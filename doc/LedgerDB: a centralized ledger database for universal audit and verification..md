@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-12 12:38:18
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-16 08:42:35
+ * @LastEditTime: 2022-08-06 02:18:10
 -->
 # LedgerDB: a centralized ledger database for universal audit and verification.
 # LedgerDB: 一个可用于通用审计与验证中心化账本数据库
@@ -285,11 +285,11 @@ AppendTx(lgid,data,'g0',{'rock', 'blues', 'reggae'})
 
 ![](source/img/paper/Figure8_Structure_of_clue_index.png)
 
-线索的基本操作包括 插入， 接收和验证。 正如我们写密集型的场景， 线索的吸入必须去考虑高的吞吐量。 我们设计一个写优化索引结构用于线索如图8所示。对于没有给线索，所有相关的 journal 被组织成一个**反转的跳表** （clue Skip List，cSL).。cSL中的一个单元（或节点）记录它自己的jsn，并指向它的前一个单元。所有的单元在创建时都被附加到一个线性结构的存储中。其中，我们可以直接使用存储偏移量来定位它们。请注意，来自同一cSL的单元格没有必要彼此相邻。因此，我们为线索索引使用固定数量的线性结构存储实例，其中多个cSL可以共享一个实例。由于线索的cardinality通常较小，我们将线索id和相应的cSL之间的映射保存在内存中。为了支持快速的故障转移，cSL被定期检点到磁盘。
+线索的基本操作包括 插入， 接收和验证。 正如我们写密集型的场景， 线索的写入入必须去考虑高的吞吐量。 我们设计一个写优化索引结构用于线索如图8所示。对于所有线索与之所有相关的 journal 被组织成一个**反转的跳表** （clue Skip List，cSL).。cSL中的一个单元（或节点）记录它自己的jsn，并指向它的前一个单元。所有的单元在创建时都被附加到一个线性结构的存储中。其中，我们可以直接使用存储偏移量来定位它们。请注意，来自同一cSL的单元格没有必要彼此相邻。因此，我们为线索索引使用固定数量的线性结构存储实例，其中多个cSL可以共享一个实例。由于线索的cardinality通常较小，我们将线索id和相应的cSL之间的映射保存在内存中。为了支持快速的故障转移，cSL被定期检点到磁盘。
 
 Clue Index Write.对于一个线索插入，其输入是一个 [clueid, jsn] 对。首先，我们找到相应的cSL并创建一个单元来记录jsn（以及与其他单元的链接 需要的时候）。然后，该单元被添加到存储中。整个过程的复杂度为O(1)。鉴于其小尺寸 和 存储宽带， 写效率很容易达到百万级每秒。
 
-Clue Index Read.线索点检索读取的是与给定jsn共享指定线索的最新jsn。由于所有的jsn都在cSL中被链接，所以查找过程是直接的。对于一个有n个日志的线索，计算和存储成本都是O(log n)。线索范围检索是针对给定jsn的指定线索读取一组jsn s。首先，我们执行一个点检索，以定位起始单元。对于一个范围大小为m的单元，我们进行迭代，直到获得m个单元。其总复杂度为O((log n) + m)。一个范围的检索可以进一步 通过同时读取随后的m-1个单元来进一步加速。
+Clue Index Read.线索点检索读取的是与给定jsn共享指定线索的最新jsn。由于所有的jsn都在cSL中被链接，所以查找过程是直接的。对于一个有n个 journal 的线索，计算和存储成本都是O(log n)。线索范围检索是针对给定jsn的指定线索读取一组jsn s。首先，我们执行一个点检索，以定位起始单元。对于一个范围大小为m的单元，我们进行迭代，直到获得m个单元。其总复杂度为O((log n) + m)。一个范围的检索可以进一步 通过同时读取随后的m-1个单元来进一步加速。
 
 
 ### 6.3 Clue-Oriented Verification
@@ -298,7 +298,7 @@ Clue Index Read.线索点检索读取的是与给定jsn共享指定线索的最�
 
 ![](http://latex.codecogs.com/gif.latex?\\frac{\\partial J}{\\partial \\theta_k^{(j)}}=\\sum_{i:r(i,j)=1}{\\big((\\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\\big)x_k^{(i)}}+\\lambda \\xtheta_k^{(j)})
 
-线索验证被是一个连续批次验证过程在所有相关的 journals 中， 不同于顺序链接块交易验证和世界状态验证。 我们对于这个这个case 提供了一个专用的验证协议。一个 clue-counter MPT (ccMPT) 被提出去追踪当前的关心线索（ie key)的 counter （ie value) 和 锚定其根hash值到最新的块头中。给一个 ledger （L） 其中 bAMT时 是Λ ， 指定的线索是 σ，这个 clue-count trusted anchor 对于σ 是m（其中m在大多数情况下是1，否则将是最后一次清除前的最新计数。）L的 ccMPT 是 ∆. 一个功能 S (搜索) 将输入 clue 数据 σ，一个树标识 ∆ 和 输出 journal 的数目 n， 一个功能 V （验证） 将输入 clue 数据 σ，一个树的根 hash r∆ 或 rΛ 和一个证明结果 π （boolean）。 线索的证明过程被如下定义：
+所有相关的 journals 中，线索验证是一个离散批次验证过程在， 不同于顺序链接块交易验证和世界状态验证。 我们对于这个这个case 提供了一个专用的验证协议。一个 clue-counter MPT (ccMPT) 被提出去追踪当前的关心线索（ie key)的 counter （ie value) 和 锚定其根hash值到最新的块头中。给一个 ledger （L） 其中 bAMT时 是Λ ， 指定的线索是 σ，这个 clue-count trusted anchor 对于σ 是m（其中m在大多数情况下是1，否则将是最后一次清除前的最新计数。）L的 ccMPT 是 ∆. 一个功能 S (搜索) 将输入 clue 数据 σ，一个树标识 ∆ 和 输出 journal 的数目 n， 一个功能 V （验证） 将输入 clue 数据 σ，一个树的根 hash r∆ 或 rΛ 和一个证明结果 π （boolean）。 线索的证明过程被如下定义：
 
 a. n=S(σ,∆) , 检索出 clue σ 的 journal 数目
 b. π_c = V(σ,r_∆,∆),   其中 n 被∆ 验证通过 当前来自最后一个 block 中的 根 hash r_∆  和一个证明 σ 的数目 n 被通过 π_c 提供。

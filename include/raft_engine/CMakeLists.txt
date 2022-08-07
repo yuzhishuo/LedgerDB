@@ -2,8 +2,6 @@
 
 add_library(raft_engine 
     RaftEngine.cpp
-    net/codec.cpp
-    net/RaftService.cpp
 )
 
 
@@ -16,5 +14,6 @@ target_link_libraries(
     gen
     utility
     raft
+    uv_a
 )
 

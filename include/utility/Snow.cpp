@@ -14,7 +14,7 @@ namespace yuzhi::utility
 // 始时间截 (2015-01-01)
 constexpr uint64_t twepoch = 142004160000uL;
 // 机器id所占的位数
-constexpr uint64_t workerIdBits = 5uL;
+// constexpr uint64_t workerIdBits = 5uL;
 // 数据标识id所占的位数
 constexpr uint64_t datacenterIdBits = 5;
 // 支持的最大机器id，结果是31 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数)

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-08-01 02:18:01
  * @LastEditors: Leo
- * @LastEditTime: 2022-08-03 14:47:21
+ * @LastEditTime: 2022-08-07 01:14:54
  */
 
 #pragma once
@@ -14,6 +14,9 @@
 #include <pthread.h>
 namespace yuzhi::utility
 {
+  // 机器id所占的位数
+constexpr uint64_t workerIdBits = 5uL;
+
 struct SnowflakeIdWorker
 {
   // 数据中心ID(0~31)

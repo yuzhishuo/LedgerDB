@@ -6,6 +6,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 file(COPY config.default.conf  DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
+
+set(CMAKE_BUILD_TYPE Release)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
@@ -29,8 +31,15 @@ set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 set(_REFLECTION gRPC::grpc++_reflection )
 set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
 
+# rocksdb
+set(USE_RTTI 1)
 option(WITH_TESTS OFF)
 option(WITH_BENCHMARK_TOOLS OFF)
+option(WITH_TOOLS OFF)
+option(WITH_CORE_TOOLS OFF)
+option(WITH_TRACE_TOOLS OFF)
+option(WITH_BENCHMARK_TOOLS OFF)
+option(WITH_ALL_TESTS OFF)
 
 add_subdirectory(3rdParty/rocksdb)
 include_directories(3rdParty/rocksdb/include)

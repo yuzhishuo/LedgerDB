@@ -1,12 +1,8 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 13:11:29
- * @LastEditTime: 2022-08-06 17:27:44
+ * @LastEditTime: 2022-08-09 12:30:02
  * @LastEditors: Leo
- * @Description: 打开koroFileHeader查看配置 进行设置:
- * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- *
- * @FilePath: /example-authority-cpp/include/raft_engine/RaftEngine.h
  */
 #pragma once
 #include <memory>
@@ -27,11 +23,12 @@ class RaftEngine : public IConfigurable
 {
 
 public:
-  virtual const char *Field() const override { return "raft"; }
-  virtual ~RaftEngine();
+  RaftEngine();
+
+  const char *Field() const override { return "raft"; }
+  ~RaftEngine() override = default;
 
 private:
-public:
-private:
+  std::unique_ptr<RaftServer> raft_server_;
 };
 } // namespace yuzhi::raft_engine

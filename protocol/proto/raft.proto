@@ -22,7 +22,9 @@ message Node
 
 // message 
 
-message Entry {}
+message Entry {
+    string data = 1;
+}
 
 message VolatileState {
    

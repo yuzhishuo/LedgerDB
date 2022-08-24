@@ -39,6 +39,9 @@ option(WITH_TRACE_TOOLS OFF)
 option(WITH_BENCHMARK_TOOLS OFF)
 option(WITH_ALL_TESTS OFF)
 
+add_subdirectory(3rdParty/RxCpp)
+include_directories(3rdParty/RxCpp/Rx/v2/src)
+
 add_subdirectory(3rdParty/rocksdb)
 include_directories(3rdParty/rocksdb/include)
 
@@ -106,7 +109,7 @@ target_link_libraries(Ledger
   # rbac
   gen
   utility
-  # raft_engine
+  raft_engine
 )
 
 enable_testing()

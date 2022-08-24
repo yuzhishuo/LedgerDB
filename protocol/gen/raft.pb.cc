@@ -34,7 +34,8 @@ struct NodeDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT NodeDefaultTypeInternal _Node_default_instance_;
 constexpr Entry::Entry(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : data_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
 struct EntryDefaultTypeInternal {
   constexpr EntryDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -195,6 +196,7 @@ const uint32_t TableStruct_raft_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pro
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::raft::Entry, data_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::raft::VolatileState, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -280,15 +282,15 @@ const uint32_t TableStruct_raft_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pro
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::raft::Node)},
   { 11, -1, -1, sizeof(::raft::Entry)},
-  { 17, -1, -1, sizeof(::raft::VolatileState)},
-  { 25, -1, -1, sizeof(::raft::PersistentState)},
-  { 34, -1, -1, sizeof(::raft::leaderState)},
-  { 42, -1, -1, sizeof(::raft::RequestVote)},
-  { 52, -1, -1, sizeof(::raft::RequestVoteResponse)},
-  { 60, -1, -1, sizeof(::raft::AppendEntries)},
-  { 72, -1, -1, sizeof(::raft::AppendEntriesResponse)},
-  { 82, -1, -1, sizeof(::raft::KeepAlive)},
-  { 90, -1, -1, sizeof(::raft::KeepAliveResponse)},
+  { 18, -1, -1, sizeof(::raft::VolatileState)},
+  { 26, -1, -1, sizeof(::raft::PersistentState)},
+  { 35, -1, -1, sizeof(::raft::leaderState)},
+  { 43, -1, -1, sizeof(::raft::RequestVote)},
+  { 53, -1, -1, sizeof(::raft::RequestVoteResponse)},
+  { 61, -1, -1, sizeof(::raft::AppendEntries)},
+  { 73, -1, -1, sizeof(::raft::AppendEntriesResponse)},
+  { 83, -1, -1, sizeof(::raft::KeepAlive)},
+  { 91, -1, -1, sizeof(::raft::KeepAliveResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -309,37 +311,37 @@ const char descriptor_table_protodef_raft_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "\n\nraft.proto\022\004raft\032\031google/protobuf/any."
   "proto\"k\n\004Node\022#\n\005udata\030\001 \001(\0132\024.google.pr"
   "otobuf.Any\022\020\n\010next_idx\030\002 \001(\003\022\021\n\tmatch_id"
-  "x\030\003 \001(\003\022\r\n\005flags\030\004 \001(\003\022\n\n\002id\030\005 \001(\003\"\007\n\005En"
-  "try\"9\n\rVolatileState\022\023\n\013commitIndex\030\004 \001("
-  "\003\022\023\n\013lastApplied\030\005 \001(\003\"R\n\017PersistentStat"
-  "e\022\023\n\013currentTerm\030\001 \001(\003\022\020\n\010votedFor\030\002 \001(\003"
-  "\022\030\n\003log\030\003 \003(\0132\013.raft.Entry\"4\n\013leaderStat"
-  "e\022\021\n\tnextIndex\030\001 \003(\003\022\022\n\nmatchIndex\030\002 \003(\003"
-  "\"[\n\013RequestVote\022\014\n\004term\030\001 \001(\003\022\023\n\013candida"
-  "teId\030\002 \001(\003\022\024\n\014lastLogIndex\030\003 \001(\003\022\023\n\013last"
-  "LogTerm\030\004 \001(\003\"8\n\023RequestVoteResponse\022\014\n\004"
-  "term\030\001 \001(\003\022\023\n\013voteGranted\030\002 \001(\010\"\217\001\n\rAppe"
-  "ndEntries\022\014\n\004term\030\001 \001(\003\022\024\n\014prevLogIndex\030"
-  "\002 \001(\003\022\023\n\013prevLogTerm\030\003 \001(\003\022\024\n\014leaderComm"
-  "it\030\004 \001(\003\022\034\n\007entries\030\005 \003(\0132\013.raft.Entry\022\021"
-  "\n\tn_entries\030\006 \001(\003\"^\n\025AppendEntriesRespon"
-  "se\022\014\n\004term\030\001 \001(\003\022\017\n\007success\030\002 \001(\010\022\023\n\013cur"
-  "rent_idx\030\003 \001(\005\022\021\n\tfirst_idx\030\004 \001(\005\"+\n\tKee"
-  "pAlive\022\014\n\004term\030\001 \001(\003\022\020\n\010leaderId\030\002 \001(\003\"2"
-  "\n\021KeepAliveResponse\022\014\n\004term\030\001 \001(\003\022\017\n\007suc"
-  "cess\030\002 \001(\010*4\n\tRaftState\022\014\n\010follower\020\000\022\r\n"
-  "\tcandidate\020\001\022\n\n\006leader\020\0022\210\001\n\004Raft\022<\n\014RRe"
-  "questVote\022\021.raft.RequestVote\032\031.raft.Requ"
-  "estVoteResponse\022B\n\016RAppendEntries\022\023.raft"
-  ".AppendEntries\032\033.raft.AppendEntriesRespo"
-  "nseb\006proto3"
+  "x\030\003 \001(\003\022\r\n\005flags\030\004 \001(\003\022\n\n\002id\030\005 \001(\003\"\025\n\005En"
+  "try\022\014\n\004data\030\001 \001(\t\"9\n\rVolatileState\022\023\n\013co"
+  "mmitIndex\030\004 \001(\003\022\023\n\013lastApplied\030\005 \001(\003\"R\n\017"
+  "PersistentState\022\023\n\013currentTerm\030\001 \001(\003\022\020\n\010"
+  "votedFor\030\002 \001(\003\022\030\n\003log\030\003 \003(\0132\013.raft.Entry"
+  "\"4\n\013leaderState\022\021\n\tnextIndex\030\001 \003(\003\022\022\n\nma"
+  "tchIndex\030\002 \003(\003\"[\n\013RequestVote\022\014\n\004term\030\001 "
+  "\001(\003\022\023\n\013candidateId\030\002 \001(\003\022\024\n\014lastLogIndex"
+  "\030\003 \001(\003\022\023\n\013lastLogTerm\030\004 \001(\003\"8\n\023RequestVo"
+  "teResponse\022\014\n\004term\030\001 \001(\003\022\023\n\013voteGranted\030"
+  "\002 \001(\010\"\217\001\n\rAppendEntries\022\014\n\004term\030\001 \001(\003\022\024\n"
+  "\014prevLogIndex\030\002 \001(\003\022\023\n\013prevLogTerm\030\003 \001(\003"
+  "\022\024\n\014leaderCommit\030\004 \001(\003\022\034\n\007entries\030\005 \003(\0132"
+  "\013.raft.Entry\022\021\n\tn_entries\030\006 \001(\003\"^\n\025Appen"
+  "dEntriesResponse\022\014\n\004term\030\001 \001(\003\022\017\n\007succes"
+  "s\030\002 \001(\010\022\023\n\013current_idx\030\003 \001(\005\022\021\n\tfirst_id"
+  "x\030\004 \001(\005\"+\n\tKeepAlive\022\014\n\004term\030\001 \001(\003\022\020\n\010le"
+  "aderId\030\002 \001(\003\"2\n\021KeepAliveResponse\022\014\n\004ter"
+  "m\030\001 \001(\003\022\017\n\007success\030\002 \001(\010*4\n\tRaftState\022\014\n"
+  "\010follower\020\000\022\r\n\tcandidate\020\001\022\n\n\006leader\020\0022\210"
+  "\001\n\004Raft\022<\n\014RRequestVote\022\021.raft.RequestVo"
+  "te\032\031.raft.RequestVoteResponse\022B\n\016RAppend"
+  "Entries\022\023.raft.AppendEntries\032\033.raft.Appe"
+  "ndEntriesResponseb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_raft_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2fany_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_raft_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_raft_2eproto = {
-  false, false, 1051, descriptor_table_protodef_raft_2eproto, "raft.proto", 
+  false, false, 1065, descriptor_table_protodef_raft_2eproto, "raft.proto", 
   &descriptor_table_raft_2eproto_once, descriptor_table_raft_2eproto_deps, 1, 11,
   schemas, file_default_instances, TableStruct_raft_2eproto::offsets,
   file_level_metadata_raft_2eproto, file_level_enum_descriptors_raft_2eproto, file_level_service_descriptors_raft_2eproto,
@@ -678,30 +680,194 @@ class Entry::_Internal {
 
 Entry::Entry(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
   // @@protoc_insertion_point(arena_constructor:raft.Entry)
 }
 Entry::Entry(const Entry& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    data_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_data().empty()) {
+    data_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_data(), 
+      GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:raft.Entry)
 }
 
+inline void Entry::SharedCtor() {
+data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  data_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
 
+Entry::~Entry() {
+  // @@protoc_insertion_point(destructor:raft.Entry)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
 
+inline void Entry::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  data_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
 
+void Entry::ArenaDtor(void* object) {
+  Entry* _this = reinterpret_cast< Entry* >(object);
+  (void)_this;
+}
+void Entry::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void Entry::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void Entry::Clear() {
+// @@protoc_insertion_point(message_clear_start:raft.Entry)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  data_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* Entry::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string data = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_data();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "raft.Entry.data"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* Entry::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:raft.Entry)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string data = 1;
+  if (!this->_internal_data().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_data().data(), static_cast<int>(this->_internal_data().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "raft.Entry.data");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_data(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:raft.Entry)
+  return target;
+}
+
+size_t Entry::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:raft.Entry)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string data = 1;
+  if (!this->_internal_data().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_data());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Entry::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    Entry::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Entry::GetClassData() const { return &_class_data_; }
 
+void Entry::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<Entry *>(to)->MergeFrom(
+      static_cast<const Entry &>(from));
+}
 
 
+void Entry::MergeFrom(const Entry& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:raft.Entry)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  if (!from._internal_data().empty()) {
+    _internal_set_data(from._internal_data());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void Entry::CopyFrom(const Entry& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:raft.Entry)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
+bool Entry::IsInitialized() const {
+  return true;
+}
+
+void Entry::InternalSwap(Entry* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &data_, lhs_arena,
+      &other->data_, rhs_arena
+  );
+}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Entry::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(

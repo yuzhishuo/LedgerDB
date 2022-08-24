@@ -24,7 +24,7 @@ constexpr JournalRequest::JournalRequest(
   , ledger_name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , payload_name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , payload_type_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , hash_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , payload_hash_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , journal_id_(uint64_t{0u})
   , payload_size_(uint64_t{0u})
   , nonce_(uint64_t{0u})
@@ -118,11 +118,11 @@ const uint32_t TableStruct_journal_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, payload_name_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, payload_size_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, payload_type_),
+  PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, payload_hash_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, nonce_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, timestamp_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, sender_),
   PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, clue_),
-  PROTOBUF_FIELD_OFFSET(::journal_engine::JournalRequest, hash_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::journal_engine::Payload, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -186,33 +186,34 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_journal_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\rjournal.proto\022\016journal_engine\"\311\001\n\016Jour"
+  "\n\rjournal.proto\022\016journal_engine\"\321\001\n\016Jour"
   "nalRequest\022\023\n\013ledger_name\030\001 \001(\t\022\022\n\njourn"
   "al_id\030\002 \001(\004\022\024\n\014payload_name\030\003 \001(\t\022\024\n\014pay"
-  "load_size\030\004 \001(\004\022\024\n\014payload_type\030\005 \001(\t\022\r\n"
-  "\005nonce\030\006 \001(\004\022\021\n\ttimestamp\030\007 \001(\004\022\016\n\006sende"
-  "r\030\010 \003(\t\022\014\n\004clue\030\t \003(\t\022\014\n\004hash\030\n \001(\014\"\027\n\007P"
-  "ayload\022\014\n\004data\030\001 \001(\014\"\345\001\n\017JournalProxying"
-  "\022\024\n\014request_hash\030\001 \001(\t\022\021\n\tstream_id\030\002 \001("
-  "\004\022\016\n\006offset\030\003 \001(\004\022\024\n\014journal_size\030\004 \001(\004\022"
-  "\021\n\tserver_id\030\005 \001(\004\022\030\n\020server_timestamp\030\006"
-  " \001(\004\022\026\n\016execute_status\030\007 \001(\004\022\026\n\016execute_"
-  "result\030\010 \001(\004\022\030\n\020root_hash_status\030\t \001(\004\022\014"
-  "\n\004hash\030\n \001(\014\"\256\001\n\016JournalReceipt\022\024\n\014reque"
-  "st_hash\030\001 \001(\014\022\025\n\rproxying_hash\030\002 \001(\014\022\022\n\n"
-  "block_hash\030\003 \001(\014\022\021\n\tserver_id\030\004 \001(\004\022\030\n\020s"
-  "erver_timestamp\030\005 \001(\004\022\026\n\016execute_status\030"
-  "\006 \001(\004\022\026\n\016execute_result\030\007 \001(\004\"\205\001\n\022Journa"
-  "lRequestByte\0229\n\017journal_request\030\001 \001(\0132\036."
-  "journal_engine.JournalRequestH\000\022*\n\007paylo"
-  "ad\030\002 \001(\0132\027.journal_engine.PayloadH\000B\010\n\006s"
-  "tream2b\n\016JournalService\022P\n\010AppendTx\022\".jo"
-  "urnal_engine.JournalRequestByte\032\036.journa"
-  "l_engine.JournalReceipt(\001b\006proto3"
+  "load_size\030\004 \001(\004\022\024\n\014payload_type\030\005 \001(\t\022\024\n"
+  "\014payload_hash\030\006 \001(\t\022\r\n\005nonce\030\007 \001(\004\022\021\n\tti"
+  "mestamp\030\010 \001(\004\022\016\n\006sender\030\t \003(\t\022\014\n\004clue\030\n "
+  "\003(\t\"\027\n\007Payload\022\014\n\004data\030\001 \001(\014\"\345\001\n\017Journal"
+  "Proxying\022\024\n\014request_hash\030\001 \001(\t\022\021\n\tstream"
+  "_id\030\002 \001(\004\022\016\n\006offset\030\003 \001(\004\022\024\n\014journal_siz"
+  "e\030\004 \001(\004\022\021\n\tserver_id\030\005 \001(\004\022\030\n\020server_tim"
+  "estamp\030\006 \001(\004\022\026\n\016execute_status\030\007 \001(\004\022\026\n\016"
+  "execute_result\030\010 \001(\004\022\030\n\020root_hash_status"
+  "\030\t \001(\004\022\014\n\004hash\030\n \001(\014\"\256\001\n\016JournalReceipt\022"
+  "\024\n\014request_hash\030\001 \001(\014\022\025\n\rproxying_hash\030\002"
+  " \001(\014\022\022\n\nblock_hash\030\003 \001(\014\022\021\n\tserver_id\030\004 "
+  "\001(\004\022\030\n\020server_timestamp\030\005 \001(\004\022\026\n\016execute"
+  "_status\030\006 \001(\004\022\026\n\016execute_result\030\007 \001(\004\"\205\001"
+  "\n\022JournalRequestByte\0229\n\017journal_request\030"
+  "\001 \001(\0132\036.journal_engine.JournalRequestH\000\022"
+  "*\n\007payload\030\002 \001(\0132\027.journal_engine.Payloa"
+  "dH\000B\010\n\006stream2b\n\016JournalService\022P\n\010Appen"
+  "dTx\022\".journal_engine.JournalRequestByte\032"
+  "\036.journal_engine.JournalReceipt(\001b\006proto"
+  "3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_journal_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_journal_2eproto = {
-  false, false, 913, descriptor_table_protodef_journal_2eproto, "journal.proto", 
+  false, false, 921, descriptor_table_protodef_journal_2eproto, "journal.proto", 
   &descriptor_table_journal_2eproto_once, nullptr, 0, 5,
   schemas, file_default_instances, TableStruct_journal_2eproto::offsets,
   file_level_metadata_journal_2eproto, file_level_enum_descriptors_journal_2eproto, file_level_service_descriptors_journal_2eproto,
@@ -271,12 +272,12 @@ JournalRequest::JournalRequest(const JournalRequest& from)
     payload_type_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_payload_type(), 
       GetArenaForAllocation());
   }
-  hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  payload_hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+    payload_hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_hash().empty()) {
-    hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_hash(), 
+  if (!from._internal_payload_hash().empty()) {
+    payload_hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_payload_hash(), 
       GetArenaForAllocation());
   }
   ::memcpy(&journal_id_, &from.journal_id_,
@@ -298,9 +299,9 @@ payload_type_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStrin
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
   payload_type_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+payload_hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  payload_hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&journal_id_) - reinterpret_cast<char*>(this)),
@@ -320,7 +321,7 @@ inline void JournalRequest::SharedDtor() {
   ledger_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   payload_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   payload_type_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  hash_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  payload_hash_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void JournalRequest::ArenaDtor(void* object) {
@@ -344,7 +345,7 @@ void JournalRequest::Clear() {
   ledger_name_.ClearToEmpty();
   payload_name_.ClearToEmpty();
   payload_type_.ClearToEmpty();
-  hash_.ClearToEmpty();
+  payload_hash_.ClearToEmpty();
   ::memset(&journal_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&timestamp_) -
       reinterpret_cast<char*>(&journal_id_)) + sizeof(timestamp_));
@@ -403,25 +404,35 @@ const char* JournalRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
         } else
           goto handle_unusual;
         continue;
-      // uint64 nonce = 6;
+      // string payload_hash = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          auto str = _internal_mutable_payload_hash();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "journal_engine.JournalRequest.payload_hash"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 nonce = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
           nonce_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // uint64 timestamp = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+      // uint64 timestamp = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
           timestamp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // repeated string sender = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+      // repeated string sender = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -430,13 +441,13 @@ const char* JournalRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
             CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "journal_engine.JournalRequest.sender"));
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
         } else
           goto handle_unusual;
         continue;
-      // repeated string clue = 9;
-      case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
+      // repeated string clue = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 82)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -445,16 +456,7 @@ const char* JournalRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
             CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "journal_engine.JournalRequest.clue"));
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
-        } else
-          goto handle_unusual;
-        continue;
-      // bytes hash = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 82)) {
-          auto str = _internal_mutable_hash();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<82>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -529,42 +531,46 @@ uint8_t* JournalRequest::_InternalSerialize(
         5, this->_internal_payload_type(), target);
   }
 
-  // uint64 nonce = 6;
+  // string payload_hash = 6;
+  if (!this->_internal_payload_hash().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_payload_hash().data(), static_cast<int>(this->_internal_payload_hash().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "journal_engine.JournalRequest.payload_hash");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_payload_hash(), target);
+  }
+
+  // uint64 nonce = 7;
   if (this->_internal_nonce() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(6, this->_internal_nonce(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(7, this->_internal_nonce(), target);
   }
 
-  // uint64 timestamp = 7;
+  // uint64 timestamp = 8;
   if (this->_internal_timestamp() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(7, this->_internal_timestamp(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(8, this->_internal_timestamp(), target);
   }
 
-  // repeated string sender = 8;
+  // repeated string sender = 9;
   for (int i = 0, n = this->_internal_sender_size(); i < n; i++) {
     const auto& s = this->_internal_sender(i);
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       s.data(), static_cast<int>(s.length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "journal_engine.JournalRequest.sender");
-    target = stream->WriteString(8, s, target);
+    target = stream->WriteString(9, s, target);
   }
 
-  // repeated string clue = 9;
+  // repeated string clue = 10;
   for (int i = 0, n = this->_internal_clue_size(); i < n; i++) {
     const auto& s = this->_internal_clue(i);
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       s.data(), static_cast<int>(s.length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "journal_engine.JournalRequest.clue");
-    target = stream->WriteString(9, s, target);
-  }
-
-  // bytes hash = 10;
-  if (!this->_internal_hash().empty()) {
-    target = stream->WriteBytesMaybeAliased(
-        10, this->_internal_hash(), target);
+    target = stream->WriteString(10, s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -583,7 +589,7 @@ size_t JournalRequest::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated string sender = 8;
+  // repeated string sender = 9;
   total_size += 1 *
       ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(sender_.size());
   for (int i = 0, n = sender_.size(); i < n; i++) {
@@ -591,7 +597,7 @@ size_t JournalRequest::ByteSizeLong() const {
       sender_.Get(i));
   }
 
-  // repeated string clue = 9;
+  // repeated string clue = 10;
   total_size += 1 *
       ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(clue_.size());
   for (int i = 0, n = clue_.size(); i < n; i++) {
@@ -620,11 +626,11 @@ size_t JournalRequest::ByteSizeLong() const {
         this->_internal_payload_type());
   }
 
-  // bytes hash = 10;
-  if (!this->_internal_hash().empty()) {
+  // string payload_hash = 6;
+  if (!this->_internal_payload_hash().empty()) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
-        this->_internal_hash());
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_payload_hash());
   }
 
   // uint64 journal_id = 2;
@@ -637,12 +643,12 @@ size_t JournalRequest::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_payload_size());
   }
 
-  // uint64 nonce = 6;
+  // uint64 nonce = 7;
   if (this->_internal_nonce() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_nonce());
   }
 
-  // uint64 timestamp = 7;
+  // uint64 timestamp = 8;
   if (this->_internal_timestamp() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_timestamp());
   }
@@ -680,8 +686,8 @@ void JournalRequest::MergeFrom(const JournalRequest& from) {
   if (!from._internal_payload_type().empty()) {
     _internal_set_payload_type(from._internal_payload_type());
   }
-  if (!from._internal_hash().empty()) {
-    _internal_set_hash(from._internal_hash());
+  if (!from._internal_payload_hash().empty()) {
+    _internal_set_payload_hash(from._internal_payload_hash());
   }
   if (from._internal_journal_id() != 0) {
     _internal_set_journal_id(from._internal_journal_id());
@@ -733,8 +739,8 @@ void JournalRequest::InternalSwap(JournalRequest* other) {
   );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &hash_, lhs_arena,
-      &other->hash_, rhs_arena
+      &payload_hash_, lhs_arena,
+      &other->payload_hash_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(JournalRequest, timestamp_)

@@ -16,7 +16,9 @@ RUN apt update -y \
     libgflags-dev \
     && apt-get update -y \
     && apt-get install -y gdb clang-format \
-    wget tar
+    wget tar \
+    iproute2 \
+    vim
 
 RUN cd /
 

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-08-07 00:28:10
  * @LastEditors: Leo
- * @LastEditTime: 2022-08-07 00:29:33
+ * @LastEditTime: 2022-08-18 01:41:13
  */
 #ifndef UV_HELPERS_H
 #define UV_HELPERS_H
@@ -19,6 +19,6 @@
 /**
  * Bind a listen socket
  * Abort if any failure. */
-void uv_bind_listen_socket(uv_tcp_t *listen, const char *host, const int port, uv_loop_t *loop);
+void uv_bind_listen_socket(uv_tcp_t *listen, const char *host, const int port, uv_loop_t *loop, void * data);
 
 #endif /* UV_HELPERS_H */

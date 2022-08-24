@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-07 15:44:35
- * @LastEditTime: 2022-08-06 14:08:38
+ * @LastEditTime: 2022-08-12 02:26:50
  * @LastEditors: Leo
  */
 
@@ -11,7 +11,7 @@
 
 #include <ledger_engine.grpc.pb.h>
 #include <meta/Ledgers.h>
-// #include <raft_engine/net/RaftService.hpp>
+#include <raft_engine/RaftEngine.h>
 #include <spdlog/spdlog.h>
 
 namespace yuzhi::service
@@ -31,8 +31,6 @@ public:
 
     return ::grpc::Status::OK;
   }
-
-private:
 };
 } // namespace yuzhi::service
 

@@ -2,37 +2,41 @@
  * @Author: Leo
  * @Date: 2022-08-07 00:28:59
  * @LastEditors: Leo
- * @LastEditTime: 2022-08-07 00:29:01
+ * @LastEditTime: 2022-08-15 14:59:29
  */
 #include <assert.h>
-#include <stdio.h>
+#include <spdlog/spdlog.h>
 #include <stdlib.h>
 
 #include "uv_helpers.h"
 
-void uv_bind_listen_socket(uv_tcp_t *listen, const char *host, const int port, uv_loop_t *loop)
+void uv_bind_listen_socket(uv_tcp_t *listen, const char *host, const int port, uv_loop_t *loop, void * data)
 {
-  int e;
-
-  e = uv_tcp_init(loop, listen);
-  if (e != 0)
+  SPDLOG_DEBUG("bind listen socket: {}:{}", host, port);
+  if (auto e = uv_tcp_init(loop, listen); e != 0)
+  {
+    spdlog::error("uv_tcp_init error: {}", uv_strerror(e));
     uv_fatal(e);
-
+  }
+  
+  listen->data = data;
+  
   struct sockaddr_in addr;
-  e = uv_ip4_addr(host, port, &addr);
-  switch (e)
+  switch (auto e = uv_ip4_addr(host, port, &addr); e)
   {
   case 0:
     break;
   case EINVAL:
-    fprintf(stderr, "Invalid address/port: %s %d\n", host, port);
+    SPDLOG_ERROR("Invalid IP address/port given: {}:{}", host, port);
     abort();
     break;
   default:
     uv_fatal(e);
   }
 
-  e = uv_tcp_bind(listen, (struct sockaddr *)&addr, 0);
-  if (e != 0)
+  if (auto e = uv_tcp_bind(listen, (struct sockaddr *)&addr, 0); e != 0)
+  {
+    spdlog::error("uv_tcp_bind error: {}", uv_strerror(e));
     uv_fatal(e);
+  }
 }

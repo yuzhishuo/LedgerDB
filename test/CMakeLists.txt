@@ -11,3 +11,5 @@ target_link_libraries(moontest PRIVATE
     GTest::gtest_main
     utility
 )
+
+add_subdirectory(raft_test)

@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 16:36:55
- * @LastEditTime: 2022-07-24 01:46:30
+ * @LastEditTime: 2022-08-12 12:52:27
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -60,10 +60,12 @@ public:
   IUnique() = default;
   virtual ~IUnique() = default;
 
-  template <typename U> friend bool operator<(const IUnique<U> &lhs, const IUnique<U> &rhs);
+  template <typename U> friend bool operator < (const IUnique<U> &lhs, const IUnique<U> &rhs);
 
 public:
   virtual T GetUnique() const = 0;
+private:
+
 };
 
 template <typename U> bool operator<(const IUnique<U> &lhs, const IUnique<U> &rhs)

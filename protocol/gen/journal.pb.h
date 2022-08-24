@@ -203,18 +203,18 @@ class JournalRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSenderFieldNumber = 8,
-    kClueFieldNumber = 9,
+    kSenderFieldNumber = 9,
+    kClueFieldNumber = 10,
     kLedgerNameFieldNumber = 1,
     kPayloadNameFieldNumber = 3,
     kPayloadTypeFieldNumber = 5,
-    kHashFieldNumber = 10,
+    kPayloadHashFieldNumber = 6,
     kJournalIdFieldNumber = 2,
     kPayloadSizeFieldNumber = 4,
-    kNonceFieldNumber = 6,
-    kTimestampFieldNumber = 7,
+    kNonceFieldNumber = 7,
+    kTimestampFieldNumber = 8,
   };
-  // repeated string sender = 8;
+  // repeated string sender = 9;
   int sender_size() const;
   private:
   int _internal_sender_size() const;
@@ -238,7 +238,7 @@ class JournalRequest final :
   std::string* _internal_add_sender();
   public:
 
-  // repeated string clue = 9;
+  // repeated string clue = 10;
   int clue_size() const;
   private:
   int _internal_clue_size() const;
@@ -304,18 +304,18 @@ class JournalRequest final :
   std::string* _internal_mutable_payload_type();
   public:
 
-  // bytes hash = 10;
-  void clear_hash();
-  const std::string& hash() const;
+  // string payload_hash = 6;
+  void clear_payload_hash();
+  const std::string& payload_hash() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_hash(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_hash();
-  PROTOBUF_NODISCARD std::string* release_hash();
-  void set_allocated_hash(std::string* hash);
+  void set_payload_hash(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_payload_hash();
+  PROTOBUF_NODISCARD std::string* release_payload_hash();
+  void set_allocated_payload_hash(std::string* payload_hash);
   private:
-  const std::string& _internal_hash() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_hash(const std::string& value);
-  std::string* _internal_mutable_hash();
+  const std::string& _internal_payload_hash() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_payload_hash(const std::string& value);
+  std::string* _internal_mutable_payload_hash();
   public:
 
   // uint64 journal_id = 2;
@@ -336,7 +336,7 @@ class JournalRequest final :
   void _internal_set_payload_size(uint64_t value);
   public:
 
-  // uint64 nonce = 6;
+  // uint64 nonce = 7;
   void clear_nonce();
   uint64_t nonce() const;
   void set_nonce(uint64_t value);
@@ -345,7 +345,7 @@ class JournalRequest final :
   void _internal_set_nonce(uint64_t value);
   public:
 
-  // uint64 timestamp = 7;
+  // uint64 timestamp = 8;
   void clear_timestamp();
   uint64_t timestamp() const;
   void set_timestamp(uint64_t value);
@@ -366,7 +366,7 @@ class JournalRequest final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ledger_name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr payload_name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr payload_type_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr hash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr payload_hash_;
   uint64_t journal_id_;
   uint64_t payload_size_;
   uint64_t nonce_;
@@ -1405,7 +1405,58 @@ inline void JournalRequest::set_allocated_payload_type(std::string* payload_type
   // @@protoc_insertion_point(field_set_allocated:journal_engine.JournalRequest.payload_type)
 }
 
-// uint64 nonce = 6;
+// string payload_hash = 6;
+inline void JournalRequest::clear_payload_hash() {
+  payload_hash_.ClearToEmpty();
+}
+inline const std::string& JournalRequest::payload_hash() const {
+  // @@protoc_insertion_point(field_get:journal_engine.JournalRequest.payload_hash)
+  return _internal_payload_hash();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void JournalRequest::set_payload_hash(ArgT0&& arg0, ArgT... args) {
+ 
+ payload_hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:journal_engine.JournalRequest.payload_hash)
+}
+inline std::string* JournalRequest::mutable_payload_hash() {
+  std::string* _s = _internal_mutable_payload_hash();
+  // @@protoc_insertion_point(field_mutable:journal_engine.JournalRequest.payload_hash)
+  return _s;
+}
+inline const std::string& JournalRequest::_internal_payload_hash() const {
+  return payload_hash_.Get();
+}
+inline void JournalRequest::_internal_set_payload_hash(const std::string& value) {
+  
+  payload_hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* JournalRequest::_internal_mutable_payload_hash() {
+  
+  return payload_hash_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* JournalRequest::release_payload_hash() {
+  // @@protoc_insertion_point(field_release:journal_engine.JournalRequest.payload_hash)
+  return payload_hash_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void JournalRequest::set_allocated_payload_hash(std::string* payload_hash) {
+  if (payload_hash != nullptr) {
+    
+  } else {
+    
+  }
+  payload_hash_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), payload_hash,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (payload_hash_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    payload_hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:journal_engine.JournalRequest.payload_hash)
+}
+
+// uint64 nonce = 7;
 inline void JournalRequest::clear_nonce() {
   nonce_ = uint64_t{0u};
 }
@@ -1425,7 +1476,7 @@ inline void JournalRequest::set_nonce(uint64_t value) {
   // @@protoc_insertion_point(field_set:journal_engine.JournalRequest.nonce)
 }
 
-// uint64 timestamp = 7;
+// uint64 timestamp = 8;
 inline void JournalRequest::clear_timestamp() {
   timestamp_ = uint64_t{0u};
 }
@@ -1445,7 +1496,7 @@ inline void JournalRequest::set_timestamp(uint64_t value) {
   // @@protoc_insertion_point(field_set:journal_engine.JournalRequest.timestamp)
 }
 
-// repeated string sender = 8;
+// repeated string sender = 9;
 inline int JournalRequest::_internal_sender_size() const {
   return sender_.size();
 }
@@ -1520,7 +1571,7 @@ JournalRequest::mutable_sender() {
   return &sender_;
 }
 
-// repeated string clue = 9;
+// repeated string clue = 10;
 inline int JournalRequest::_internal_clue_size() const {
   return clue_.size();
 }
@@ -1593,57 +1644,6 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
 JournalRequest::mutable_clue() {
   // @@protoc_insertion_point(field_mutable_list:journal_engine.JournalRequest.clue)
   return &clue_;
-}
-
-// bytes hash = 10;
-inline void JournalRequest::clear_hash() {
-  hash_.ClearToEmpty();
-}
-inline const std::string& JournalRequest::hash() const {
-  // @@protoc_insertion_point(field_get:journal_engine.JournalRequest.hash)
-  return _internal_hash();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void JournalRequest::set_hash(ArgT0&& arg0, ArgT... args) {
- 
- hash_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:journal_engine.JournalRequest.hash)
-}
-inline std::string* JournalRequest::mutable_hash() {
-  std::string* _s = _internal_mutable_hash();
-  // @@protoc_insertion_point(field_mutable:journal_engine.JournalRequest.hash)
-  return _s;
-}
-inline const std::string& JournalRequest::_internal_hash() const {
-  return hash_.Get();
-}
-inline void JournalRequest::_internal_set_hash(const std::string& value) {
-  
-  hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* JournalRequest::_internal_mutable_hash() {
-  
-  return hash_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* JournalRequest::release_hash() {
-  // @@protoc_insertion_point(field_release:journal_engine.JournalRequest.hash)
-  return hash_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void JournalRequest::set_allocated_hash(std::string* hash) {
-  if (hash != nullptr) {
-    
-  } else {
-    
-  }
-  hash_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), hash,
-      GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (hash_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:journal_engine.JournalRequest.hash)
 }
 
 // -------------------------------------------------------------------

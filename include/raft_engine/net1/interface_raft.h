@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-04 17:46:31
- * @LastEditTime: 2022-08-09 12:09:26
+ * @LastEditTime: 2022-08-18 01:12:30
  * @LastEditors: Leo
  */
 #pragma once
@@ -13,12 +13,19 @@ extern "C"
 {
 #include <raft.h>
 }
-
+#include <array>
+#include <optional>
 #include <string.h>
 #include <utility/tpl.h>
-
+#include <uv.h>
 constexpr auto RAFT_BUFLEN = 512;
 constexpr auto IP_STR_LEN = strlen("111.111.111.111");
+
+struct address_t
+{
+  uint16_t port;
+  char host[IP_STR_LEN];
+};
 
 using entry_cfg_change_t = struct
 {
@@ -45,6 +52,19 @@ using peer_message_type_ = enum {
   MSG_APPENDENTRIES_RESPONSE,
 };
 
+enum class conn_status_e
+{
+  DISCONNECTED,
+  CONNECTING,
+  CONNECTED,
+};
+
+enum class handshake_state_e
+{
+  HANDSHAKE_FAILURE,
+  HANDSHAKE_SUCCESS,
+};
+
 using msg_handshake_t = struct
 {
   int raft_port;
@@ -54,7 +74,7 @@ using msg_handshake_t = struct
 
 using msg_handshake_response_t = struct
 {
-  int success;
+  handshake_state_e success;
   int leader_port;
   int http_port;
   /* my Raft node ID.
@@ -73,22 +93,19 @@ struct msg_t
     msg_requestvote_response_t rvr;
     msg_appendentries_t ae;
     msg_appendentries_response_t aer;
-  };
+  }; // __internal_msg_t_union_e;
+
+  // #define hs __internal_msg_t_union_e.hs
+  // #define hsr __internal_msg_t_union_e.hsr
+  // #define rv __internal_msg_t_union_e.rv
+  // #define rvr __internal_msg_t_union_e.rvr
+  // #define ae __internal_msg_t_union_e.ae
+  // #define aer __internal_msg_t_union_e.aer
+
   int padding[100];
 }; // size 456
 
-using conn_status_e = enum {
-  DISCONNECTED,
-  CONNECTING,
-  CONNECTED,
-};
-
-using handshake_state_e = enum {
-  HANDSHAKE_FAILURE,
-  HANDSHAKE_SUCCESS,
-};
-
-struct peer_connection_t 
+struct peer_connection_t
 {
 
   /* peer's address */
@@ -119,7 +136,59 @@ struct peer_connection_t
 
   uv_loop_t *loop;
 
+  void *udata;
+
   struct peer_connection_t *next;
+};
+
+enum class RaftRole
+{
+  UNKNOW,
+  LEADER,
+  SLAVE,
+};
+
+enum class IdleState
+{
+  RESTORE,
+  JOIN,
+  START,
+};
+
+struct RaftOptions
+{
+  IdleState idle_state;
+
+  /* flags */
+  int debug;
+
+  /* options */
+  char *host;
+  int id;
+  int raft_port;
+  int http_port;
+
+  std::optional<address_t> cluster_address;
+};
+
+struct RaftServerInterface
+{
+  /* Link list of peer connections */
+  peer_connection_t *conns = nullptr;
+  uv_mutex_t raft_lock;
+  uv_cond_t appendentries_received;
+  int node_id;
+
+  raft_server_t *raft = nullptr;
+  uv_loop_t peer_loop;
+  uv_timer_t periodic_req;
+  uv_tcp_t peer_listen;
+
+  raft_cbs_t raft_callbacks;
+
+  RaftOptions opts;
+
+  void *user_data = nullptr;
 };
 
 #endif // __RAFT_ENGINE_NET_INTERFACE_RAFT_H__

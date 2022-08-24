@@ -13,3 +13,6 @@
 [submodule "3rdParty/libuv"]
 	path = 3rdParty/libuv
 	url = https://github.com/libuv/libuv.git
+[submodule "3rdParty/RxCpp"]
+	path = 3rdParty/RxCpp
+	url = https://github.com/ReactiveX/RxCpp.git

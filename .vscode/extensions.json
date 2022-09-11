@@ -2,7 +2,7 @@
     "recommendations": [
         "ms-vscode.cpptools-extension-pack",
         "xaver.clang-format",
-        "austin.code-gnu-global",
-        "tomoki1207.pdf"
+        "tomoki1207.pdf",
+        "austin.code-gnu-global"
     ]
 }

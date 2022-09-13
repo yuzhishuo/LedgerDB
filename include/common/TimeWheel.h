@@ -49,13 +49,12 @@ public:
   {
     init_link_node();
   }
+
   ~TimeWheel()
   {
     while (head_)
     {
-      tail_ = head_;
-      head_ = head_->next;
-      delete tail_;
+      remove_head_link_node();
     }
   }
 
@@ -89,7 +88,7 @@ public:
     new_tail_link_node();
   }
 
-  bool push(T v) { return tail_->val.insert(v).second; }
+  inline bool push(T v) { return tail_->val.insert(v).second; }
 
 private:
   LinkNode<T> *head_;

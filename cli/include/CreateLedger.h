@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:47:17
+ * @LastEditTime: 2022-09-17 02:15:08
  */
 //
 // Created by yuzhi on 6/17/22.
@@ -40,7 +40,7 @@ public:
 )"};
   }
 
-  GrammarType GetUnique() const override { return GrammarType::CREATE_LEDGER; }
+  GrammarType getUnique() const override { return GrammarType::CREATE_LEDGER; }
 };
 } // namespace yuzhi::grammar::cli
 

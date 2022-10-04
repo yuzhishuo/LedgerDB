@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-20 12:21:39
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 16:34:03
+ * @LastEditTime: 2022-09-17 10:33:14
  */
 #pragma once
 
@@ -28,11 +28,11 @@ class User;
 namespace yuzhi::meta
 {
 
-class UsersImpl final : public interface::IDisposable, meta::IAccountAtrribute
+class UserFactoryImpl final : public interface::IDisposable, meta::IAccountAtrribute
 {
 public:
-  UsersImpl(std::weak_ptr<rocksdb::DB> db);
-  ~UsersImpl() override;
+  UserFactoryImpl(std::weak_ptr<rocksdb::DB> db);
+  ~UserFactoryImpl() override;
 
 public:
   // create user object

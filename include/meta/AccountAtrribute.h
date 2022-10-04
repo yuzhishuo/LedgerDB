@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-23 13:17:21
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 13:25:44
+ * @LastEditTime: 2022-09-17 10:47:08
  */
 
 #pragma once
@@ -38,5 +38,7 @@ public:
   virtual std::optional<common::Error> removeCommon(const std::string &ledger_name, const std::string &name) = 0;
   virtual std::optional<common::Error> removeRegulator(const std::string &ledger_name, const std::string &name) = 0;
   virtual std::optional<common::Error> removeReadOnly(const std::string &ledger_name, const std::string &name) = 0;
+
+  virtual ~IAccountAtrribute() = default;
 };
 } // namespace yuzhi::meta

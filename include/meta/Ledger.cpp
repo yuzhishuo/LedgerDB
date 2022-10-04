@@ -2,11 +2,11 @@
 #include <cassert>
 
 #include "Ledger.h"
-#include "Ledgers.h"
+#include <meta/LedgerFactory.h>
 #include "User.h"
-#include "Users.h"
+#include "UserFactory.h"
 
-#include <LedgerEngine.h>
+#include <engine/LedgerEngine.h>
 #include <meta/AccountAtrribute.h>
 
 namespace yuzhi
@@ -28,37 +28,37 @@ Ledger::Ledger(meta::IAccountAtrribute *attribute, ledger_engine::Ledger &&ledge
 
 void Ledger::dispose()
 {
-  auto is_remove = Ledgers::Instance().removeLedger(shared_from_this());
+  auto is_remove =  LedgerFactory::Instance().removeLedger(shared_from_this());
   assert(is_remove);
 }
 
 std::optional<common::Error> Ledger::addRegulator(const std::string &name)
 {
-  return attribute_->addRegulator(GetUnique(), name);
+  return attribute_->addRegulator(getUnique(), name);
 }
 
 std::optional<common::Error> Ledger::addCommon(const std::string &name)
 {
-  return attribute_->addCommon(GetUnique(), name);
+  return attribute_->addCommon(getUnique(), name);
 }
 std::optional<common::Error> Ledger::addReadOnly(const std::string &name)
 {
-  return attribute_->addReadOnly(GetUnique(), name);
+  return attribute_->addReadOnly(getUnique(), name);
 }
 
 std::optional<common::Error> Ledger::removeCommon(const std::string &name)
 {
-  return attribute_->removeCommon(GetUnique(), name);
+  return attribute_->removeCommon(getUnique(), name);
 }
 
 std::optional<common::Error> Ledger::removeRegulator(const std::string &name)
 {
-  return attribute_->removeRegulator(GetUnique(), name);
+  return attribute_->removeRegulator(getUnique(), name);
 }
 
 std::optional<common::Error> Ledger::removeReadOnly(const std::string &name)
 {
-  return attribute_->removeReadOnly(GetUnique(), name);
+  return attribute_->removeReadOnly(getUnique(), name);
 }
 
 LEDGER_ROLE Ledger::getRoleByUserName(const std::string &name) const
@@ -85,15 +85,15 @@ LEDGER_ROLE Ledger::getRoleByUserName(const std::string &name) const
   }
 }
 
-bool Ledger::isOwner(const std::string &name) const { return attribute_->isOwner(GetUnique(), name); }
+bool Ledger::isOwner(const std::string &name) const { return attribute_->isOwner(getUnique(), name); }
 
-std::shared_ptr<User> Ledger::Onwer() const { return attribute_->Onwer(GetUnique()); }
+std::shared_ptr<User> Ledger::Onwer() const { return attribute_->Onwer(getUnique()); }
 
-bool Ledger::isCommon(const std::string &name) const { return attribute_->isCommon(GetUnique(), name); }
+bool Ledger::isCommon(const std::string &name) const { return attribute_->isCommon(getUnique(), name); }
 
-bool Ledger::isRegulator(const std::string &name) const { return attribute_->isRegulator(GetUnique(), name); }
+bool Ledger::isRegulator(const std::string &name) const { return attribute_->isRegulator(getUnique(), name); }
 
-bool Ledger::isReadOnly(const std::string &name) const { return attribute_->isReadOnly(GetUnique(), name); }
+bool Ledger::isReadOnly(const std::string &name) const { return attribute_->isReadOnly(getUnique(), name); }
 
 const std::string &Ledger::name() const { return ledger_->name(); }
 

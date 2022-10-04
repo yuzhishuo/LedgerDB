@@ -83,7 +83,6 @@ add_subdirectory(cli)
 
 set(
   DIR_SRCS
-  include/LedgerEngine.cpp
 )
 
 add_executable(Ledger ${DIR_SRCS} main.cpp )
@@ -93,7 +92,6 @@ add_executable(Ledger ${DIR_SRCS} main.cpp )
 # add_dependencies(Ledger raft)
 
 target_link_libraries(Ledger
-
                     rocksdb
                     gRPC::gpr gRPC::upb gRPC::grpc gRPC::grpc++
                     # re2::re2 c-ares::cares

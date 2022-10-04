@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-23 03:14:32
+ * @LastEditTime: 2022-09-17 10:12:53
  */
 #pragma once
 #include "meta/Constant.h"
@@ -19,11 +19,11 @@
 
 namespace yuzhi
 {
-class LedgersImpl
+class LedgerFactoryImpl
 {
 public:
-  LedgersImpl(const std::string &db_name);
-  ~LedgersImpl() = default;
+  explicit LedgerFactoryImpl(const std::string &db_name);
+  ~LedgerFactoryImpl() = default;
 
 public:
   std::weak_ptr<rocksdb::DB> getRawDBPtr() const;

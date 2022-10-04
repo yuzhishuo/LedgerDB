@@ -2,10 +2,12 @@
  * @Author: Leo
  * @Date: 2022-07-17 14:09:42
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-22 09:51:37
+ * @LastEditTime: 2022-09-17 11:05:26
  */
 #pragma once
 
+namespace yuzhi::utility
+{
 namespace inner
 {
 namespace operators_detail
@@ -37,3 +39,16 @@ template <class T, class B = operators_detail::empty_base<T>> struct less_than_c
 } // namespace inner
 
 template <typename T> using less_than_comparable = inner::less_than_comparable1<T>;
+
+class Noncopyable
+{
+protected:
+  Noncopyable() = default;
+  ~Noncopyable() = default;
+
+private:
+  Noncopyable(const Noncopyable &) = delete;
+  const Noncopyable &operator=(const Noncopyable &) = delete;
+};
+
+} // namespace yuzhi::utility

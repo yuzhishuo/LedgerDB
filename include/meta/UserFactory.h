@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-24 01:29:31
+ * @LastEditTime: 2022-09-17 11:21:08
  */
 #pragma once
 
@@ -13,27 +13,23 @@
 #include <rocksdb/db.h>
 #include <spdlog/spdlog.h>
 
+#include <utility/opeartors.h>
+
 #include "meta/AccountAtrribute.h"
 #include "meta/User.h"
-#include "meta/UsersImpl.h"
+#include "meta/UserFactoryImpl.h"
 
 // #define PREDEF_USER "admin"
 namespace yuzhi
 {
-class Users : public interface::IDisposable, public meta::IAccountAtrribute
+class UserFactory : public interface::IDisposable, public meta::IAccountAtrribute, public utility::Noncopyable
 {
 public:
   using Raw = User;
   using Element = std::shared_ptr<User>;
-  using UniqueType = std::common_type_t<decltype(((User *)nullptr)->GetUnique())>;
+  using UniqueType = std::common_type_t<decltype(((User *)nullptr)->getUnique())>;
 
 public:
-  static Users &getInstance()
-  {
-    static Users instance{};
-    return instance;
-  }
-
   void dispose() override { usersImpl_.dispose(); }
 
 public: // IAccountAtrribute
@@ -84,9 +80,8 @@ public: // IAccountAtrribute
   }
 
 public:
-  Users(std::initializer_list<std::pair<std::string, std::shared_ptr<User>>> init);
 
-  Users(std::weak_ptr<rocksdb::DB> db);
+  explicit UserFactory(std::weak_ptr<rocksdb::DB> db);
 
 public:
   std::shared_ptr<User> createUser(const std::string &user_name, const std::string &ledger_name, USER_ROLE role);
@@ -96,6 +91,6 @@ public:
 
 private:
   std::map<std::string, std::shared_ptr<User>> users_;
-  yuzhi::meta::UsersImpl usersImpl_;
+  yuzhi::meta::UserFactoryImpl usersImpl_;
 };
 } // namespace yuzhi

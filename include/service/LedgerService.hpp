@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-02-07 15:44:35
- * @LastEditTime: 2022-08-12 02:26:50
+ * @LastEditTime: 2022-09-17 12:22:06
  * @LastEditors: Leo
  */
 
@@ -9,10 +9,11 @@
 #ifndef YUZHI_SERVICE_Ledger_SERVICE_HPP
 #define YUZHI_SERVICE_Ledger_SERVICE_HPP
 
-#include <ledger_engine.grpc.pb.h>
-#include <meta/Ledgers.h>
+#include <meta/LedgerFactory.h>
 #include <raft_engine/RaftEngine.h>
 #include <spdlog/spdlog.h>
+
+#include <rocksdb/utilities/transaction_db.h>
 
 namespace yuzhi::service
 {
@@ -24,12 +25,9 @@ public:
   virtual ~LedgerService() = default;
 
 public:
-  virtual grpc::Status CreateLedger(grpc::ServerContext *context, const ::ledger_engine::CreateLedgerRequest *request,
-                                    ::ledger_engine::Response *response)
+  virtual bool CreateLedger()
   {
-    SPDLOG_INFO("create leadger request: {}", request->DebugString());
-
-    return ::grpc::Status::OK;
+    return true;
   }
 };
 } // namespace yuzhi::service

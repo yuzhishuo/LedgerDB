@@ -39,7 +39,7 @@ public:
   std::optional<common::Error> Add(const Value &value)
   {
 
-    auto is_inserted = dictionary_.insert(std::make_pair(value.GetUnique(), value));
+    auto is_inserted = dictionary_.insert(std::make_pair(value.getUnique(), value));
     if (!is_inserted.second)
     {
       return common::Error("Duplicate key");
@@ -49,19 +49,19 @@ public:
 
   std::optional<common::Error> Update(const Value &value)
   {
-    if (dictionary_.find(value.GetUnique()) == dictionary_.end())
+    if (dictionary_.find(value.getUnique()) == dictionary_.end())
     {
       return common::Error("Key not found");
     }
 
-    dictionary_.insert(std::move(std::make_pair(value.GetUnique(), value)));
+    dictionary_.insert(std::move(std::make_pair(value.getUnique(), value)));
 
     return std::nullopt;
   }
 
   std::optional<common::Error> Remove(const Value &value)
   {
-    if (dictionary_.erase(value.GetUnique()) == 0)
+    if (dictionary_.erase(value.getUnique()) == 0)
     {
       return common::Error("Key not found");
     }
@@ -103,7 +103,7 @@ public:
   std::optional<common::Error> Add(SmartValue &value)
   {
 
-    auto is_inserted = dictionary_.insert(std::make_pair(value->GetUnique(), value));
+    auto is_inserted = dictionary_.insert(std::make_pair(value->getUnique(), value));
     if (!is_inserted.second)
     {
       return common::Error::RepeatKey();
@@ -113,19 +113,19 @@ public:
 
   std::optional<common::Error> Update(SmartValue &value)
   {
-    if (dictionary_.find(value->GetUnique()) == dictionary_.end())
+    if (dictionary_.find(value->getUnique()) == dictionary_.end())
     {
       return common::Error("Key not found");
     }
 
-    dictionary_.insert(std::move(std::make_pair(value->GetUnique(), value)));
+    dictionary_.insert(std::move(std::make_pair(value->getUnique(), value)));
 
     return std::nullopt;
   }
 
   std::optional<common::Error> Remove(SmartValue &value)
   {
-    if (dictionary_.erase(value->GetUnique()) == 0)
+    if (dictionary_.erase(value->getUnique()) == 0)
     {
       return common::Error("Key not found");
     }

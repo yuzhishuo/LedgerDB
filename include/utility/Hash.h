@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-08-06 08:44:41
  * @LastEditors: Leo
- * @LastEditTime: 2022-08-06 13:56:23
+ * @LastEditTime: 2022-09-14 14:59:39
  */
 /*
  * @Author: Leo
@@ -39,7 +39,7 @@ class IDigest
 {
 public:
   virtual std::optional<common::Error> add(std::string_view view);
-  virtual std::pair<std::optional<common::Error>, std::string> final();
+  virtual std::optional<common::Error> final1(std::string &result);
 
 protected:
 };
@@ -54,19 +54,22 @@ template <> class Hash<HashType::MD5> : public IDigest
 {
 public:
   Hash() { MD5_Init(&ctx); }
+
   std::optional<common::Error> add(std::string_view view) override
   {
     MD5_Update(&ctx, view.data(), view.size());
     return std::nullopt;
   };
 
-  std::pair<std::optional<common::Error>, std::string> final() override
+  std::optional<common::Error> final1(std::string &result) override
   {
     unsigned char MD5result[MD5_DIGEST_LENGTH] = {0};
 
     MD5_Final(MD5result, &ctx);
 
-    return {std::nullopt, std::string(reinterpret_cast<char *>(MD5result), MD5_DIGEST_LENGTH)};
+    result = std::move(std::string(reinterpret_cast<char *>(MD5result), MD5_DIGEST_LENGTH));
+
+    return std::nullopt;
   };
 
 private:
@@ -82,13 +85,14 @@ public:
     SHA512_Update(&ctx, view.data(), view.size());
     return std::nullopt;
   }
-  std::pair<std::optional<common::Error>, std::string> final() override
+  std::optional<common::Error> final1(std::string &result) override
   {
     unsigned char SHA512result[SHA256_DIGEST_LENGTH] = {0};
 
     SHA512_Final(SHA512result, &ctx);
 
-    return {std::nullopt, std::string(reinterpret_cast<char *>(SHA512result), SHA512_DIGEST_LENGTH)};
+    result = std::move(std::string(reinterpret_cast<char *>(SHA512result), SHA512_DIGEST_LENGTH));
+    return std::nullopt;
   };
 
 private:
@@ -99,18 +103,20 @@ template <> class Hash<HashType::SHA256> : public IDigest
 {
 public:
   Hash() { SHA256_Init(&ctx); }
+
   std::optional<common::Error> add(std::string_view view) override
   {
     SHA256_Update(&ctx, view.data(), view.size());
     return std::nullopt;
   }
-  std::pair<std::optional<common::Error>, std::string> final() override
+
+  std::optional<common::Error> final1(std::string &result) override
   {
     unsigned char SHA256result[SHA256_DIGEST_LENGTH] = {0};
 
     SHA256_Final(SHA256result, &ctx);
-
-    return {std::nullopt, std::string(reinterpret_cast<char *>(SHA256result), SHA256_DIGEST_LENGTH)};
+    result = std::string(reinterpret_cast<char *>(SHA256result), SHA256_DIGEST_LENGTH);
+    return std::nullopt;
   };
 
 private:

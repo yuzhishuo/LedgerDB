@@ -2,8 +2,9 @@
  * @Author: Leo
  * @Date: 2022-09-10 09:25:55
  * @LastEditors: Leo
- * @LastEditTime: 2022-09-11 02:59:03
+ * @LastEditTime: 2022-09-17 02:40:38
  */
+#pragma once
 #ifndef YUZHI_COMMON_LOOPQUEUE_
 #define YUZHI_COMMON_LOOPQUEUE_
 
@@ -14,19 +15,6 @@
 
 namespace yuzhi::common
 {
-
-namespace
-{
-
-template <typename T> struct LinkNode
-{
-
-  static_assert(std::is_default_constructible_v<T>, "LinkNode requires default constructible");
-  std::set<T> val;
-  LinkNode *next;
-};
-
-} // namespace
 
 template <typename T> struct has_hash_specific
 {
@@ -43,6 +31,13 @@ template <typename T> class TimeWheel final
 
   static_assert(has_hash_specific<std::shared_ptr<void>>::value,
                 "should finish hash computation for shared pointer, or should ");
+
+  template <typename U> struct LinkNode
+  {
+    static_assert(std::is_default_constructible_v<U>, "LinkNode requires default constructible");
+    std::set<U> val;
+    LinkNode *next;
+  };
 
 public:
   TimeWheel(size_t legth) : head_{new LinkNode<T>{.val{}, .next{nullptr}}}, tail_{head_}, length_{legth}

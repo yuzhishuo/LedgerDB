@@ -7,7 +7,7 @@
 #include "rbac/AuthorityCertification.h"
 #include "meta/Ledgers.h"
 #include "meta/User.h"
-#include "meta/Users.h"
+#include "meta/UserFactory.h"
 
 using namespace yuzhi;
 bool AuthorityCertification::UserPass(const std::string &command_name, const std::string &user_name) const

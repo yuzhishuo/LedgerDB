@@ -41,7 +41,7 @@ public:
   virtual ~User() = default;
 
 public:
-  const std::string &GetUnique() const override { return user_->name(); }
+  const std::string &getUnique() const override { return user_->name(); }
 
   void dispose() override;
 

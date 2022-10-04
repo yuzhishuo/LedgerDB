@@ -1,9 +1,9 @@
 
-#include "meta/LedgersImpl.h"
+#include <meta/LedgerFactoryImpl.h>
 namespace yuzhi
 {
 
-LedgersImpl::LedgersImpl(const std::string &db_name)
+LedgerFactoryImpl::LedgerFactoryImpl(const std::string &db_name)
 {
 
   using namespace rocksdb;
@@ -11,16 +11,18 @@ LedgersImpl::LedgersImpl(const std::string &db_name)
 
   std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
 
-  column_families.push_back(
-      rocksdb::ColumnFamilyDescriptor(rocksdb::kDefaultColumnFamilyName, rocksdb::ColumnFamilyOptions()));
+  column_families.emplace_back(
+      rocksdb::kDefaultColumnFamilyName, rocksdb::ColumnFamilyOptions());
 
-  column_families.push_back({"ledger_db_{ledger_name}", ColumnFamilyOptions()});
-  column_families.push_back(ColumnFamilyDescriptor("ledger_db_{ledger_name}_user_{user_name}", ColumnFamilyOptions()));
+  column_families.emplace_back("ledger_db_{ledger_name}", ColumnFamilyOptions());
+  column_families.emplace_back(
+      "ledger_db_{ledger_name}_user_{user_name}", ColumnFamilyOptions());
 
   rocksdb::OptimisticTransactionDB *db;
   OptimisticTransactionDB::Open(options, db_name, column_families, &handles, &db);
   // maybe error here
   txn_db.reset(db);
+  
   std::string val;
   if (auto status = txn_db->Get(rocksdb::ReadOptions{}, handles[1], "current_ledger_id", &val); !status.ok())
   {
@@ -28,10 +30,10 @@ LedgersImpl::LedgersImpl(const std::string &db_name)
   }
 }
 
-std::weak_ptr<ROCKSDB_NAMESPACE::DB> LedgersImpl::getRawDBPtr() const { return txn_db; }
+std::weak_ptr<ROCKSDB_NAMESPACE::DB> LedgerFactoryImpl::getRawDBPtr() const { return txn_db; }
 
 // createLedger
-std::optional<common::Error> LedgersImpl::createLedger(ledger_engine::Ledger &mono_ledger)
+std::optional<common::Error> LedgerFactoryImpl::createLedger(ledger_engine::Ledger &mono_ledger)
 {
   using namespace rocksdb;
   WriteOptions write_options;
@@ -84,7 +86,7 @@ std::optional<common::Error> LedgersImpl::createLedger(ledger_engine::Ledger &mo
   return std::nullopt;
 }
 
-bool LedgersImpl::hasLedger(const std::string &ledger_name) const
+bool LedgerFactoryImpl::hasLedger(const std::string &ledger_name) const
 {
   using namespace rocksdb;
   ReadOptions read_options;
@@ -98,7 +100,7 @@ bool LedgersImpl::hasLedger(const std::string &ledger_name) const
 }
 
 // deleteLedger
-std::optional<common::Error> LedgersImpl::deleteLedger(const std::string &ledger_name)
+std::optional<common::Error> LedgerFactoryImpl::deleteLedger(const std::string &ledger_name)
 {
   using namespace rocksdb;
   WriteOptions write_options;

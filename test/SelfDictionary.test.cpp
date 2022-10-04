@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-22 09:08:07
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-26 02:35:34
+ * @LastEditTime: 2022-09-21 15:09:12
  */
 
 #include <common/SelfDictionary.h>
@@ -10,7 +10,7 @@
 
 struct Unique : public IUnique<int>
 {
-  virtual int GetUnique() const override { return id_; }
+  int getUnique() const override { return id_; }
   void setId(int id) { id_ = id; }
 
 private:
@@ -23,7 +23,8 @@ class SelfDictionaryTest : public ::testing::TestWithParam<int>
 
 INSTANTIATE_TEST_CASE_P(TrueReturn, SelfDictionaryTest, testing::Values(3, 5, 11, 23, 17, 10, 12));
 
-yuzhi::SelfDictionary<Unique> dictionary;
+static yuzhi::SelfDictionary<Unique> dictionary;
+
 TEST_P(SelfDictionaryTest, ADDTrueReturn)
 {
   int n = GetParam();
@@ -31,7 +32,7 @@ TEST_P(SelfDictionaryTest, ADDTrueReturn)
   Unique unique;
   unique.setId(n);
 
-  if (unique.GetUnique() % 2)
+  if (unique.getUnique() % 2)
   {
     auto error = dictionary.Add(unique);
     ASSERT_FALSE(error);
@@ -52,7 +53,7 @@ TEST_P(SelfDictionaryTest, RemoveTrueReturn)
   Unique unique;
   unique.setId(n);
 
-  if (unique.GetUnique() % 2)
+  if (unique.getUnique() % 2)
   {
     auto error = dictionary.Remove(unique);
     ASSERT_FALSE(error);

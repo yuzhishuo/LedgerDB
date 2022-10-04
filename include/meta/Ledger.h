@@ -56,7 +56,7 @@ public: // meta
 
   void dispose() override;
 
-  const std::string &GetUnique() const override { return ledger_->name(); }
+  const std::string &getUnique() const override { return ledger_->name(); }
 
   LEDGER_ROLE getRoleByUserName(const std::string &name) const;
 

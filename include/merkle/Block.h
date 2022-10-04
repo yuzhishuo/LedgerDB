@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-07-30 07:30:07
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-30 09:00:14
+ * @LastEditTime: 2022-09-25 14:48:14
  */
 
 #pragma once
@@ -20,7 +20,6 @@ namespace yuzhi
 
 struct BlockNode
 {
-
   std::string acc_hash;
   std::string prev_hash;
   BlockNode *prev;
@@ -40,7 +39,6 @@ public:
 
   BlockNode *newNode(std::shared_ptr<::merkle::Tree> tree)
   {
-
     assert(current_node_);
     auto prev_tree = current_node_->tree.lock();
     auto node = new BlockNode;

@@ -2,7 +2,7 @@
  * @Author: Leo
  * @Date: 2022-02-14 02:36:28
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-24 01:36:32
+ * @LastEditTime: 2022-09-17 10:44:43
  */
 #include <algorithm>
 #include <cassert>
@@ -10,13 +10,13 @@
 
 #include <ledger_engine.pb.h>
 
-#include "Ledgers.h"
-#include "Users.h"
+#include "LedgerFactory.h"
+#include "UserFactory.h"
 using namespace yuzhi;
 
-Ledgers::Ledgers() : ledgers_(), impl_(kLedgerStoreName), users_{impl_.getRawDBPtr()} {}
+LedgerFactory::LedgerFactory() : ledgers_{}, impl_{kLedgerStoreName}, users_{impl_.getRawDBPtr()}, time_wheel_{10} {}
 
-std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std::string &owner)
+std::shared_ptr<Ledger> LedgerFactory::createLedger(const std::string &name, const std::string &owner)
 {
   if (hasLedger(name)
 #ifdef DEBUG
@@ -31,16 +31,16 @@ std::shared_ptr<Ledger> Ledgers::createLedger(const std::string &name, const std
   mono_ledger.set_name(name);
   impl_.createLedger(mono_ledger);
   auto ledger = std::make_shared<Ledger>(dynamic_cast<meta::IAccountAtrribute *>(&users_), std::move(mono_ledger));
-  ledgers_.insert(std::make_pair(name, ledger));
+  ledgers_.try_emplace(name, ledger);
 
   return ledger;
 }
 
-Ledgers::~Ledgers() { users_.dispose(); }
+LedgerFactory::~LedgerFactory() { users_.dispose(); }
 
-bool Ledgers::removeLedger(const std::shared_ptr<Ledger> &ledger) { return removeLedger(ledger->name()); }
+bool LedgerFactory::removeLedger(const std::shared_ptr<Ledger> &ledger) { return removeLedger(ledger->name()); }
 
-bool Ledgers::removeLedger(const std::string &ledger_name)
+bool LedgerFactory::removeLedger(const std::string &ledger_name)
 {
   auto it = ledgers_.find(ledger_name);
   if (it == ledgers_.end())
@@ -54,9 +54,9 @@ bool Ledgers::removeLedger(const std::string &ledger_name)
   return true;
 }
 
-bool Ledgers::hasLedger(const std::string &name) const { return ledgers_.count(name) && impl_.hasLedger(name); }
+bool LedgerFactory::hasLedger(const std::string &name) const { return ledgers_.count(name) && impl_.hasLedger(name); }
 
-bool Ledgers::removeLedgerByUser(const std::shared_ptr<User> &user)
+bool LedgerFactory::removeLedgerByUser(const std::shared_ptr<User> &user)
 {
   std::vector<std::string> remove_ledger_names;
   for (auto it = ledgers_.begin(); it != ledgers_.end();)
@@ -72,14 +72,14 @@ bool Ledgers::removeLedgerByUser(const std::shared_ptr<User> &user)
     }
   }
 
-  for (auto &name : remove_ledger_names)
+  for (const auto &name : remove_ledger_names)
   {
     ledgers_.erase(name);
   }
   return remove_ledger_names.empty();
 }
 
-std::shared_ptr<Ledger> Ledgers::getLedger(const std::string &name) const
+std::shared_ptr<Ledger> LedgerFactory::getLedger(const std::string &name) const
 {
   if (auto it = ledgers_.find(name); it != ledgers_.end())
   {

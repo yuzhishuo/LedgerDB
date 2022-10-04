@@ -1,11 +1,9 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 16:36:55
- * @LastEditTime: 2022-08-12 12:52:27
+ * @LastEditTime: 2022-10-04 14:01:03
  * @LastEditors: Leo
- * @Description: 打开koroFileHeader查看配置 进行设置:
- * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /example-authority-cpp/include/IUnique.h
+ * @FilePath: /LedgerDB/include/IUnique.h
  */
 #pragma once
 
@@ -27,7 +25,8 @@ struct is_comparable<T, std::void_t<
 
 template <typename T> constexpr auto is_comparable_v = is_comparable<T>::value;
 
-template <typename T, bool is_pod = std::is_pod_v<T>> class IUnique : public less_than_comparable<IUnique<T>>
+template <typename T, bool is_pod = std::is_pod_v<T>>
+class IUnique : public yuzhi::utility::less_than_comparable<IUnique<T>>
 {
 public:
   using Key = T;
@@ -43,12 +42,12 @@ public:
   template <typename U> friend bool operator<(const IUnique<U> &lhs, const IUnique<U> &rhs);
 
 public:
-  virtual const T &GetUnique() const = 0;
+  virtual const T &getUnique() const = 0;
 };
 
 template <typename T>
 // POD types do not have a default constructor
-class IUnique<T, true> : public less_than_comparable<IUnique<T>>
+class IUnique<T, true> : public yuzhi::utility::less_than_comparable<IUnique<T>>
 {
 
 public:
@@ -60,17 +59,17 @@ public:
   IUnique() = default;
   virtual ~IUnique() = default;
 
-  template <typename U> friend bool operator < (const IUnique<U> &lhs, const IUnique<U> &rhs);
+  template <typename U> friend bool operator<(const IUnique<U> &lhs, const IUnique<U> &rhs);
 
 public:
-  virtual T GetUnique() const = 0;
-private:
+  virtual T getUnique() const = 0;
 
+private:
 };
 
 template <typename U> bool operator<(const IUnique<U> &lhs, const IUnique<U> &rhs)
 {
-  return lhs.GetUnique() < rhs.GetUnique();
+  return lhs.getUnique() < rhs.getUnique();
 }
 
 // static_assert(is_comparable_v<IUnique<std::string>>);       // true

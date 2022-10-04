@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-21 16:46:09
- * @LastEditTime: 2022-07-22 09:48:41
+ * @LastEditTime: 2022-09-21 15:30:36
  * @LastEditors: Leo
  * @Description: 打开koroFileHeader查看配置 进行设置:
  * https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -18,17 +18,15 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
-MerkleEngine::MerkleEngine(std::shared_ptr<Ledger> ledger) : tree_store_path_(kMerkleRoot), ledger_(ledger)
+MerkleEngine::MerkleEngine(std::weak_ptr<Ledger> ledger) : tree_store_path_(kMerkleRoot), ledger_(ledger)
 {
-  merkle_ = std::move(std::make_unique<merkle::Tree>());
+  merkle_ = std::make_unique<merkle::Tree>();
   if (!fs::exists(tree_store_path_))
   {
     fs::create_directories(tree_store_path_);
   }
-
-  const std::string tree_file_path = tree_store_path_ + "Merkle" + to_string(ledger_->id());
-
-  if (fs::exists(tree_file_path))
+  if (const std::string tree_file_path = tree_store_path_ + "Merkle" + to_string(ledger_->id());
+      fs::exists(tree_file_path))
   {
 
     std::ifstream ifs(tree_file_path);

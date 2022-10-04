@@ -2,9 +2,9 @@
  * @Author: Leo
  * @Date: 2022-07-21 07:36:48
  * @LastEditors: Leo
- * @LastEditTime: 2022-07-26 01:53:32
+ * @LastEditTime: 2022-09-17 10:35:22
  */
-#include "meta/UsersImpl.h"
+#include "meta/UserFactoryImpl.h"
 #include "meta/Constant.h"
 #include <rocksdb/db.h>
 #include <rocksdb/utilities/optimistic_transaction_db.h>
@@ -19,7 +19,7 @@ namespace yuzhi::meta
 {
 using namespace rocksdb;
 
-UsersImpl::UsersImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db))
+UserFactoryImpl::UserFactoryImpl(std::weak_ptr<rocksdb::DB> db) : db_(std::move(db))
 {
   using namespace rocksdb;
 
@@ -51,9 +51,9 @@ end:
   SPDLOG_ERROR("Error creating current user id key {}", genCurrentUserIdOfKey());
 }
 
-UsersImpl::~UsersImpl() { assert(!db_.lock() && !cf_handle_); }
+UserFactoryImpl::~UserFactoryImpl() { assert(!db_.lock() && !cf_handle_); }
 
-void UsersImpl::dispose()
+void UserFactoryImpl::dispose()
 {
 
   if (auto db = std::dynamic_pointer_cast<ROCKSDB_NAMESPACE::OptimisticTransactionDB>(db_.lock()); db)
@@ -68,7 +68,7 @@ void UsersImpl::dispose()
 }
 
 // create user object
-std::optional<common::Error> UsersImpl::createUser(const std::string &user_name, const std::string &ledger_name) const
+std::optional<common::Error> UserFactoryImpl::createUser(const std::string &user_name, const std::string &ledger_name) const
 {
 
   using namespace rocksdb;
@@ -114,7 +114,7 @@ std::optional<common::Error> UsersImpl::createUser(const std::string &user_name,
 }
 
 // delete user object
-std::optional<common::Error> UsersImpl::deleteUser(const std::string &ledger_name, const std::string &user_name) const
+std::optional<common::Error> UserFactoryImpl::deleteUser(const std::string &ledger_name, const std::string &user_name) const
 {
 
   using namespace rocksdb;
@@ -134,7 +134,7 @@ std::optional<common::Error> UsersImpl::deleteUser(const std::string &ledger_nam
   return std::nullopt;
 }
 
-std::shared_ptr<rocksdb::OptimisticTransactionDB> UsersImpl::captureOptimisticTransactionDB() const
+std::shared_ptr<rocksdb::OptimisticTransactionDB> UserFactoryImpl::captureOptimisticTransactionDB() const
 {
   using namespace rocksdb;
   if (auto db = std::dynamic_pointer_cast<ROCKSDB_NAMESPACE::OptimisticTransactionDB>(db_.lock()); db)
@@ -146,7 +146,7 @@ std::shared_ptr<rocksdb::OptimisticTransactionDB> UsersImpl::captureOptimisticTr
   return nullptr;
 }
 
-std::optional<user_engine::User> UsersImpl::captureUser(const std::string &ledger_name,
+std::optional<user_engine::User> UserFactoryImpl::captureUser(const std::string &ledger_name,
                                                         const std::string &user_name) const
 {
   auto db = captureOptimisticTransactionDB();
@@ -164,7 +164,7 @@ std::optional<user_engine::User> UsersImpl::captureUser(const std::string &ledge
   return std::nullopt;
 }
 
-bool UsersImpl::isOwner(const std::string &ledger_name, const std::string &name) const
+bool UserFactoryImpl::isOwner(const std::string &ledger_name, const std::string &name) const
 {
   if (auto user_opt = captureUser(ledger_name, name); user_opt)
   {
@@ -173,7 +173,7 @@ bool UsersImpl::isOwner(const std::string &ledger_name, const std::string &name)
 
   return false;
 }
-bool UsersImpl::isCommon(const std::string &ledger_name, const std::string &name) const
+bool UserFactoryImpl::isCommon(const std::string &ledger_name, const std::string &name) const
 {
 
   if (auto user_opt = captureUser(ledger_name, name); user_opt)
@@ -184,7 +184,7 @@ bool UsersImpl::isCommon(const std::string &ledger_name, const std::string &name
   return false;
 }
 
-bool UsersImpl::UsersImpl::isRegulator(const std::string &ledger_name, const std::string &name) const
+bool UserFactoryImpl::isRegulator(const std::string &ledger_name, const std::string &name) const
 {
   if (auto user_opt = captureUser(ledger_name, name); user_opt)
   {
@@ -194,7 +194,7 @@ bool UsersImpl::UsersImpl::isRegulator(const std::string &ledger_name, const std
   return false;
 }
 
-bool UsersImpl::isReadOnly(const std::string &ledger_name, const std::string &name) const
+bool UserFactoryImpl::isReadOnly(const std::string &ledger_name, const std::string &name) const
 {
 
   if (auto user_opt = captureUser(ledger_name, name); user_opt)
@@ -205,7 +205,7 @@ bool UsersImpl::isReadOnly(const std::string &ledger_name, const std::string &na
   return false;
 }
 
-std::shared_ptr<User> UsersImpl::Onwer(const std::string &ledger_name) const
+std::shared_ptr<User> UserFactoryImpl::Onwer(const std::string &ledger_name) const
 {
   auto db = captureOptimisticTransactionDB();
 
@@ -222,30 +222,30 @@ std::shared_ptr<User> UsersImpl::Onwer(const std::string &ledger_name) const
   return nullptr;
 }
 
-std::optional<common::Error> UsersImpl::addCommon(const std::string &ledger_name, const std::string &name)
+std::optional<common::Error> UserFactoryImpl::addCommon(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }
 
-std::optional<common::Error> UsersImpl::addRegulator(const std::string &ledger_name, const std::string &name)
+std::optional<common::Error> UserFactoryImpl::addRegulator(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }
 
-std::optional<common::Error> UsersImpl::addReadOnly(const std::string &ledger_name, const std::string &name)
+std::optional<common::Error> UserFactoryImpl::addReadOnly(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }
 
-std::optional<common::Error> UsersImpl::removeCommon(const std::string &ledger_name, const std::string &name)
+std::optional<common::Error> UserFactoryImpl::removeCommon(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }
-std::optional<common::Error> UsersImpl::removeRegulator(const std::string &ledger_name, const std::string &name)
+std::optional<common::Error> UserFactoryImpl::removeRegulator(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }
-std::optional<common::Error> UsersImpl::removeReadOnly(const std::string &ledger_name, const std::string &name)
+std::optional<common::Error> UserFactoryImpl::removeReadOnly(const std::string &ledger_name, const std::string &name)
 {
   return std::nullopt;
 }

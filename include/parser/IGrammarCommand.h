@@ -30,7 +30,7 @@ public:
 public:
   virtual std::optional<common::Error> operator()(utility::VaStack &vaStack) = 0;
 
-  virtual GrammarType GetUnique() const = 0;
+  virtual GrammarType getUnique() const = 0;
 
 public:
   virtual ~IGrammarCommand() = default;

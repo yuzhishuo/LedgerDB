@@ -1,13 +1,14 @@
 
 
 add_library(meta Ledger.cpp
-                 Ledgers.cpp
+                 LedgerFactory.cpp
                  User.cpp
-                 Users.cpp
-                 UsersImpl.cpp
-                 LedgersImpl.cpp
+                 UserFactory.cpp
+                 UserFactoryImpl.cpp
+                 LedgerFactoryImpl.cpp
                  )
 target_link_libraries(meta
                  rocksdb
                  merkle
+                 ledger_engine
                  fmt::fmt)

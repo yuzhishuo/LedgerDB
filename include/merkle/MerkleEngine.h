@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-25 16:36:55
- * @LastEditTime: 2022-08-05 03:44:33
+ * @LastEditTime: 2022-09-17 02:36:17
  * @LastEditors: Leo
  */
 #pragma once
@@ -24,7 +24,7 @@ class MerkleEngine final
 {
 
 public:
-  explicit MerkleEngine(std::shared_ptr<Ledger> ledger);
+  explicit MerkleEngine(std::weak_ptr<Ledger> ledger);
   ~MerkleEngine();
 
 public:

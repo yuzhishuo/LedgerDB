@@ -1,7 +1,7 @@
 /*
  * @Author: Leo
  * @Date: 2022-01-30 13:11:29
- * @LastEditTime: 2022-08-21 00:12:40
+ * @LastEditTime: 2022-09-11 09:23:44
  * @LastEditors: Leo
  */
 #pragma once
@@ -20,7 +20,7 @@ namespace rocksdb
 }
 namespace yuzhi::raft_engine
 {
-class RaftEngine : public IConfigurable
+class RaftEngine final : public IConfigurable
 {
 
 public:
@@ -29,15 +29,15 @@ public:
 
   const char *Field() const override { return "raft"; }
   RaftRole role() const { return RaftRole::UNKNOW; }
-  int sync(const yuzhi::IMonostate<raft::Entry> &y) { return raft_server_->sync(y); }
-  void start();
+  int sync(const yuzhi::IMonostate<raft::Entry> &y) const { return raft_server_->sync(y); }
+  void start() const;
 
 private:
   void cluster_id_change_cb(common::Subscription, int id);
 
 private:
   int service_id = -1;
-  std::unique_ptr<rocksdb::TransactionDB> db_; 
+  std::unique_ptr<rocksdb::TransactionDB> db_;
   std::unique_ptr<RaftServer> raft_server_;
 
 public:

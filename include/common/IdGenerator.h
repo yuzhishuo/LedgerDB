@@ -48,7 +48,7 @@ public:
   };
   ~IdGenerator() override = default;
 
-  inline uint64_t GetUnique() const override
+  inline uint64_t getUnique() const override
   {
     auto transaction = db_->BeginTransaction(rocksdb::WriteOptions{}, rocksdb::TransactionOptions{});
 

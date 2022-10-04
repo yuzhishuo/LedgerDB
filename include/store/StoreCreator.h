@@ -30,7 +30,7 @@ public:
     {
       if (auto [raw, err] = object->serialize(); !err)
       {
-        auto key = prefix_ + "_" + object->GetUnique() + "_" + suffix_;
+        auto key = prefix_ + "_" + object->getUnique() + "_" + suffix_;
         return storage->save(key, raw);
       }
       else
@@ -46,7 +46,7 @@ public:
   {
     if (auto storage = create(); storage)
     {
-      auto key = prefix_ + "_" + object->GetUnique() + "_" + suffix_;
+      auto key = prefix_ + "_" + object->getUnique() + "_" + suffix_;
 
       if (auto [store_raw, err] = storage->load(key); !err)
       {

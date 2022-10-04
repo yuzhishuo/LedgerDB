@@ -20,6 +20,11 @@ RUN apt update -y \
     iproute2 \
     vim
 
+# https://prajankya.me/valgrind-on-linux/
+# https://cloud.tencent.com/developer/article/1383789
+RUN apt install -y valgrind 
+
+
 RUN cd /
 
 # lib
